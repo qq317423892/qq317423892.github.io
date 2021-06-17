@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.loli.net/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic|Roboto Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/moon_logo.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="C++,UE4," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="1.UMG类视图UMG 控件跟Unity UGUI不太一样，不是所有的控件节点，都能拥有子节点，为了区分这三种控件，整理了下他们基类：  UWidget : 所有UMG 控件的公共基类，不提供增加子节点功能 UPanelWidget : 提供了增加子节点功能，可以有多个子节点 UContentWidget : 继承于 UPanelWidget ，是 UPanelWidget 的一种特例，只能有一个">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UMG源码笔记2-渲染过程">
+<meta property="og:url" content="http://xianlong.space/2021/06/17/umg-render/index.html">
+<meta property="og:site_name" content="十三的blog">
+<meta property="og:description" content="1.UMG类视图UMG 控件跟Unity UGUI不太一样，不是所有的控件节点，都能拥有子节点，为了区分这三种控件，整理了下他们基类：  UWidget : 所有UMG 控件的公共基类，不提供增加子节点功能 UPanelWidget : 提供了增加子节点功能，可以有多个子节点 UContentWidget : 继承于 UPanelWidget ，是 UPanelWidget 的一种特例，只能有一个">
+<meta property="og:locale">
+<meta property="og:image" content="http://xianlong.space/images/umg_render/umg_class.png">
+<meta property="og:image" content="http://xianlong.space/images/umg_render/slate_class.png">
+<meta property="og:image" content="http://xianlong.space/slate_draw_stack.svg">
+<meta property="article:published_time" content="2021-06-17T02:27:11.000Z">
+<meta property="article:modified_time" content="2021-06-17T03:33:05.475Z">
+<meta property="article:author" content="小贤">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="UE4">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://xianlong.space/images/umg_render/umg_class.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://xianlong.space/2021/06/17/umg-render/"/>
+
+
+
+
+
+  <title>UMG源码笔记2-渲染过程 | 十三的blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">十三的blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">安心学技术</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://xianlong.space/2021/06/17/umg-render/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="小贤">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="十三的blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">UMG源码笔记2-渲染过程</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-06-17T10:27:11+08:00">
+                2021-06-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/UE4/" itemprop="url" rel="index">
+                    <span itemprop="name">UE4</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/UE4/SlateUI/" itemprop="url" rel="index">
+                    <span itemprop="name">SlateUI</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2021/06/17/umg-render/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2021/06/17/umg-render/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2.6k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  13
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="1-UMG类视图"><a href="#1-UMG类视图" class="headerlink" title="1.UMG类视图"></a>1.UMG类视图</h1><p>UMG 控件跟Unity UGUI不太一样，不是所有的控件节点，都能拥有子节点，为了区分这三种控件，整理了下他们基类：</p>
+<ul>
+<li><strong>UWidget</strong> : 所有UMG 控件的公共基类，不提供增加子节点功能</li>
+<li><strong>UPanelWidget</strong> : 提供了增加子节点功能，可以有多个子节点</li>
+<li><strong>UContentWidget</strong> : 继承于 <strong>UPanelWidget</strong> ，是 <strong>UPanelWidget</strong> 的一种特例，只能有一个子节点</li>
+</ul>
+<p>UMG常用控件的继承关系如下图所示:</p>
+<img src="/images/umg_render/umg_class.png" width=70% height=70% align="center"/>
+
+<p><strong>UPanelWidget</strong> 实现了可以增加节点的功能 <strong>AddChild</strong> ，然后提供了是否可以增加多个子节点的标记为，</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">UPanelSlot* <span class="title">UPanelWidget::AddChild</span><span class="params">(UWidget* Content)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> ( Content == <span class="literal">nullptr</span> )</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ( !bCanHaveMultipleChildren &amp;&amp; <span class="built_in">GetChildrenCount</span>() &gt; <span class="number">0</span> )</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Content-&gt;<span class="built_in">RemoveFromParent</span>();</span><br><span class="line"></span><br><span class="line">    EObjectFlags NewObjectFlags = RF_Transactional;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">HasAnyFlags</span>(RF_Transient))</span><br><span class="line">    &#123;</span><br><span class="line">        NewObjectFlags |= RF_Transient;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建 Slot </span></span><br><span class="line">    <span class="comment">// GetSlotClass  : 获取对应节点的Slot类</span></span><br><span class="line"></span><br><span class="line">    UPanelSlot* PanelSlot = NewObject&lt;UPanelSlot&gt;(<span class="keyword">this</span>, <span class="built_in">GetSlotClass</span>(), NAME_None, NewObjectFlags);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Slot-&gt;Content : 子节点</span></span><br><span class="line">    <span class="comment">// Slot-&gt;Parent  : 父节点 </span></span><br><span class="line">    PanelSlot-&gt;Parent = <span class="keyword">this</span>;</span><br><span class="line">    PanelSlot-&gt;Content = Content;</span><br><span class="line"></span><br><span class="line">    Content-&gt;Slot = PanelSlot;</span><br><span class="line"></span><br><span class="line">    Slots.<span class="built_in">Add</span>(PanelSlot);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">OnSlotAdded</span>(PanelSlot);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">InvalidateLayoutAndVolatility</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> PanelSlot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>UContentWidget</strong> 的实现是将 <strong>bCanHaveMultipleChildren</strong> 设置 <strong>false</strong> ，达到只有一个子节点的功能。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">UContentWidget::<span class="built_in">UContentWidget</span>(<span class="keyword">const</span> FObjectInitializer&amp; ObjectInitializer)</span><br><span class="line">    : <span class="built_in">Super</span>(ObjectInitializer)</span><br><span class="line">&#123;</span><br><span class="line">    bCanHaveMultipleChildren = <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中， <strong>GetSlotClass</strong> 返回对应控件的 <strong>Slot</strong> 的类型，下面的表格里给出了对应控件的 <strong>Slot</strong> 类型，即 <strong>GetSlotClass</strong> 返回的 <strong>Slot</strong> 的类型。创建后的 <strong>Slot</strong> 对象会分别指向父节点跟子节点。</p>
+<table>
+<thead>
+<tr>
+<th>控件</th>
+<th>Slot类</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>UWidget/UPanelWidget/UCheckBox/URetainerBox</td>
+<td>UPanelSlot</td>
+</tr>
+<tr>
+<td>USafeZone</td>
+<td>USafeZoneSlot</td>
+</tr>
+<tr>
+<td>USizeBox</td>
+<td>USizeBoxSlot</td>
+</tr>
+<tr>
+<td>UBorder</td>
+<td>UBorderSlot</td>
+</tr>
+<tr>
+<td>UButton</td>
+<td>UButtonSlot</td>
+</tr>
+<tr>
+<td>UCanvasPanel</td>
+<td>UCanvasPanelSlot</td>
+</tr>
+<tr>
+<td>UHorizontalBox</td>
+<td>UHorizontalBoxSlot</td>
+</tr>
+<tr>
+<td>UOverlay</td>
+<td>UOverlaySlot</td>
+</tr>
+<tr>
+<td>UScrollBox</td>
+<td>UScrollBoxSlot</td>
+</tr>
+<tr>
+<td>UGridPanel</td>
+<td>UGridSlot</td>
+</tr>
+</tbody></table>
+<h2 id="1-3-Slate控件类视图"><a href="#1-3-Slate控件类视图" class="headerlink" title="1.3 Slate控件类视图"></a>1.3 Slate控件类视图</h2><p><strong>Slate</strong> 中基础类是 <strong>SWidget</strong> ，这是个抽象类，不能实例化，此外还有三个继承 <strong>SWidget</strong> 的基础类，其他控件都是这个三个类的子类型。</p>
+<ul>
+<li><strong>SPanel</strong> : 有多个子节点，本身是个抽象类，子类需要定义子节点组织方式</li>
+<li><strong>SLeafWidget</strong> : 没有子节点，抽象类，子节点需要重写 <strong>Paint</strong> 方法</li>
+<li><strong>SCompoundWidget</strong> : 可以有一个子节点</li>
+</ul>
+<h1><img src="/images/umg_render/slate_class.png" width=100% height=100% align="center"/></h1>
+
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SCompoundWidget</span> :</span> <span class="keyword">public</span> SWidget</span><br><span class="line">&#123;</span><br><span class="line">    FSimpleSlot ChildSlot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SBoxPanel</span> :</span> <span class="keyword">public</span> SPanel</span><br><span class="line">&#123;</span><br><span class="line">    TPanelChildren&lt;FSlot&gt; Children;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> SlotType&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TPanelChildren</span> :</span> <span class="keyword">public</span> FChildren, <span class="keyword">private</span> TIndirectArray&lt; SlotType &gt;</span><br><span class="line">&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>TPanelChildren<FSlot></strong> : 实际上是一个 <strong>Array&lt;SWidget*&gt;</strong><br><strong>FSimpleSlot</strong> : 持有一个 <strong>SWidget*</strong></p>
+</blockquote>
+<h1 id="2-UMG渲染流程"><a href="#2-UMG渲染流程" class="headerlink" title="2 UMG渲染流程"></a>2 UMG渲染流程</h1><p>渲染一个SImage的调用栈如下：</p>
+<img src="/slate_draw_stack.svg" width=100% height=100% align="center"/>
+
+<h2 id="2-1-FSlateApplication-渲染"><a href="#2-1-FSlateApplication-渲染" class="headerlink" title="2.1 FSlateApplication 渲染"></a>2.1 FSlateApplication 渲染</h2><p>首先介绍下几个关键的类</p>
+<ul>
+<li>UGameEngine : 全局对象 <strong>GEngine</strong> 类</li>
+<li>FSlateApplication : 单例，游戏窗口类负责渲染 <strong>Slate</strong></li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 全局单例</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UGameEngine</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="comment">// 游戏窗口句柄</span></span><br><span class="line">    TWeakPtr&lt;<span class="class"><span class="keyword">class</span> <span class="title">SWindow</span>&gt;</span> GameViewportWindow;</span><br><span class="line">    <span class="comment">// 游戏视口</span></span><br><span class="line">    UGameViewportClient* GameViewport;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 游戏GameInstance对象 ：WorkingCellGameInstance</span></span><br><span class="line">    UGameInstance* GameInstance;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 全局单例</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FSlateApplication</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Create</span><span class="params">()</span></span>;</span><br><span class="line">   </span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="built_in">FSlateApplication</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 保存所有窗口</span></span><br><span class="line">    TArray&lt; TSharedRef&lt;SWindow&gt; &gt; SlateWindows;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 游戏加载前闪屏</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FPreLoadScreenManager</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    TWeakPtr&lt;<span class="class"><span class="keyword">class</span> <span class="title">SWindow</span>&gt;</span> MainWindow;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Initialize</span><span class="params">((FSlateRenderer&amp; InSlateRenderer);</span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">void</span> PassPreLoadScreenWindowBackToGame();</span></span></span><br><span class="line"><span class="function"><span class="params">&#125;</span></span></span><br><span class="line"><span class="function"><span class="params"></span></span></span><br></pre></td></tr></table></figure>
+
+<p><strong>FSlateApplication</strong> 是一个单例类，会在 <strong>FEngineLoop::PreInit</strong> 调用时创建：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// 1</span></span><br><span class="line"><span class="function">int32 <span class="title">FEngineLoop::PreInit</span><span class="params">(<span class="keyword">const</span> TCHAR* CmdLine)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">const</span> int32 rv1 = <span class="built_in">PreInitPreStartupScreen</span>(CmdLine);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// 2</span></span><br><span class="line"><span class="function">int32 <span class="title">FEngineLoop::PreInitPreStartupScreen</span><span class="params">(<span class="keyword">const</span> TCHAR* CmdLine)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    FSlateApplication::<span class="built_in">Create</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>创建完 <strong>FSlateApplication</strong> 后，接下来会在 <strong>FEngineLoop::PreInitPreStartUpScreen</strong> 函数中调用 <strong>UGameEngine::CreateGameWindow()</strong> 创建游戏窗口</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// 1</span></span><br><span class="line"><span class="function">TSharedRef&lt;SWindow&gt; <span class="title">UGameEngine::CreateGameWindow</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    TSharedRef&lt;SWindow&gt; Window = <span class="built_in">SNew</span>(SWindow);</span><br><span class="line"></span><br><span class="line">    FSlateApplication::<span class="built_in">Get</span>().<span class="built_in">AddWindow</span>( Window, bShowImmediately );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// 2. 如果有**PreLoadScreenManager**，则会在其初始化函数 **Initialize** </span></span><br><span class="line"><span class="comment">///    的时候创建，并赋值给**MainWindow**</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FPreLoadScreenManager::Initialize</span><span class="params">(FSlateRenderer&amp; InSlateRenderer)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    TSharedRef&lt;SWindow&gt; GameWindow = (GameEngine &amp;&amp; GameEngine-&gt;GameViewportWindow.<span class="built_in">IsValid</span>()) ? </span><br><span class="line">    GameEngine-&gt;GameViewportWindow.<span class="built_in">Pin</span>().<span class="built_in">ToSharedRef</span>() : UGameEngine::<span class="built_in">CreateGameWindow</span>();</span><br><span class="line"></span><br><span class="line">    MainWindow = GameWindow;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// 3. 然后在**PassPreLoadScreenWindowBackToGame**将窗口</span></span><br><span class="line"><span class="comment">///    赋值给**GameEngine-&gt;GameViewportWindow**</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FPreLoadScreenManager::PassPreLoadScreenWindowBackToGame</span><span class="params">()</span> <span class="keyword">const</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    GameEngine-&gt;GameViewportWindow = MainWindow;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>创建的 <strong>SWindow</strong>会加到 <strong>FSlateApplication</strong> 的 <strong>SlateWindown</strong> 队列:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">TSharedRef&lt;SWindow&gt; <span class="title">FSlateApplication::AddWindow</span><span class="params">( TSharedRef&lt;SWindow&gt; InSlateWindow,</span></span></span><br><span class="line"><span class="function"><span class="params"> <span class="keyword">const</span> <span class="keyword">bool</span> bShowImmediately )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    </span><br><span class="line">    FSlateWindowHelper::<span class="built_in">ArrangeWindowToFront</span>(SlateWindows, InSlateWindow);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> InSlateWindow;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>渲染时，会遍历 <strong>SlateWindows</strong> 列表，依次渲染每个 <strong>Window</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// 1</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FSlateApplication::PrivateDrawWindows</span><span class="params">( TSharedPtr&lt;SWindow&gt; DrawOnlyThisWindow )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">for</span>( TArray&lt; TSharedRef&lt;SWindow&gt; &gt;::TConstIterator <span class="built_in">CurrentWindowIt</span>( SlateWindows ); </span><br><span class="line">        CurrentWindowIt; ++CurrentWindowIt )</span><br><span class="line">    &#123;</span><br><span class="line">        TSharedRef&lt;SWindow&gt; CurrentWindow = *CurrentWindowIt;</span><br><span class="line">        <span class="comment">// Only draw visible windows or in off-screen rendering mode</span></span><br><span class="line">        <span class="keyword">if</span> (bRenderOffScreen || CurrentWindow-&gt;<span class="built_in">IsVisible</span>() )</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">DrawWindowAndChildren</span>( CurrentWindow, DrawWindowArgs );</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// 2</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FSlateApplication::DrawWindowAndChildren</span><span class="params">( <span class="keyword">const</span> TSharedRef&lt;SWindow&gt;&amp; WindowToDraw, </span></span></span><br><span class="line"><span class="function"><span class="params">    FDrawWindowArgs&amp; DrawWindowArgs )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    MaxLayerId = WindowToDraw-&gt;<span class="built_in">PaintWindow</span>(</span><br><span class="line">        <span class="built_in">GetCurrentTime</span>(),</span><br><span class="line">        <span class="built_in">GetDeltaTime</span>(),</span><br><span class="line">        WindowElementList,</span><br><span class="line">        <span class="built_in">FWidgetStyle</span>(),</span><br><span class="line">        WindowToDraw-&gt;<span class="built_in">IsEnabled</span>());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>UGameEngine</strong> 初始化时，还会创建 <strong>UGameViewportClient</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">UGameEngine::Init</span><span class="params">(IEngineLoop* InEngineLoop)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(GIsClient)</span><br><span class="line">    &#123;</span><br><span class="line">        ViewportClient = NewObject&lt;UGameViewportClient&gt;(<span class="keyword">this</span>, GameViewportClientClass);</span><br><span class="line">        ViewportClient-&gt;<span class="built_in">Init</span>(*GameInstance-&gt;<span class="built_in">GetWorldContext</span>(), GameInstance);</span><br><span class="line">        GameViewport = ViewportClient;</span><br><span class="line">        GameInstance-&gt;<span class="built_in">GetWorldContext</span>()-&gt;GameViewport = ViewportClient;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<!-- 游戏中打开的界面**UUserWidget**，都会调用**widiget::AddToViewport()**，将自己挂到**UGameViewportClient**上 -->
+
+<h2 id="2-2-SWindow-渲染"><a href="#2-2-SWindow-渲染" class="headerlink" title="2.2 SWindow 渲染"></a>2.2 SWindow 渲染</h2><p><strong>SWindow</strong> 类的组成</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SLATECORE_API</span> <span class="title">SWindow</span> :</span> <span class="keyword">public</span> SCompoundWidget, <span class="keyword">public</span> FSlateInvalidationRoot</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">/// Slate 事件检测加速类</span></span><br><span class="line">    TUniquePtr&lt;FHittestGrid&gt; HittestGrid;</span><br><span class="line">    SVerticalBox::FSlot* ContentSlot;</span><br><span class="line">    TWeakPtr&lt;SWindow&gt; ParentWindowPtr;</span><br><span class="line">    TArray&lt; TSharedRef&lt;SWindow&gt; &gt; ChildWindows;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>SWindow</strong>在初始化时，会在 ChildSlot里增加几个 <strong>SOverlay</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">SWindow::ConstructWindowInternals</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">this</span>-&gt;ChildSlot</span><br><span class="line">    [</span><br><span class="line">        <span class="built_in">SAssignNew</span>(WindowOverlay, SOverlay)</span><br><span class="line">        .<span class="built_in">Visibility</span>(EVisibility::SelfHitTestInvisible)</span><br><span class="line">        <span class="comment">// window background</span></span><br><span class="line">        + SOverlay::<span class="built_in">Slot</span>()</span><br><span class="line">        [</span><br><span class="line">            WindowBackgroundImage.<span class="built_in">ToSharedRef</span>()</span><br><span class="line">        ]</span><br><span class="line"></span><br><span class="line">        <span class="comment">// window border</span></span><br><span class="line">        + SOverlay::<span class="built_in">Slot</span>()</span><br><span class="line">        [</span><br><span class="line">            WindowBorder.<span class="built_in">ToSharedRef</span>()</span><br><span class="line">        ]</span><br><span class="line"></span><br><span class="line">        <span class="comment">// window outline</span></span><br><span class="line">        + SOverlay::<span class="built_in">Slot</span>()</span><br><span class="line">        [</span><br><span class="line">            WindowOutline.<span class="built_in">ToSharedRef</span>()</span><br><span class="line">        ]</span><br><span class="line">    ];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>渲染时，从 <strong>SlateApplication</strong> 对象调用 <strong>SWindow</strong> 的 <strong>PaintWindow</strong> 方法</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// 1</span></span><br><span class="line"><span class="function">int32 <span class="title">SWindow::PaintWindow</span><span class="params">( <span class="keyword">double</span> CurrentTime, <span class="keyword">float</span> DeltaTime, </span></span></span><br><span class="line"><span class="function"><span class="params">    FSlateWindowElementList&amp; OutDrawElements, <span class="keyword">const</span> FWidgetStyle&amp; InWidgetStyle, </span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">bool</span> bParentEnabled )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    FSlateInvalidationResult Result = <span class="built_in">PaintInvalidationRoot</span>(Context);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// 2</span></span><br><span class="line"><span class="function">FSlateInvalidationResult <span class="title">FSlateInvalidationRoot::PaintInvalidationRoot</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">const</span> FSlateInvalidationContext&amp; Context)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    CachedMaxLayerId = <span class="built_in">PaintSlowPath</span>(Context);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// 3</span></span><br><span class="line"><span class="function">int32 <span class="title">SWindow::PaintSlowPath</span><span class="params">(<span class="keyword">const</span> FSlateInvalidationContext&amp; Context)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    HittestGrid-&gt;<span class="built_in">Clear</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> FSlateRect WindowCullingBounds = <span class="built_in">GetClippingRectangleInWindow</span>();</span><br><span class="line">    <span class="keyword">const</span> int32 LayerId = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">const</span> FGeometry WindowGeometry = <span class="built_in">GetWindowGeometryInWindow</span>();</span><br><span class="line"></span><br><span class="line">    int32 MaxLayerId = <span class="number">0</span>;</span><br><span class="line">      </span><br><span class="line">    MaxLayerId = <span class="built_in">Paint</span>(*Context.PaintArgs, WindowGeometry, WindowCullingBounds, </span><br><span class="line">        *Context.WindowElementList, LayerId, Context.WidgetStyle,</span><br><span class="line">         Context.bParentEnabled);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> MaxLayerId;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// 4. 最终调用到基类 SWidget::Paint 函数</span></span><br><span class="line"><span class="function">int32 <span class="title">SWidget::Paint</span><span class="params">(<span class="keyword">const</span> FPaintArgs&amp; Args, <span class="keyword">const</span> FGeometry&amp; AllottedGeometry, </span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">const</span> FSlateRect&amp; MyCullingRect, FSlateWindowElementList&amp; OutDrawElements, </span></span></span><br><span class="line"><span class="function"><span class="params">    int32 LayerId, <span class="keyword">const</span> FWidgetStyle&amp; InWidgetStyle, <span class="keyword">bool</span> bParentEnabled)</span> <span class="keyword">const</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    int32 NewLayerId = <span class="built_in">OnPaint</span>(UpdatedArgs, AllottedGeometry, CullingBounds, </span><br><span class="line">        OutDrawElements, LayerId, ContentWidgetStyle, bParentEnabled);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// 5</span></span><br><span class="line"><span class="function">int32 <span class="title">SWindow::OnPaint</span><span class="params">(<span class="keyword">const</span> FPaintArgs&amp; Args, <span class="keyword">const</span> FGeometry&amp; AllottedGeometry, </span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">const</span> FSlateRect&amp; MyCullingRect, FSlateWindowElementList&amp; OutDrawElements, </span></span></span><br><span class="line"><span class="function"><span class="params">    int32 LayerId, <span class="keyword">const</span> FWidgetStyle&amp; InWidgetStyle, <span class="keyword">bool</span> bParentEnabled)</span> <span class="keyword">const</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    int32 MaxLayer = SCompoundWidget::<span class="built_in">OnPaint</span>(Args, AllottedGeometry, MyCullingRect, </span><br><span class="line">        OutDrawElements, LayerId, InWidgetStyle, bParentEnabled);</span><br><span class="line">    <span class="keyword">return</span> MaxLayer;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>不同的节点的<strong>OnPaint</strong>函数实现不一样<br><strong>SCompoundWidget</strong>只有一个子节点，直接调用子节点的Paint函数</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">int32 <span class="title">SCompoundWidget::OnPaint</span><span class="params">( <span class="keyword">const</span> FPaintArgs&amp; Args, <span class="keyword">const</span> FGeometry&amp; AllottedGeometry, </span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">const</span> FSlateRect&amp; MyCullingRect, FSlateWindowElementList&amp; OutDrawElements, int32 LayerId, </span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">const</span> FWidgetStyle&amp; InWidgetStyle, <span class="keyword">bool</span> bParentEnabled )</span> <span class="keyword">const</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>( ArrangedChildren.<span class="built_in">Num</span>() &gt; <span class="number">0</span> )</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">check</span>( ArrangedChildren.<span class="built_in">Num</span>() == <span class="number">1</span> );</span><br><span class="line">        FArrangedWidget&amp; TheChild = ArrangedChildren[<span class="number">0</span>];</span><br><span class="line">       </span><br><span class="line">        int32 Layer = <span class="number">0</span>;</span><br><span class="line">        &#123;</span><br><span class="line">            Layer = TheChild.Widget-&gt;<span class="built_in">Paint</span>( Args.<span class="built_in">WithNewParent</span>(<span class="keyword">this</span>), </span><br><span class="line">                TheChild.Geometry, MyCullingRect, OutDrawElements, LayerId + <span class="number">1</span>,</span><br><span class="line">                CompoundedWidgetStyle, <span class="built_in">ShouldBeEnabled</span>( bParentEnabled ) );</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> Layer;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>SPanel</strong> 有多个子节点，渲染接口如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (int32 ChildIndex = <span class="number">0</span>; ChildIndex &lt; ArrangedChildren.<span class="built_in">Num</span>(); ++ChildIndex)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">const</span> FArrangedWidget&amp; CurWidget = ArrangedChildren[ChildIndex];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!<span class="built_in">IsChildWidgetCulled</span>(MyCullingRect, CurWidget))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">const</span> int32 CurWidgetsMaxLayerId = CurWidget.Widget-&gt;<span class="built_in">Paint</span>(NewArgs, </span><br><span class="line">            CurWidget.Geometry, MyCullingRect, OutDrawElements, LayerId,</span><br><span class="line">            InWidgetStyle, bShouldBeEnabled);</span><br><span class="line"></span><br><span class="line">        MaxLayerId = FMath::<span class="built_in">Max</span>(MaxLayerId, CurWidgetsMaxLayerId);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最终渲染到可渲染的子节点上，例如<strong>SImage</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// 1</span></span><br><span class="line"><span class="function">int32 <span class="title">SImage::OnPaint</span><span class="params">( <span class="keyword">const</span> FPaintArgs&amp; Args, <span class="keyword">const</span> FGeometry&amp; AllottedGeometry, </span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">const</span> FSlateRect&amp; MyCullingRect, FSlateWindowElementList&amp; OutDrawElements, </span></span></span><br><span class="line"><span class="function"><span class="params">    int32 LayerId, <span class="keyword">const</span> FWidgetStyle&amp; InWidgetStyle, <span class="keyword">bool</span> bParentEnabled )</span> <span class="keyword">const</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">const</span> FSlateBrush* ImageBrush = Image.<span class="built_in">GetImage</span>().<span class="built_in">Get</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ((ImageBrush != <span class="literal">nullptr</span>) &amp;&amp; (ImageBrush-&gt;DrawAs != ESlateBrushDrawType::NoDrawType))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">const</span> <span class="keyword">bool</span> bIsEnabled = <span class="built_in">ShouldBeEnabled</span>(bParentEnabled);</span><br><span class="line">        <span class="keyword">const</span> ESlateDrawEffect DrawEffects = bIsEnabled ? ESlateDrawEffect::None :</span><br><span class="line">            ESlateDrawEffect::DisabledEffect;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">const</span> FLinearColor <span class="title">FinalColorAndOpacity</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">            InWidgetStyle.GetColorAndOpacityTint() * </span></span></span><br><span class="line"><span class="function"><span class="params">            ColorAndOpacity.Get().GetColor(InWidgetStyle) * </span></span></span><br><span class="line"><span class="function"><span class="params">            ImageBrush-&gt;GetTint( InWidgetStyle ) )</span></span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (bFlipForRightToLeftFlowDirection &amp;&amp; GSlateFlowDirection == EFlowDirection::RightToLeft)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">const</span> FGeometry FlippedGeometry = AllottedGeometry.MakeChild</span><br><span class="line">                (<span class="built_in">FSlateRenderTransform</span>(<span class="built_in">FScale2D</span>(<span class="number">-1</span>, <span class="number">1</span>)));</span><br><span class="line"></span><br><span class="line">            FSlateDrawElement::<span class="built_in">MakeBox</span>(OutDrawElements, LayerId,</span><br><span class="line">                FlippedGeometry.<span class="built_in">ToPaintGeometry</span>(), ImageBrush, DrawEffects,</span><br><span class="line">                FinalColorAndOpacity);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            FSlateDrawElement::<span class="built_in">MakeBox</span>(OutDrawElements, LayerId, AllottedGeometry.<span class="built_in">ToPaintGeometry</span>(), </span><br><span class="line">                ImageBrush, DrawEffects, FinalColorAndOpacity);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> LayerId;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// 2</span></span><br><span class="line"><span class="comment">/// 最后调用 **FSlateDrawElement** 来生成对应的渲染元素</span></span><br><span class="line"><span class="comment">/// FSlateDrawElement::MakeBox -&gt; FSlateDrawElement::MakeBoxInternal</span></span><br><span class="line"><span class="function">FSlateDrawElement&amp; <span class="title">FSlateDrawElement::MakeBoxInternal</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    FSlateWindowElementList&amp; ElementList,</span></span></span><br><span class="line"><span class="function"><span class="params">    uint32 InLayer,</span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">const</span> FPaintGeometry&amp; PaintGeometry,</span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">const</span> FSlateBrush* InBrush,</span></span></span><br><span class="line"><span class="function"><span class="params">    ESlateDrawEffect InDrawEffects,</span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">const</span> FLinearColor&amp; InTint</span></span></span><br><span class="line"><span class="function"><span class="params">)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">/// 记住这个 ElementType，后面还有用到</span></span><br><span class="line">    EElementType ElementType = (InBrush-&gt;DrawAs == ESlateBrushDrawType::Border) ? </span><br><span class="line">        EElementType::ET_Border : EElementType::ET_Box;</span><br><span class="line"></span><br><span class="line">    FSlateDrawElement&amp; Element = ElementList.<span class="built_in">AddUninitialized</span>();</span><br><span class="line">    FSlateBoxPayload&amp; BoxPayload = ElementList.CreatePayload&lt;FSlateBoxPayload&gt;(Element);</span><br><span class="line"></span><br><span class="line">    BoxPayload.<span class="built_in">SetTint</span>(InTint);</span><br><span class="line">    BoxPayload.<span class="built_in">SetBrush</span>(InBrush);</span><br><span class="line"></span><br><span class="line">    Element.<span class="built_in">Init</span>(ElementList, ElementType, InLayer, PaintGeometry, InDrawEffects);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> Element;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在<strong>SlateApplication</strong>中的<strong>Renderer</strong>中有专门的渲染buff<strong>DrawBuffer</strong>，调用完OnPaint后都会将自己的渲染数据<strong>Element</strong>添加到 <strong>ElementListd</strong>队列中，给后面合批准备数据。</p>
+<h2 id="2-3-真正的Render"><a href="#2-3-真正的Render" class="headerlink" title="2.3 真正的Render"></a>2.3 真正的Render</h2><p>下面进入真正的渲染流程了</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// 1</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FSlateApplication::PrivateDrawWindows</span><span class="params">( TSharedPtr&lt;SWindow&gt; DrawOnlyThisWindow )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">/// 这是上面说的，依次 Paint 每个 SWindow  </span></span><br><span class="line">    <span class="keyword">for</span>( TArray&lt; TSharedRef&lt;SWindow&gt; &gt;::TConstIterator <span class="built_in">CurrentWindowIt</span>( SlateWindows ); </span><br><span class="line">        CurrentWindowIt; ++CurrentWindowIt )</span><br><span class="line">    &#123;</span><br><span class="line">        TSharedRef&lt;SWindow&gt; CurrentWindow = *CurrentWindowIt;</span><br><span class="line">        <span class="comment">// Only draw visible windows or in off-screen rendering mode</span></span><br><span class="line">        <span class="keyword">if</span> (bRenderOffScreen || CurrentWindow-&gt;<span class="built_in">IsVisible</span>() )</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">DrawWindowAndChildren</span>( CurrentWindow, DrawWindowArgs );</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// 开始准备合批，并且生成 render 指令</span></span><br><span class="line">    <span class="comment">/// OutDrawBuffer : 之前所有Slate控件的Element数据都在这里</span></span><br><span class="line">    Renderer-&gt;<span class="built_in">DrawWindows</span>( DrawWindowArgs.OutDrawBuffer );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// 2</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FSlateRHIRenderer::DrawWindows</span><span class="params">(FSlateDrawBuffer&amp; WindowDrawBuffer)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">DrawWindows_Private</span>(WindowDrawBuffer);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// 3</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FSlateRHIRenderer::DrawWindows_Private</span><span class="params">(FSlateDrawBuffer&amp; WindowDrawBuffer)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">/// SlateBlush资源合并图集</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">DoesThreadOwnSlateRendering</span>())</span><br><span class="line">    &#123;</span><br><span class="line">        ResourceManager-&gt;<span class="built_in">UpdateTextureAtlases</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// 按照 Window 处理 Element 数据</span></span><br><span class="line">    <span class="keyword">for</span> (int32 ListIndex = <span class="number">0</span>; ListIndex &lt; WindowElementLists.<span class="built_in">Num</span>(); ++ListIndex)</span><br><span class="line">    &#123;</span><br><span class="line">        FSlateWindowElementList&amp; ElementList = *WindowElementLists[ListIndex];</span><br><span class="line"></span><br><span class="line">        ElementBatcher-&gt;<span class="built_in">AddElements</span>(ElementList);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// 4. ElementBatcher 定义</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FSlateRHIRenderer</span> :</span> <span class="keyword">public</span> FSlateRenderer</span><br><span class="line">&#123;</span><br><span class="line">    TUniquePtr&lt;FSlateElementBatcher&gt; ElementBatcher;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// 5 </span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FSlateElementBatcher::AddElements</span><span class="params">(FSlateWindowElementList&amp; WindowElementList)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">AddElementsInternal</span>(WindowElementList.<span class="built_in">GetUncachedDrawElements</span>(), ViewportSize);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// 6. 之前 SImage 用到的 ElementType ET_Box/ET_Border</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">enum</span> <span class="keyword">class</span> <span class="title">EElementType</span> :</span> uint8</span><br><span class="line">&#123;</span><br><span class="line">    ET_Box,</span><br><span class="line">    ET_DebugQuad,</span><br><span class="line">    ET_Text,</span><br><span class="line">    ET_ShapedText,</span><br><span class="line">    ET_Spline,</span><br><span class="line">    ET_Line,</span><br><span class="line">    ET_Gradient,</span><br><span class="line">    ET_Viewport,</span><br><span class="line">    ET_Border,</span><br><span class="line">    ET_Custom,</span><br><span class="line">    ET_CustomVerts,</span><br><span class="line">    ET_PostProcessPass,</span><br><span class="line">    <span class="comment">/** Total number of draw commands */</span></span><br><span class="line">    ET_Count,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FSlateElementBatcher::AddElementsInternal</span><span class="params">(<span class="keyword">const</span> FSlateDrawElementArray&amp; DrawElements, </span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">const</span> FVector2D&amp; ViewportSize)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">const</span> FSlateDrawElement&amp; DrawElement : DrawElements)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// Determine what type of element to add</span></span><br><span class="line">        <span class="built_in"><span class="keyword">switch</span></span> ( DrawElement.<span class="built_in">GetElementType</span>() )</span><br><span class="line">        &#123;</span><br><span class="line">        <span class="comment">// 之前 SImage 用到的 ElementType ET_Box/ET_Border</span></span><br><span class="line">        <span class="keyword">case</span> EElementType::ET_Box:</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">SCOPED_NAMED_EVENT_TEXT</span>(<span class="string">&quot;Slate::AddBoxElement&quot;</span>, FColor::Magenta);</span><br><span class="line">            <span class="built_in">STAT</span>(ElementStat_Boxes++);</span><br><span class="line">            DrawElement.<span class="built_in">IsPixelSnapped</span>() ? AddBoxElement&lt;ESlateVertexRounding::Enabled&gt;(DrawElement) : </span><br><span class="line">                AddBoxElement&lt;ESlateVertexRounding::Disabled&gt;(DrawElement);</span><br><span class="line">        &#125;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> EElementType::ET_Border:</span><br><span class="line">        <span class="keyword">case</span> EElementType::ET_Text:</span><br><span class="line"></span><br><span class="line">        <span class="comment">///...</span></span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// 7</span></span><br><span class="line"><span class="keyword">template</span>&lt;ESlateVertexRounding Rounding&gt;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FSlateElementBatcher::AddBoxElement</span><span class="params">(<span class="keyword">const</span> FSlateDrawElement&amp; DrawElement)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    FSlateRenderBatch&amp; RenderBatch = <span class="built_in">CreateRenderBatch</span>( Layer, <span class="built_in">FShaderParams</span>(), Resource, </span><br><span class="line">        ESlateDrawPrimitive::TriangleList, ESlateShader::Default, InDrawEffects, DrawFlags, </span><br><span class="line">        DrawElement);</span><br><span class="line">    <span class="comment">// Create 9 quads for the box element based on the following diagram</span></span><br><span class="line">    <span class="comment">//     ___LeftMargin    ___RightMargin</span></span><br><span class="line">    <span class="comment">//    /                /</span></span><br><span class="line">    <span class="comment">//  +--+-------------+--+</span></span><br><span class="line">    <span class="comment">//  |  |c1           |c2| ___TopMargin</span></span><br><span class="line">    <span class="comment">//  +--o-------------o--+</span></span><br><span class="line">    <span class="comment">//  |  |             |  |</span></span><br><span class="line">    <span class="comment">//  |  |c3           |c4|</span></span><br><span class="line">    <span class="comment">//  +--o-------------o--+</span></span><br><span class="line">    <span class="comment">//  |  |             |  | ___BottomMargin</span></span><br><span class="line">    <span class="comment">//  +--+-------------+--+</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/// 一共16个顶点数据</span></span><br><span class="line">    RenderBatch.<span class="built_in">AddVertex</span>( FSlateVertex::Make&lt;Rounding&gt;( RenderTransform, <span class="built_in">FVector2D</span>( Position.X, Position.Y ),</span><br><span class="line">       LocalSize, DrawScale, <span class="built_in">FVector4</span>(StartUV, Tiling), Tint ) ); <span class="comment">//0</span></span><br><span class="line">    <span class="comment">/// ...</span></span><br><span class="line">    RenderBatch.<span class="built_in">AddVertex</span>( FSlateVertex::Make&lt;Rounding&gt;( RenderTransform, <span class="built_in">FVector2D</span>( EndPos.X, EndPos.Y ),</span><br><span class="line">       LocalSize, DrawScale, <span class="built_in">FVector4</span>(EndUV, Tiling), Tint ) ); <span class="comment">//15</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// Top</span></span><br><span class="line">    RenderBatch.<span class="built_in">AddIndex</span>( IndexStart + <span class="number">0</span> );</span><br><span class="line">    <span class="comment">/// ...</span></span><br><span class="line">    RenderBatch.<span class="built_in">AddIndex</span>( IndexStart + <span class="number">15</span> );</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// 8. 所有的Element都会存储Layer Shader参数等信息，添加成待合批数据。</span></span><br><span class="line"><span class="function">FSlateRenderBatch&amp; <span class="title">FSlateElementBatcher::CreateRenderBatch</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    int32 Layer, </span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">const</span> FShaderParams&amp; ShaderParams,</span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">const</span> FSlateShaderResource* InResource,</span></span></span><br><span class="line"><span class="function"><span class="params">    ESlateDrawPrimitive PrimitiveType,</span></span></span><br><span class="line"><span class="function"><span class="params">    ESlateShader ShaderType,</span></span></span><br><span class="line"><span class="function"><span class="params">    ESlateDrawEffect DrawEffects,</span></span></span><br><span class="line"><span class="function"><span class="params">    ESlateBatchDrawFlag DrawFlags,</span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">const</span> FSlateDrawElement&amp; DrawElement)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    FSlateRenderBatch&amp; NewBatch = CurrentCachedElementList</span><br><span class="line">        ? CurrentCachedElementList-&gt;<span class="built_in">AddRenderBatch</span>(Layer, ShaderParams, InResource,</span><br><span class="line">            PrimitiveType, ShaderType, DrawEffects, DrawFlags, DrawElement.<span class="built_in">GetSceneIndex</span>())</span><br><span class="line"></span><br><span class="line">        : BatchData-&gt;<span class="built_in">AddRenderBatch</span>(Layer, ShaderParams, InResource, PrimitiveType, </span><br><span class="line">            ShaderType, DrawEffects, DrawFlags, DrawElement.<span class="built_in">GetSceneIndex</span>());</span><br><span class="line"></span><br><span class="line">    NewBatch.ClippingState = <span class="built_in">ResolveClippingState</span>(DrawElement);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> NewBatch;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// 9. 最后新建合批任务，在新建的线程里进行合批</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FSlateRHIRenderer::DrawWindows_Private</span><span class="params">(FSlateDrawBuffer&amp; WindowDrawBuffer)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (GIsClient &amp;&amp; !<span class="built_in">IsRunningCommandlet</span>() &amp;&amp; !GUsingNullRHI)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">ENQUEUE_RENDER_COMMAND</span>(SlateDrawWindowsCommand)(</span><br><span class="line">            [Params, ViewInfo](FRHICommandListImmediate&amp; RHICmdList)</span><br><span class="line">            &#123;</span><br><span class="line">                Params.Renderer-&gt;<span class="built_in">DrawWindow_RenderThread</span>(RHICmdList, *ViewInfo, </span><br><span class="line">                    *Params.WindowElementList, Params);</span><br><span class="line">            &#125;</span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/// 10 </span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FSlateRHIRenderingPolicy::BuildRenderingBuffers</span><span class="params">(FRHICommandListImmediate&amp; RHICmdList, </span></span></span><br><span class="line"><span class="function"><span class="params">    FSlateBatchData&amp; InBatchData)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    InBatchData.<span class="built_in">MergeRenderBatches</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// 11</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FSlateBatchData::MergeRenderBatches</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (int32 TestIndex = BatchIndex + <span class="number">1</span>; TestIndex &lt; BatchIndices.<span class="built_in">Num</span>(); ++TestIndex)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">const</span> TPair&lt;int32, int32&gt;&amp; NextBatchIndexPair = BatchIndices[TestIndex];</span><br><span class="line">        FSlateRenderBatch&amp; TestBatch = RenderBatches[NextBatchIndexPair.Key];</span><br><span class="line">        <span class="keyword">if</span> (TestBatch.<span class="built_in">GetLayer</span>() != CurBatch.<span class="built_in">GetLayer</span>())</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// none of the batches will be compatible since we encountered an incompatible layer</span></span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (!TestBatch.bIsMerged &amp;&amp; CurBatch.<span class="built_in">IsBatchableWith</span>(TestBatch))</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">CombineBatches</span>(CurBatch, TestBatch, FinalVertexData, FinalIndexData);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// 12. 合批规则</span></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">IsBatchableWith</span><span class="params">(<span class="keyword">const</span> FSlateRenderBatch&amp; Other)</span> <span class="keyword">const</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">        ShaderResource == Other.ShaderResource</span><br><span class="line">        &amp;&amp; DrawFlags == Other.DrawFlags</span><br><span class="line">        &amp;&amp; ShaderType == Other.ShaderType</span><br><span class="line">        &amp;&amp; DrawPrimitiveType == Other.DrawPrimitiveType</span><br><span class="line">        &amp;&amp; DrawEffects == Other.DrawEffects</span><br><span class="line">        &amp;&amp; ShaderParams == Other.ShaderParams</span><br><span class="line">        &amp;&amp; InstanceData == Other.InstanceData</span><br><span class="line">        &amp;&amp; InstanceCount == Other.InstanceCount</span><br><span class="line">        &amp;&amp; InstanceOffset == Other.InstanceOffset</span><br><span class="line">        &amp;&amp; DynamicOffset == Other.DynamicOffset</span><br><span class="line">        &amp;&amp; CustomDrawer == Other.CustomDrawer</span><br><span class="line">        &amp;&amp; SceneIndex == Other.SceneIndex</span><br><span class="line">        &amp;&amp; ClippingState == Other.ClippingState;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/// 13. 合批结束</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FSlateRHIRenderingPolicy::BuildRenderingBuffers</span><span class="params">(FRHICommandListImmediate&amp; RHICmdList,</span></span></span><br><span class="line"><span class="function"><span class="params">    FSlateBatchData&amp; InBatchData)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    InBatchData.<span class="built_in">MergeRenderBatches</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// 合批结束 开始发送渲染指令</span></span><br><span class="line">    <span class="keyword">const</span> FSlateVertexArray&amp; FinalVertexData = InBatchData.<span class="built_in">GetFinalVertexData</span>();</span><br><span class="line">    <span class="keyword">const</span> FSlateIndexArray&amp; FinalIndexData = InBatchData.<span class="built_in">GetFinalIndexData</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> int32 NumVertices = FinalVertexData.<span class="built_in">Num</span>();</span><br><span class="line">    <span class="keyword">const</span> int32 NumIndices = FinalIndexData.<span class="built_in">Num</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (InBatchData.<span class="built_in">GetRenderBatches</span>().<span class="built_in">Num</span>() &gt; <span class="number">0</span> &amp;&amp; NumVertices &gt; <span class="number">0</span> &amp;&amp; NumIndices &gt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">bool</span> bShouldShrinkResources = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">        RHICmdList.<span class="built_in">EnqueueLambda</span>([</span><br><span class="line">            VertexBuffer = MasterVertexBuffer.VertexBufferRHI.<span class="built_in">GetReference</span>(),</span><br><span class="line">            IndexBuffer = MasterIndexBuffer.IndexBufferRHI.<span class="built_in">GetReference</span>(),</span><br><span class="line">            &amp;InBatchData,</span><br><span class="line">            bAbsoluteIndices</span><br><span class="line">        ](FRHICommandListImmediate&amp; InRHICmdList)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">SCOPE_CYCLE_COUNTER</span>(STAT_SlateUpdateBufferRTTimeLambda);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// Note: Use &quot;Lambda&quot; prefix to prevent clang/gcc warnings of &#x27;-Wshadow&#x27; warning</span></span><br><span class="line">            <span class="keyword">const</span> FSlateVertexArray&amp; LambdaFinalVertexData = InBatchData.<span class="built_in">GetFinalVertexData</span>();</span><br><span class="line">            <span class="keyword">const</span> FSlateIndexArray&amp; LambdaFinalIndexData = InBatchData.<span class="built_in">GetFinalIndexData</span>();</span><br><span class="line"></span><br><span class="line">            <span class="keyword">const</span> int32 NumBatchedVertices = LambdaFinalVertexData.<span class="built_in">Num</span>();</span><br><span class="line">            <span class="keyword">const</span> int32 NumBatchedIndices = LambdaFinalIndexData.<span class="built_in">Num</span>();</span><br><span class="line"></span><br><span class="line">            uint32 RequiredVertexBufferSize = NumBatchedVertices * <span class="built_in"><span class="keyword">sizeof</span></span>(FSlateVertex);</span><br><span class="line">            uint8* VertexBufferData = (uint8*)InRHICmdList.<span class="built_in">LockVertexBuffer</span>(VertexBuffer, <span class="number">0</span>, </span><br><span class="line">                RequiredVertexBufferSize, RLM_WriteOnly);</span><br><span class="line"></span><br><span class="line">            uint32 RequiredIndexBufferSize = NumBatchedIndices * <span class="built_in"><span class="keyword">sizeof</span></span>(SlateIndex);</span><br><span class="line">            uint8* IndexBufferData = (uint8*)InRHICmdList.<span class="built_in">LockIndexBuffer</span>(IndexBuffer, <span class="number">0</span>, </span><br><span class="line">                RequiredIndexBufferSize, RLM_WriteOnly);</span><br><span class="line"></span><br><span class="line">            FMemory::<span class="built_in">Memcpy</span>(VertexBufferData, LambdaFinalVertexData.<span class="built_in">GetData</span>(), RequiredVertexBufferSize);</span><br><span class="line">            FMemory::<span class="built_in">Memcpy</span>(IndexBufferData, LambdaFinalIndexData.<span class="built_in">GetData</span>(), RequiredIndexBufferSize);</span><br><span class="line"></span><br><span class="line">            InRHICmdList.<span class="built_in">UnlockVertexBuffer</span>(VertexBuffer);</span><br><span class="line">            InRHICmdList.<span class="built_in">UnlockIndexBuffer</span>(IndexBuffer);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>至此，就完成了Slate的渲染了。</p>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.css">
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    小贤
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://xianlong.space/2021/06/17/umg-render/" title="UMG源码笔记2-渲染过程">http://xianlong.space/2021/06/17/umg-render/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/C/" rel="tag"># C++</a>
+          
+            <a href="/tags/UE4/" rel="tag"># UE4</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/05/31/hello-world/" rel="next" title="第一次使用Github + Hexo搭建博客">
+                <i class="fa fa-chevron-left"></i> 第一次使用Github + Hexo搭建博客
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="小贤" />
+            
+              <p class="site-author-name" itemprop="name">小贤</p>
+              <p class="site-description motion-element" itemprop="description">Watch and learn, your magic is mine!</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+                <a href="/archives">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/qq317423892" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:xianlongok@163.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+            <div class="cc-license motion-element" itemprop="license">
+              <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" target="_blank">
+                <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+              </a>
+            </div>
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://scorpioq.github.io/" title="ScorpioQ" target="_blank">ScorpioQ</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-UMG%E7%B1%BB%E8%A7%86%E5%9B%BE"><span class="nav-text">1.UMG类视图</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-Slate%E6%8E%A7%E4%BB%B6%E7%B1%BB%E8%A7%86%E5%9B%BE"><span class="nav-text">1.3 Slate控件类视图</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-text"></span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-UMG%E6%B8%B2%E6%9F%93%E6%B5%81%E7%A8%8B"><span class="nav-text">2 UMG渲染流程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-FSlateApplication-%E6%B8%B2%E6%9F%93"><span class="nav-text">2.1 FSlateApplication 渲染</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-SWindow-%E6%B8%B2%E6%9F%93"><span class="nav-text">2.2 SWindow 渲染</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-%E7%9C%9F%E6%AD%A3%E7%9A%84Render"><span class="nav-text">2.3 真正的Render</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小贤</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">10.7k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: true,
+        notify: false,
+        appId: '7TO2HV1Xg9swHbSsI2kFt1H7-gzGzoHsz',
+        appKey: 'FgrhitpMKU9Ff5RhDKrpPgog',
+        placeholder: 'ヾﾉ≧∀≦)o来啊，快活啊!',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
