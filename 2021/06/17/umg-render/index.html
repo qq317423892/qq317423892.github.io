@@ -127,9 +127,8 @@
 <meta property="og:locale">
 <meta property="og:image" content="http://xianlong.space/images/umg_render/umg_class.png">
 <meta property="og:image" content="http://xianlong.space/images/umg_render/slate_class.png">
-<meta property="og:image" content="http://xianlong.space/slate_draw_stack.svg">
 <meta property="article:published_time" content="2021-06-17T02:27:11.000Z">
-<meta property="article:modified_time" content="2021-06-17T03:33:05.475Z">
+<meta property="article:modified_time" content="2021-06-17T04:12:55.977Z">
 <meta property="article:author" content="小贤">
 <meta property="article:tag" content="C++">
 <meta property="article:tag" content="UE4">
@@ -560,7 +559,8 @@
 <p><strong>TPanelChildren<FSlot></strong> : 实际上是一个 <strong>Array&lt;SWidget*&gt;</strong><br><strong>FSimpleSlot</strong> : 持有一个 <strong>SWidget*</strong></p>
 </blockquote>
 <h1 id="2-UMG渲染流程"><a href="#2-UMG渲染流程" class="headerlink" title="2 UMG渲染流程"></a>2 UMG渲染流程</h1><p>渲染一个SImage的调用栈如下：</p>
-<img src="/slate_draw_stack.svg" width=100% height=100% align="center"/>
+<img  src=http://www.plantuml.com/plantuml/svg/ZLDTQy8m57tlhmW-RGF_G1y4TOu9oiGF9WoHp5pRO7OZITHjltwtJUhQhav37vfppxdVkNkuP-rsvsc0YKGOQRsFuxdSxA8Cd2dkeBlVAxdXJcgyQkgYU3Jyz2f50ivU87e62dt2IvI9aKV2VfasablMQZ6N0aQCJjl897NjpXiBnyTa4oxH5HXR_HkUiksdKWbJyybctavvPDxyfSBmReTuv4gAtEzKQnVuTRYYhBgUANsQS9TwIcxDgWZM0bqkb_4BLY2VG5RAGC4784d6V0Sz_Lbb-6Y1CvAMU5qX5YXHEabPVeE8G5dmgcmarD9SEGKKO5RigNG3KvjU9TRqUTX4i-impO8z1QiFPWDZZZp9k8izDGlcyEaE1hfESGktkLvxS9uQu29NrBQaiYbKU6Y43NiHhZtkDcdckSJu8x-ew7FwRT3z8od8GtHWaAkRHFJHU8FXkg9FFIdcbeDHhZaFEuZ3-tdF6EpFMTNQBp6PQ7fANt7SEz3BEQEzmtOBfg7wFFGZTvmM54nIJWWQw4sHIbjke-W7>
+
 
 <h2 id="2-1-FSlateApplication-渲染"><a href="#2-1-FSlateApplication-渲染" class="headerlink" title="2.1 FSlateApplication 渲染"></a>2.1 FSlateApplication 渲染</h2><p>首先介绍下几个关键的类</p>
 <ul>
