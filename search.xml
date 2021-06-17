@@ -2,7 +2,7 @@
 <search>
   <entry>
     <title>第一次使用Github + Hexo搭建博客</title>
-    <url>/2021/05/31/hello-world/</url>
+    <url>/2021/03/21/hello-world/</url>
     <content><![CDATA[<p>偶然看到一个大神的文章，讲到怎么使用GitHub跟Hexo搭建博客，便依照大神给的方法尝试了一遍，便有了今天这个博客。大神的<a href="https://imzlp.com/posts/58952/">博客链接</a></p>
 <p>环境: Win10</p>
 <h2 id="1-前期准备"><a href="#1-前期准备" class="headerlink" title="1. 前期准备"></a>1. 前期准备</h2><h3 id="1-1-安装必要工具"><a href="#1-1-安装必要工具" class="headerlink" title="1.1 安装必要工具"></a>1.1 安装必要工具</h3><ul>
@@ -489,6 +489,40 @@
       <categories>
         <category>UE4</category>
         <category>SlateUI</category>
+      </categories>
+      <tags>
+        <tag>C++</tag>
+        <tag>UE4</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>UE4 static 变量 GC 导致闪退问题</title>
+    <url>/2021/06/17/ue4-static/</url>
+    <content><![CDATA[<p>最近开发一个 UMG 插件，插件里用到了静态变量，在 UE4 编辑器里完全没有啥问题，然后到处手机包后，运行一段时间后，闪退了，闪退点就是我写的代码里中访问全局变量的时候，使用 UnrealVS 插件在 VS2019 下开启 Window 模式，也出现了类似的闪退问题：</p>
+<p>UnrealVS 参数</p>
+<blockquote>
+<p>“E:\xxx.uproject” -game -windowed -log -verbose</p>
+</blockquote>
+<p>闪退代码处：</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// .h 文件</span></span><br><span class="line"><span class="built_in">UCLASS</span>()</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UMGEXT_API</span> <span class="title">UExtTextBlock</span> :</span> <span class="keyword">public</span> UTextBlock</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">static</span> UDataTable* ExtTextStyleSet;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// .cpp 文件</span></span><br><span class="line">UDataTable* UExtTextBlock::ExtTextStyleSet = <span class="literal">nullptr</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">UExtTextBlock::EnsureTextDataTable</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="literal">nullptr</span> == ExtTextStyleSet || !ExtTextStyleSet-&gt;<span class="built_in">IsValidLowLevel</span>())</span><br><span class="line">    &#123;</span><br><span class="line">        ExtTextStyleSet = LoadObject&lt;UDataTable&gt;(<span class="literal">nullptr</span>, *DataPath);</span><br><span class="line">        ExtTextStyleSet-&gt;<span class="built_in">AddToRoot</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">FTextBlockStyle <span class="title">UExtTextBlock::GetTextStyleByName</span><span class="params">(FName StyleName)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">EnsureTextDataTable</span>();</span><br><span class="line">    FTextBlockStyle Style = FTextBlockStyle::<span class="built_in">GetDefault</span>();</span><br><span class="line">    <span class="keyword">if</span>(<span class="literal">nullptr</span> == UExtTextBlock::ExtTextStyleSet)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> Style;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// 闪退地方</span></span><br><span class="line">    <span class="keyword">auto</span> RowMap = UExtTextBlock::ExtTextStyleSet-&gt;<span class="built_in">GetRowMap</span>();</span><br><span class="line">    <span class="keyword">if</span>(RowMap.<span class="built_in">Contains</span>(StyleName))</span><br><span class="line">    &#123;</span><br><span class="line">        FRichTextStyleRow* RichTextStyle = (FRichTextStyleRow*)(RowMap[StyleName]);</span><br><span class="line">        Style = RichTextStyle-&gt;TextStyle;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> Style;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>用 VS2019 调试闪退点，查看 UExtTextBlock::ExtTextStyleSet 内存，每次都不一样，而且类型对象完全不匹配，所以联想到可能是内存空间被GC，然后之前指向的内存被其他变量占用了，于是去谷歌。</p>
+<p>要防止对象被GC，有4种方式：</p>
+<ul>
+<li>作为成员变量并标记为UPROPERTY()；</li>
+<li>创建对象后 AddToRoot() ；（退出游戏时需要RemoveFromRoot()）</li>
+<li>FStreamableManager Load资源时，bManageActiveHandle 设置为true；</li>
+<li>FGCObjectScopeGuard 在指定代码区域内保持对象；</li>
+</ul>
+<blockquote>
+<p>注意：<br>一个UObject类型的变量，即使是static，默认也会被GC掉。</p>
+</blockquote>
+<p>知道了原因，就好解决问题了，于是做了一下修改：</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">/// 插件模块代码 </span></span><br><span class="line"><span class="comment">/// 启动时: 加载创建静态变量，并且将 静态变量加到 Root 上</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FUMGExtModule::StartupModule</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">UE_LOG</span>(LogUMGExtModule, Display, <span class="built_in">TEXT</span>(<span class="string">&quot;UMGExtModule StartupModule&quot;</span>));</span><br><span class="line"></span><br><span class="line">    UExtTextBlock::<span class="built_in">EnsureTextDataTable</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// 模块卸载时：将静态变量从 Root 拿掉</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FUMGExtModule::ShutdownModule</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">UE_LOG</span>(LogUMGExtModule, Display, <span class="built_in">TEXT</span>(<span class="string">&quot;UMGExtModule ShutdownModule&quot;</span>));</span><br><span class="line"></span><br><span class="line">    UExtTextBlock::<span class="built_in">ClearTextDataTable</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// 对应类的代码</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">UExtTextBlock::EnsureTextDataTable</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="literal">nullptr</span> == ExtTextStyleSet || !ExtTextStyleSet-&gt;<span class="built_in">IsValidLowLevel</span>())</span><br><span class="line">    &#123;</span><br><span class="line">        ExtTextStyleSet = LoadObject&lt;UDataTable&gt;(<span class="literal">nullptr</span>, *DataPath);</span><br><span class="line">        <span class="comment">/// AddToRoot : 防止被 GC</span></span><br><span class="line">        ExtTextStyleSet-&gt;<span class="built_in">AddToRoot</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">UExtTextBlock::ClearTextDataTable</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="literal">nullptr</span> != ExtTextStyleSet)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">/// RemoveFromRoot : 可以 GC 了 </span></span><br><span class="line">        ExtTextStyleSet-&gt;<span class="built_in">RemoveFromRoot</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.css">]]></content>
+      <categories>
+        <category>UE4</category>
       </categories>
       <tags>
         <tag>C++</tag>
