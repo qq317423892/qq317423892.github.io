@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.loli.net/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic|Roboto Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/moon_logo.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="C++,UE4," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="1. UE4 反射系统反射的概念是由Smith在1982年首次提出的，主要是指程序可以访问、检测和修改它本身状态或行为的一种能力，即在运行过程中检查自己的C++类，函数，成员变量，结构体等等。 在UE4里面，通过如下的宏定义，来实现发射：  #define UPROPERTY(…) #define UFUNCTION(…) #define USTRUCT(…) #define UMETA(…) #">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UE4 反射系统">
+<meta property="og:url" content="http://xianlong.space/2021/08/12/ue4-reflection/index.html">
+<meta property="og:site_name" content="十三的blog">
+<meta property="og:description" content="1. UE4 反射系统反射的概念是由Smith在1982年首次提出的，主要是指程序可以访问、检测和修改它本身状态或行为的一种能力，即在运行过程中检查自己的C++类，函数，成员变量，结构体等等。 在UE4里面，通过如下的宏定义，来实现发射：  #define UPROPERTY(…) #define UFUNCTION(…) #define USTRUCT(…) #define UMETA(…) #">
+<meta property="og:locale">
+<meta property="article:published_time" content="2021-08-12T01:38:23.000Z">
+<meta property="article:modified_time" content="2021-08-12T01:40:07.768Z">
+<meta property="article:author" content="小贤">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="UE4">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://xianlong.space/2021/08/12/ue4-reflection/"/>
+
+
+
+
+
+  <title>UE4 反射系统 | 十三的blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">十三的blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">安心学技术</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://xianlong.space/2021/08/12/ue4-reflection/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="小贤">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="十三的blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">UE4 反射系统</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-08-12T09:38:23+08:00">
+                2021-08-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/UE4/" itemprop="url" rel="index">
+                    <span itemprop="name">UE4</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2021/08/12/ue4-reflection/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2021/08/12/ue4-reflection/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3.4k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  17
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="1-UE4-反射系统"><a href="#1-UE4-反射系统" class="headerlink" title="1. UE4 反射系统"></a>1. UE4 反射系统</h1><p>反射的概念是由Smith在1982年首次提出的，主要是指程序可以访问、检测和修改它本身状态或行为的一种能力，即在运行过程中检查自己的C++类，函数，成员变量，结构体等等。</p>
+<p>在UE4里面，通过如下的宏定义，来实现发射：</p>
+<blockquote>
+<p>#define UPROPERTY(…)<br> #define UFUNCTION(…)<br> #define USTRUCT(…)<br> #define UMETA(…)<br> #define UPARAM(…)<br> #define UENUM(…)<br> #define UDELEGATE(…)<br> #define UCLASS(…) BODY_MACRO_COMBINE(CURRENT_FILE_ID,_,<strong>LINE</strong>,_PROLOG)<br> #define UINTERFACE(…) UCLASS()</p>
+</blockquote>
+<p>这些宏分别用在属性，函数，结构体/类型定义等，然后有这些宏定义的属性，函数，类型就能够被蓝图调用</p>
+<h1 id="2-反射实现机制和基本原理"><a href="#2-反射实现机制和基本原理" class="headerlink" title="2. 反射实现机制和基本原理"></a>2. 反射实现机制和基本原理</h1><p>在了解反射系统之前，我们必须要知道两个UE4特有的文件类型</p>
+<ul>
+<li>.generate.h</li>
+<li>.gen.cpp</li>
+</ul>
+<p>UE4 在编译之前，会给每一个带有 UCLASS 的文件生成一个对应的 **”.generate.h”**，并且要求代码 include 这个头文件（并且是在其他 include 之后），否则无法正常编译。这两个文件都是通过 UBT 和 UHT 生成的。</p>
+<h2 id="2-1-UBT-和-UHT"><a href="#2-1-UBT-和-UHT" class="headerlink" title="2.1 UBT 和 UHT"></a>2.1 UBT 和 UHT</h2><p><strong>UnrealHeaderTool （UHT，C++）</strong>：UE4的C++代码解析生成工具，我们在代码里写的那些宏 UCLASS 等和 #include “*.generated.h” 都为 UHT 提供了信息来生成相应的 C++ 反射代码<br><strong>UnrealBuildTool（UBT，C#）</strong>：UE4的自定义工具，来编译 UE4 的逐个模块并处理依赖等。我们编写的 Target.cs，Build.cs 都是为这个工具服务的。</p>
+<p>UE4 中代码编译分两个阶段进行：</p>
+<ul>
+<li>UHT 被调用。它将解析 C++ 头中引擎相关类元数据，并生成自定义代码，以实现诸多 UObject 相关的功能。</li>
+<li>普通 C++ 编译器被调用，以便对结果进行编译。</li>
+</ul>
+<h2 id="2-2-UBT"><a href="#2-2-UBT" class="headerlink" title="2.2 UBT"></a>2.2 UBT</h2><p>UBT主要责任是UE4的各个模块的编译并处理各模块之间的依赖关系的。build.cs和Target.cs都是为这个工具来服务的。</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Test.Target.cs</span></span><br><span class="line"><span class="keyword">using</span> UnrealBuildTool;</span><br><span class="line"><span class="keyword">using</span> System.Collections.Generic;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">TestTarget</span> : <span class="title">TargetRules</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">TestTarget</span>(<span class="params"> TargetInfo Target</span>) : <span class="title">base</span>(<span class="params">Target</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Type = TargetType.Game;</span><br><span class="line">        DefaultBuildSettings = BuildSettingsVersion.V2;</span><br><span class="line">        ExtraModuleNames.AddRange( <span class="keyword">new</span> <span class="built_in">string</span>[] &#123; <span class="string">&quot;Test&quot;</span> &#125; );</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="UBT-支持多种-TargetType"><a href="#UBT-支持多种-TargetType" class="headerlink" title="UBT 支持多种 TargetType"></a>UBT 支持多种 TargetType</h3><ul>
+<li>Game - 需要烘焙数据来运行的独立游戏；</li>
+<li>Client - 与Game相同，但包不含任何服务器代码，适用于联网游戏。</li>
+<li>Server - 与Game相同，但不包含客户端代码，适用于联网游戏种的独立服务器。</li>
+<li>Editor - 扩展编辑器的一种targetType。</li>
+<li>Program - 基于虚幻引擎打造的独立工具程序。</li>
+</ul>
+<h3 id="Modules"><a href="#Modules" class="headerlink" title="Modules"></a>Modules</h3><p>UE4 引擎是由大量的模块集合实现的，模块是通过 C# 源文件声明的，扩展名为 .build.cs，存储在项目的 Source 目录下，每一个 .build.cs 都声明一个类，继承 ModuleRules 基类。</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnrealBuildTool;</span><br><span class="line"><span class="keyword">using</span> System.Collections.Generic;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MyModule</span> :<span class="title">ModuleRules</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyModule</span>(<span class="params">ReadOnlyTargetRules Target</span>) : <span class="title">base</span>(<span class="params">Target</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="comment">// Settings go here</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-3-UHT-预处理"><a href="#2-3-UHT-预处理" class="headerlink" title="2.3 UHT 预处理"></a>2.3 UHT 预处理</h2><p>我们编写过程中用到的 UCLASS 、UFUNCTION 这些宏就是参与这个阶段，当 UHT 处理代码时，遇到这些宏标记，就会对代码进行对应的预处理，在正常的 C++ 编译预处理过程中，这些宏会被展开，只不过展开内容是空。</p>
+<p>UHT 生成的代码分别在 generated.h 和 gen.cpp 中，generated.h 中的代码大多是一些宏定义，用在所声明的类中，编译器预处理时可以增加通用成员，gen.cpp 则是 UHT 给予反射标记生成的用来描述类反射信息的具体代码。</p>
+<p>UE4 与反射相关的 UHT 宏标记大多定义在以下几个头文件中：</p>
+<ul>
+<li>Runtime/CoreUObject/Public/Object/ObjectMacros.h （UHT 标记 UPROPERY等）</li>
+<li>Runtime/CoreUObject/Public/Object/ScriptMacros.h（大多是 P_* 的宏，可以利用反射从 Stack 中获取数据）</li>
+<li>Runtime/CoreUObject/Public/UObject/Class.h （反射基类的定义 UField/UEnum/UStruct/UClass 等）</li>
+</ul>
+<p>下面是我们通过 UE4 编辑器生成的一个 C++ 类</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// MyActor.h</span></span><br><span class="line"><span class="comment">// Fill out your copyright notice in the Description page of Project Settings.</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> once</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;CoreMinimal.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;GameFramework/Actor.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;MyActor.generated.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="built_in">UCLASS</span>()</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TEST_API</span> <span class="title">AMyActor</span> :</span> <span class="keyword">public</span> AActor</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">GENERATED_BODY</span>()  <span class="comment">// Line:12</span></span><br><span class="line">    </span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">AMyActor</span>();</span><br><span class="line"></span><br><span class="line">    <span class="built_in">UFUNCTION</span>()</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">GetValue</span><span class="params">()</span> <span class="keyword">const</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">UFUNCTION</span>()</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">SetValue</span><span class="params">(<span class="keyword">int</span> InValue)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">SetValueNoneU</span><span class="params">(<span class="keyword">int</span> IntValue)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="built_in">UPROPERTY</span>()</span><br><span class="line">    <span class="keyword">int</span> Value;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/// MyActor.cpp</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;MyActor.h&quot;</span></span></span><br><span class="line"></span><br><span class="line">AMyActor::<span class="built_in">AMyActor</span>()</span><br><span class="line">&#123;</span><br><span class="line">    PrimaryActorTick.bCanEverTick = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">AMyActor::GetValue</span><span class="params">()</span> <span class="keyword">const</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> Value;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">AMyActor::SetValue</span><span class="params">(<span class="keyword">int</span> InValue)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Value = InValue;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">AMyActor::SetValueNoneU</span><span class="params">(<span class="keyword">int</span> InValue)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Value = InValue;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">AMyActor::BeginPlay</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Super::<span class="built_in">BeginPlay</span>();</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">AMyActor::Tick</span><span class="params">(<span class="keyword">float</span> DeltaTime)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Super::<span class="built_in">Tick</span>(DeltaTime);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当我们在编译时，UBT 会驱动 UHT 为这个类生成  MyActor.generated.h 和 MyActor.gen.cpp 文件。<br>*.generated.h 与 *.gen.cpp 文件存放与下列路径 (相对于项目根目录)：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Intermediate\Build\Win64\UE4Editor\Inc\&#123;PROJECT_NAME&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="GENERATED-BODY"><a href="#GENERATED-BODY" class="headerlink" title="GENERATED_BODY"></a>GENERATED_BODY</h3><p>在正式分析这两个文件前，先介绍下 GENERATED_BODY 与 GENERATED_UCLASS_BODY 宏。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// This pair of macros is used to help implement GENERATED_BODY() and GENERATED_USTRUCT_BODY()</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BODY_MACRO_COMBINE_INNER(A,B,C,D) A##B##C##D</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BODY_MACRO_COMBINE(A,B,C,D) BODY_MACRO_COMBINE_INNER(A,B,C,D)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Include a redundant semicolon at the end of the generated code block, so that intellisense parsers can start parsing</span></span><br><span class="line"><span class="comment">// a new declaration if the line number/generated code is out of date.</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> GENERATED_BODY_LEGACY(...) BODY_MACRO_COMBINE(CURRENT_FILE_ID,_,__LINE__,_GENERATED_BODY_LEGACY);</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> GENERATED_BODY(...) BODY_MACRO_COMBINE(CURRENT_FILE_ID,_,__LINE__,_GENERATED_BODY);</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> GENERATED_USTRUCT_BODY(...) GENERATED_BODY()</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> GENERATED_UCLASS_BODY(...) GENERATED_BODY_LEGACY()</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> GENERATED_UINTERFACE_BODY(...) GENERATED_BODY_LEGACY()</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> GENERATED_IINTERFACE_BODY(...) GENERATED_BODY_LEGACY()</span></span><br></pre></td></tr></table></figure>
+
+<p>单纯的从宏展开角度看，GENERATED_BODY 与 GENERATED_UCLASS_BODY 区别就是：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// GENERATED_BODY最终生成了这样的一串字符：</span></span><br><span class="line">&#123;CURRENT_FILE_ID&#125;_&#123;__LINE__&#125;_GENERATED_BODY</span><br><span class="line"><span class="comment">// GENERATED_UCLASS_BODY最终生成的是这样的一串字符串：</span></span><br><span class="line">&#123;CURRENT_FILE_ID&#125;_&#123;__LINE__&#125;_GENERATED_BODY_LEGACY</span><br></pre></td></tr></table></figure>
+
+<p>注意：这里用 {} 括着的是其他的宏组成的，这里只是列出来两个宏的不同形式。</p>
+<blockquote>
+<p>CURRENT_FILE_ID 为项目所在的文件夹的名字_源文件相对路径_h<br>__LINE__ 为代码所在行号，也就是上面代码 GENERATED_BODY 所在的第 12 行。</p>
+</blockquote>
+<p>则这两个宏实际拼接后的字符串如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// e.g</span></span><br><span class="line"><span class="comment">// Test\Source\Test\MyActor.h</span></span><br><span class="line"><span class="comment">// GENERATED_BODY</span></span><br><span class="line">Test_Source_Test_MyActor_h_12_GENERATED_BODY</span><br><span class="line"></span><br><span class="line"><span class="comment">// GENERATED_BODY_LEGACY</span></span><br><span class="line">Test_Source_Test_MyActor_h_12_GENERATED_BODY_LEGACY</span><br></pre></td></tr></table></figure>
+
+<p>然后打开 MyActor.generated.h 文件，仔细看其中定义的宏代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Copyright Epic Games, Inc. All Rights Reserved.</span></span><br><span class="line"><span class="comment">/*===========================================================================</span></span><br><span class="line"><span class="comment">    Generated code exported from UnrealHeaderTool.</span></span><br><span class="line"><span class="comment">    DO NOT modify this manually! Edit the corresponding .h files instead!</span></span><br><span class="line"><span class="comment">===========================================================================*/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;UObject/ObjectMacros.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;UObject/ScriptMacros.h&quot;</span></span></span><br><span class="line"></span><br><span class="line">PRAGMA_DISABLE_DEPRECATION_WARNINGS</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> TEST_MyActor_generated_h</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">error</span> <span class="meta-string">&quot;MyActor.generated.h already included, missing &#x27;#pragma once&#x27; in MyActor.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> TEST_MyActor_generated_h</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> Test_Source_Test_MyActor_h_12_SPARSE_DATA</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> Test_Source_Test_MyActor_h_12_RPC_WRAPPERS \</span></span><br><span class="line">\</span><br><span class="line">    <span class="built_in">DECLARE_FUNCTION</span>(execSetValue); \</span><br><span class="line">    <span class="built_in">DECLARE_FUNCTION</span>(execGetValue);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> Test_Source_Test_MyActor_h_12_RPC_WRAPPERS_NO_PURE_DECLS \</span></span><br><span class="line">\</span><br><span class="line">    <span class="built_in">DECLARE_FUNCTION</span>(execSetValue); \</span><br><span class="line">    <span class="built_in">DECLARE_FUNCTION</span>(execGetValue);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> Test_Source_Test_MyActor_h_12_INCLASS_NO_PURE_DECLS \</span></span><br><span class="line"><span class="keyword">private</span>: \</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">StaticRegisterNativesAMyActor</span><span class="params">()</span></span>; \</span><br><span class="line">    <span class="keyword">friend</span> <span class="class"><span class="keyword">struct</span> <span class="title">Z_Construct_UClass_AMyActor_Statics</span>;</span> \</span><br><span class="line"><span class="keyword">public</span>: \</span><br><span class="line">    <span class="built_in">DECLARE_CLASS</span>(AMyActor, AActor, <span class="built_in">COMPILED_IN_FLAGS</span>(<span class="number">0</span> | CLASS_Config), CASTCLASS_None, <span class="built_in">TEXT</span>(<span class="string">&quot;/Script/Test&quot;</span>), NO_API) \</span><br><span class="line">    <span class="built_in">DECLARE_SERIALIZER</span>(AMyActor)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> Test_Source_Test_MyActor_h_12_INCLASS \</span></span><br><span class="line"><span class="keyword">private</span>: \</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">StaticRegisterNativesAMyActor</span><span class="params">()</span></span>; \</span><br><span class="line">    <span class="keyword">friend</span> <span class="class"><span class="keyword">struct</span> <span class="title">Z_Construct_UClass_AMyActor_Statics</span>;</span> \</span><br><span class="line"><span class="keyword">public</span>: \</span><br><span class="line">    <span class="built_in">DECLARE_CLASS</span>(AMyActor, AActor, <span class="built_in">COMPILED_IN_FLAGS</span>(<span class="number">0</span> | CLASS_Config), CASTCLASS_None, <span class="built_in">TEXT</span>(<span class="string">&quot;/Script/Test&quot;</span>), NO_API) \</span><br><span class="line">    <span class="built_in">DECLARE_SERIALIZER</span>(AMyActor)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> Test_Source_Test_MyActor_h_12_STANDARD_CONSTRUCTORS \</span></span><br><span class="line">    <span class="comment">/** Standard constructor, called after all reflected properties have been initialized */</span> \</span><br><span class="line">    <span class="function">NO_API <span class="title">AMyActor</span><span class="params">(<span class="keyword">const</span> FObjectInitializer&amp; ObjectInitializer)</span></span>; \</span><br><span class="line">    <span class="built_in">DEFINE_DEFAULT_OBJECT_INITIALIZER_CONSTRUCTOR_CALL</span>(AMyActor) \</span><br><span class="line">    <span class="built_in">DECLARE_VTABLE_PTR_HELPER_CTOR</span>(NO_API, AMyActor); \</span><br><span class="line"><span class="built_in">DEFINE_VTABLE_PTR_HELPER_CTOR_CALLER</span>(AMyActor); \</span><br><span class="line"><span class="keyword">private</span>: \</span><br><span class="line">    <span class="comment">/** Private move- and copy-constructors, should never be used */</span> \</span><br><span class="line">    <span class="function">NO_API <span class="title">AMyActor</span><span class="params">(AMyActor&amp;&amp;)</span></span>; \</span><br><span class="line">    <span class="function">NO_API <span class="title">AMyActor</span><span class="params">(<span class="keyword">const</span> AMyActor&amp;)</span></span>; \</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> Test_Source_Test_MyActor_h_12_ENHANCED_CONSTRUCTORS \</span></span><br><span class="line"><span class="keyword">private</span>: \</span><br><span class="line">    <span class="comment">/** Private move- and copy-constructors, should never be used */</span> \</span><br><span class="line">    <span class="function">NO_API <span class="title">AMyActor</span><span class="params">(AMyActor&amp;&amp;)</span></span>; \</span><br><span class="line">    <span class="function">NO_API <span class="title">AMyActor</span><span class="params">(<span class="keyword">const</span> AMyActor&amp;)</span></span>; \</span><br><span class="line"><span class="keyword">public</span>: \</span><br><span class="line">    <span class="built_in">DECLARE_VTABLE_PTR_HELPER_CTOR</span>(NO_API, AMyActor); \</span><br><span class="line"><span class="built_in">DEFINE_VTABLE_PTR_HELPER_CTOR_CALLER</span>(AMyActor); \</span><br><span class="line">    <span class="built_in">DEFINE_DEFAULT_CONSTRUCTOR_CALL</span>(AMyActor)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> Test_Source_Test_MyActor_h_12_PRIVATE_PROPERTY_OFFSET \</span></span><br><span class="line">    FORCEINLINE <span class="keyword">static</span> uint32 __PPO__Value() &#123; <span class="keyword">return</span> <span class="built_in">STRUCT_OFFSET</span>(AMyActor, Value); &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> Test_Source_Test_MyActor_h_9_PROLOG</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> Test_Source_Test_MyActor_h_12_GENERATED_BODY_LEGACY \</span></span><br><span class="line">PRAGMA_DISABLE_DEPRECATION_WARNINGS \</span><br><span class="line"><span class="keyword">public</span>: \</span><br><span class="line">    Test_Source_Test_MyActor_h_12_PRIVATE_PROPERTY_OFFSET \</span><br><span class="line">    Test_Source_Test_MyActor_h_12_SPARSE_DATA \</span><br><span class="line">    Test_Source_Test_MyActor_h_12_RPC_WRAPPERS \</span><br><span class="line">    Test_Source_Test_MyActor_h_12_INCLASS \</span><br><span class="line">    Test_Source_Test_MyActor_h_12_STANDARD_CONSTRUCTORS \</span><br><span class="line"><span class="keyword">public</span>: \</span><br><span class="line">PRAGMA_ENABLE_DEPRECATION_WARNINGS</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> Test_Source_Test_MyActor_h_12_GENERATED_BODY \</span></span><br><span class="line">PRAGMA_DISABLE_DEPRECATION_WARNINGS \</span><br><span class="line"><span class="keyword">public</span>: \</span><br><span class="line">    Test_Source_Test_MyActor_h_12_PRIVATE_PROPERTY_OFFSET \</span><br><span class="line">    Test_Source_Test_MyActor_h_12_SPARSE_DATA \</span><br><span class="line">    Test_Source_Test_MyActor_h_12_RPC_WRAPPERS_NO_PURE_DECLS \</span><br><span class="line">    Test_Source_Test_MyActor_h_12_INCLASS_NO_PURE_DECLS \</span><br><span class="line">    Test_Source_Test_MyActor_h_12_ENHANCED_CONSTRUCTORS \</span><br><span class="line"><span class="keyword">private</span>: \</span><br><span class="line">PRAGMA_ENABLE_DEPRECATION_WARNINGS</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;&gt; TEST_API UClass* StaticClass&lt;<span class="class"><span class="keyword">class</span> <span class="title">AMyActor</span>&gt;</span>();</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">undef</span> CURRENT_FILE_ID</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CURRENT_FILE_ID Test_Source_Test_MyActor_h</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">PRAGMA_ENABLE_DEPRECATION_WARNINGS</span><br></pre></td></tr></table></figure>
+
+<p>里面包含了我们刚刚写的那些宏定义：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CURRENT_FILE_ID Test_Source_Test_MyActor_h</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> Test_Source_Test_MyActor_h_12_GENERATED_BODY_LEGACY</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> Test_Source_Test_MyActor_h_12_GENERATED_BODY</span></span><br></pre></td></tr></table></figure>
+
+<p>因此我们 MyActor.h 用到的 GENERATED_BODY 的代码对应如下宏定义：</p>
+<blockquote>
+<p>其实 GENERATED_BODY 与 GENERATED_UCLASS_BODY 的区别在于：Test_Source_Test_MyActor_h_12_ENHANCED_CONSTRUCTORS 跟 Test_Source_Test_MyActor_h_12_STANDARD_CONSTRUCTORS 这两个宏，GENERATED_UCLASS_BODY 多了一个 AMyActor(const FObjectInitializer&amp; ObjectInitializer); 的声明。</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> Test_Source_Test_MyActor_h_12_GENERATED_BODY \</span></span><br><span class="line">PRAGMA_DISABLE_DEPRECATION_WARNINGS \</span><br><span class="line"><span class="keyword">public</span>: \</span><br><span class="line">    Test_Source_Test_MyActor_h_12_PRIVATE_PROPERTY_OFFSET \</span><br><span class="line">    Test_Source_Test_MyActor_h_12_SPARSE_DATA \</span><br><span class="line">    Test_Source_Test_MyActor_h_12_RPC_WRAPPERS_NO_PURE_DECLS \</span><br><span class="line">    Test_Source_Test_MyActor_h_12_INCLASS_NO_PURE_DECLS \</span><br><span class="line">    Test_Source_Test_MyActor_h_12_ENHANCED_CONSTRUCTORS \</span><br><span class="line"><span class="keyword">private</span>: \</span><br><span class="line">PRAGMA_ENABLE_DEPRECATION_WARNINGS</span><br></pre></td></tr></table></figure>
+
+<p>展开之后代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  MyActor.generated.h</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AMyActor</span> :</span> <span class="keyword">public</span> AActor</span><br><span class="line">&#123;</span><br><span class="line"><span class="comment">///  begin  GENERATED_BODY()</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">// mark 1:</span></span><br><span class="line">    <span class="built_in">DECLARE_FUNCTION</span>(execSetValue);</span><br><span class="line">    <span class="built_in">DECLARE_FUNCTION</span>(execGetValue);</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">StaticRegisterNativesAMyActor</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="keyword">friend</span> <span class="class"><span class="keyword">struct</span> <span class="title">Z_Construct_UClass_AMyActor_Statics</span>;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">// mark 2:</span></span><br><span class="line">    <span class="built_in">DECLARE_CLASS</span>(AMyActor, AActor, <span class="built_in">COMPILED_IN_FLAGS</span>(<span class="number">0</span> | CLASS_Config), CASTCLASS_None, <span class="built_in">TEXT</span>(<span class="string">&quot;/Script/Test&quot;</span>), NO_API)</span><br><span class="line">    <span class="comment">// mark 3:</span></span><br><span class="line">    <span class="built_in">DECLARE_SERIALIZER</span>(AMyActor)</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="comment">/** Private move- and copy-constructors, should never be used */</span></span><br><span class="line">    <span class="function">NO_API <span class="title">AMyActor</span><span class="params">(AMyActor&amp;&amp;)</span></span>;</span><br><span class="line">    <span class="function">NO_API <span class="title">AMyActor</span><span class="params">(<span class="keyword">const</span> AMyActor&amp;)</span></span>;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">DECLARE_VTABLE_PTR_HELPER_CTOR</span>(NO_API, AMyActor);</span><br><span class="line">    <span class="built_in">DEFINE_VTABLE_PTR_HELPER_CTOR_CALLER</span>(AMyActor);</span><br><span class="line">    <span class="built_in">DEFINE_DEFAULT_CONSTRUCTOR_CALL</span>(AMyActor)</span><br><span class="line"></span><br><span class="line"><span class="comment">///  end  GENERATED_BODY()</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">AMyActor</span>();</span><br><span class="line"></span><br><span class="line">    <span class="built_in">UFUNCTION</span>()</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">GetValue</span><span class="params">()</span> <span class="keyword">const</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">UFUNCTION</span>()</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">SetValue</span><span class="params">(<span class="keyword">int</span> InValue)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">SetValueNoneU</span><span class="params">(<span class="keyword">int</span> IntValue)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="built_in">UPROPERTY</span>()</span><br><span class="line">    <span class="keyword">int</span> Value;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// MyActor.gen.cpp</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;Test/MyActor.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="built_in">DEFINE_FUNCTION</span>(AMyActor::execSetValue)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">P_GET_PROPERTY</span>(FIntProperty,Z_Param_InValue);</span><br><span class="line">    P_FINISH;</span><br><span class="line">    P_NATIVE_BEGIN;</span><br><span class="line">    P_THIS-&gt;<span class="built_in">SetValue</span>(Z_Param_InValue);</span><br><span class="line">    P_NATIVE_END;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">DEFINE_FUNCTION</span>(AMyActor::execGetValue)</span><br><span class="line">&#123;</span><br><span class="line">    P_FINISH;</span><br><span class="line">    P_NATIVE_BEGIN;</span><br><span class="line">    *(int32*)Z_Param__Result=P_THIS-&gt;<span class="built_in">GetValue</span>();</span><br><span class="line">    P_NATIVE_END;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">AMyActor::StaticRegisterNativesAMyActor</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    UClass* Class = AMyActor::<span class="built_in">StaticClass</span>();</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">const</span> FNameNativePtrPair Funcs[] = &#123;</span><br><span class="line">        &#123; <span class="string">&quot;GetValue&quot;</span>, &amp;AMyActor::execGetValue &#125;,</span><br><span class="line">        &#123; <span class="string">&quot;SetValue&quot;</span>, &amp;AMyActor::execSetValue &#125;,</span><br><span class="line">    &#125;;</span><br><span class="line">    FNativeFunctionRegistrar::<span class="built_in">RegisterFunctions</span>(Class, Funcs, <span class="built_in">UE_ARRAY_COUNT</span>(Funcs));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">IMPLEMENT_CLASS</span>(AMyActor, <span class="number">1716205458</span>);</span><br><span class="line"><span class="keyword">template</span>&lt;&gt; TEST_API UClass* StaticClass&lt;AMyActor&gt;()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> AMyActor::<span class="built_in">StaticClass</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中</p>
+<ul>
+<li>DECLARE_FUNCTION 为使用 UFUNCIONT 标记的函数创建中间函数；</li>
+<li>DECLARE_CLASS ：声明定义当前类的几个关键信息：Super 和 ThisClass 等 typedef 在此处被定义，以及 StaticClass/StaticPackage/StaticClassCastFlags 和重载的 new 也被定义；</li>
+<li>DECLARE_SERIALIZER：重载 &lt;&lt; 使可以被 FArchive 序列化；</li>
+<li>DECLARE_VTABLE_PTR_HELPER_CTOR：声明一个接收 FVTableHelper&amp; 参数的构造函数；</li>
+<li>DEFINE_DEFAULT_OBJECT_INITIALIZER_CONSTRUCTOR_CALL：定义一个名为__DefaultConstructor 的静态函数，其中是调用 placement-new 创建类对象（用于统一的内存分配），引擎中唯一调用的位置是在 Class.h 的模板函数 InternalConstructor；</li>
+</ul>
+<blockquote>
+<p>placement-new : 就是在用户指定的内存位置上构建新的对象，这个构建过程不需要额外分配内存，只需要调用对象的构造函数即可。</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span>* buff = <span class="keyword">new</span> <span class="keyword">char</span>[ <span class="built_in"><span class="keyword">sizeof</span></span>(Foo) * N ];</span><br><span class="line"><span class="built_in">memset</span>( buff, <span class="number">0</span>, <span class="built_in"><span class="keyword">sizeof</span></span>(Foo)*N );</span><br><span class="line"></span><br><span class="line"><span class="comment">/// placement-new</span></span><br><span class="line">Foo* pfoo = <span class="built_in"><span class="keyword">new</span></span> (buff)Foo;</span><br></pre></td></tr></table></figure>
+
+<h3 id="DECLARE-CLASS"><a href="#DECLARE-CLASS" class="headerlink" title="DECLARE_CLASS"></a>DECLARE_CLASS</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span>: </span><br><span class="line">    MyActor&amp; <span class="keyword">operator</span>=(MyActor&amp;&amp;);   </span><br><span class="line">    MyActor&amp; <span class="keyword">operator</span>=(<span class="keyword">const</span> MyActor&amp;);   </span><br><span class="line">    <span class="function">TRequiredAPI <span class="keyword">static</span> UClass* <span class="title">GetPrivateStaticClass</span><span class="params">()</span></span>; </span><br><span class="line"><span class="keyword">public</span>: </span><br><span class="line">    <span class="comment">/** Bitwise union of #EClassFlags pertaining to this class.*/</span> </span><br><span class="line">    <span class="class"><span class="keyword">enum</span> &#123;</span>StaticClassFlags=TStaticFlags&#125;; </span><br><span class="line">    <span class="comment">/** Typedef for the base class (&#123;&#123; typedef-type &#125;&#125;) */</span> </span><br><span class="line">    <span class="keyword">typedef</span> AActor Super;</span><br><span class="line">    <span class="comment">/** Typedef for &#123;&#123; typedef-type &#125;&#125;. */</span> </span><br><span class="line">    <span class="keyword">typedef</span> MyActor ThisClass;</span><br><span class="line">    <span class="comment">/** Returns a UClass object representing this class at runtime */</span> </span><br><span class="line">    <span class="function"><span class="keyword">inline</span> <span class="keyword">static</span> UClass* <span class="title">StaticClass</span><span class="params">()</span> </span></span><br><span class="line"><span class="function">    </span>&#123; </span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">GetPrivateStaticClass</span>(); </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="comment">/** Returns the package this class belongs in */</span> </span><br><span class="line">    <span class="function"><span class="keyword">inline</span> <span class="keyword">static</span> <span class="keyword">const</span> TCHAR* <span class="title">StaticPackage</span><span class="params">()</span> </span></span><br><span class="line"><span class="function">    </span>&#123; </span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">TEXT</span>(<span class="string">&quot;/Script/Test&quot;</span>); </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="comment">/** Returns the static cast flags for this class */</span> </span><br><span class="line">    <span class="function"><span class="keyword">inline</span> <span class="keyword">static</span> EClassCastFlags <span class="title">StaticClassCastFlags</span><span class="params">()</span> </span></span><br><span class="line"><span class="function">    </span>&#123; </span><br><span class="line">        <span class="keyword">return</span> CASTCLASS_None; </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="comment">/** For internal use only; use StaticConstructObject() to create new objects. */</span> </span><br><span class="line">    <span class="function"><span class="keyword">inline</span> <span class="keyword">void</span>* <span class="keyword">operator</span> <span class="title">new</span><span class="params">(<span class="keyword">const</span> <span class="keyword">size_t</span> InSize, EInternal InInternalOnly, UObject* InOuter = </span></span></span><br><span class="line"><span class="function"><span class="params">        (UObject*)GetTransientPackage(), FName InName = NAME_None, EObjectFlags InSetFlags = RF_NoFlags)</span> </span></span><br><span class="line"><span class="function">    </span>&#123; </span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">StaticAllocateObject</span>(<span class="built_in">StaticClass</span>(), InOuter, InName, InSetFlags); </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="comment">/** For internal use only; use StaticConstructObject() to create new objects. */</span> </span><br><span class="line">    <span class="function"><span class="keyword">inline</span> <span class="keyword">void</span>* <span class="keyword">operator</span> <span class="title">new</span><span class="params">( <span class="keyword">const</span> <span class="keyword">size_t</span> InSize, EInternal* InMem )</span> </span></span><br><span class="line"><span class="function">    </span>&#123; </span><br><span class="line">        <span class="keyword">return</span> (<span class="keyword">void</span>*)InMem; </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里包含了一系列函数、typedef 以及序列化、new 等。</p>
+<h3 id="IMPLEMENT-CLASS"><a href="#IMPLEMENT-CLASS" class="headerlink" title="IMPLEMENT_CLASS"></a>IMPLEMENT_CLASS</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// IMPLEMENT_CLASS(AMyActor, 1716205458);</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Register a class at startup time.</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMPLEMENT_CLASS(TClass, TClassCrc) \</span></span><br><span class="line">    <span class="keyword">static</span> TClassCompiledInDefer&lt;TClass&gt; AutoInitialize##<span class="built_in">TClass</span>(<span class="built_in">TEXT</span>(#TClass), <span class="built_in"><span class="keyword">sizeof</span></span>(TClass), TClassCrc); \</span><br><span class="line">    UClass* TClass::GetPrivateStaticClass() \</span><br><span class="line">    &#123; \</span><br><span class="line">        <span class="keyword">static</span> UClass* PrivateStaticClass = <span class="literal">NULL</span>; \</span><br><span class="line">        <span class="keyword">if</span> (!PrivateStaticClass) \</span><br><span class="line">        &#123; \</span><br><span class="line">            <span class="comment">/* this could be handled with templates, but we want it external to avoid code bloat */</span> \</span><br><span class="line">            <span class="built_in">GetPrivateStaticClassBody</span>( \</span><br><span class="line">                <span class="built_in">StaticPackage</span>(), \</span><br><span class="line">                (TCHAR*)<span class="built_in">TEXT</span>(#TClass) + <span class="number">1</span> + ((StaticClassFlags &amp; CLASS_Deprecated) ? <span class="number">11</span> : <span class="number">0</span>), \</span><br><span class="line">                PrivateStaticClass, \</span><br><span class="line">                StaticRegisterNatives##TClass, \</span><br><span class="line">                <span class="built_in"><span class="keyword">sizeof</span></span>(TClass), \</span><br><span class="line">                <span class="built_in"><span class="keyword">alignof</span></span>(TClass), \</span><br><span class="line">                (EClassFlags)TClass::StaticClassFlags, \</span><br><span class="line">                TClass::<span class="built_in">StaticClassCastFlags</span>(), \</span><br><span class="line">                TClass::<span class="built_in">StaticConfigName</span>(), \</span><br><span class="line">                (UClass::ClassConstructorType)InternalConstructor&lt;TClass&gt;, \</span><br><span class="line">                (UClass::ClassVTableHelperCtorCallerType)InternalVTableHelperCtorCaller&lt;TClass&gt;, \</span><br><span class="line">                &amp;TClass::AddReferencedObjects, \</span><br><span class="line">                &amp;TClass::Super::StaticClass, \</span><br><span class="line">                &amp;TClass::WithinClass::StaticClass \</span><br><span class="line">            ); \</span><br><span class="line">        &#125; \</span><br><span class="line">        <span class="keyword">return</span> PrivateStaticClass; \</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>GetPrivateStaticClass (定义在 Class.cpp)，作用是从当前类的信息构造出一个 UClass 单例对象，调用 GetPrivateStaticClassBody 创建 UClass 对象，并保存为 PrivateStaticClass 变量，在 DECLARE_CLASS 展开的 StaticClass 函数中，返回的就是这个对象。</p>
+<h3 id="UFUCTION"><a href="#UFUCTION" class="headerlink" title="UFUCTION"></a>UFUCTION</h3><p>UHT 扫描代码中所有标记了 UFUCTION 的函数，会生成对应名为 execFUNC_NAME 的中间函数定义（也称作 thunk 函数）。它统一了所有 UFUNCTION 函数调用规则（this/调用参数/函数返回值），并且包裹了真正要执行的函数。</p>
+<p>所有 UNFUNCTION 函数注册过程如下：</p>
+<ul>
+<li>IMPLEMENT_CLASS ：调用 RegisterNativeFunc 注册 UFUNCTION 函数列表，存储到 Class::NativeFunctionLookupTable</li>
+<li>Z_Construct_UClass_AMyActor ：创建 UClass 对象，最终调用 Z_Construct_UFunction_AMyActor_GetValue 创建 UFunction 对象。</li>
+<li>NewFunction-&gt;Bind() : 生成 UFunction 对象后，要进行 bind，bind 到 Class::NativeFunctionLookupTable 对应名字的函数指针，即 &amp;AMyActor::execGetValue</li>
+<li>AddFunctionToFunctionMap ：绑定好的 UFunction 对象会保存在 FuncMap</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// step 1:</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">AMyActor::StaticRegisterNativesAMyActor</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    UClass* Class = AMyActor::<span class="built_in">StaticClass</span>();</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">const</span> FNameNativePtrPair Funcs[] = &#123;</span><br><span class="line">        &#123; <span class="string">&quot;GetValue&quot;</span>, &amp;AMyActor::execGetValue &#125;,</span><br><span class="line">        &#123; <span class="string">&quot;SetValue&quot;</span>, &amp;AMyActor::execSetValue &#125;,</span><br><span class="line">    &#125;;</span><br><span class="line">    FNativeFunctionRegistrar::<span class="built_in">RegisterFunctions</span>(Class, Funcs, <span class="built_in">UE_ARRAY_COUNT</span>(Funcs));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">UClass::AddNativeFunction</span><span class="params">(<span class="keyword">const</span> WIDECHAR* InName, FNativeFuncPtr InPointer)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">new</span>(NativeFunctionLookupTable)<span class="built_in">FNativeFunctionLookup</span>(InFName, InPointer);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// step 2: 直接看到 Z_Construct_UClass_AMyActor</span></span><br><span class="line"><span class="keyword">const</span> FClassFunctionLinkInfo Z_Construct_UClass_AMyActor_Statics::FuncInfo[] = &#123;</span><br><span class="line">    &#123; &amp;Z_Construct_UFunction_AMyActor_GetValue, <span class="string">&quot;GetValue&quot;</span> &#125;, <span class="comment">// 4052474662</span></span><br><span class="line">    &#123; &amp;Z_Construct_UFunction_AMyActor_SetValue, <span class="string">&quot;SetValue&quot;</span> &#125;, <span class="comment">// 2571773712</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> UE4CodeGen_Private::FClassParams Z_Construct_UClass_AMyActor_Statics::ClassParams = &#123;</span><br><span class="line">    &amp;AMyActor::StaticClass,</span><br><span class="line">    <span class="string">&quot;Engine&quot;</span>,</span><br><span class="line">    &amp;StaticCppClassTypeInfo,</span><br><span class="line">    DependentSingletons,</span><br><span class="line">    FuncInfo,    <span class="comment">// FunctionLinkArray</span></span><br><span class="line">    Z_Construct_UClass_AMyActor_Statics::PropPointers,</span><br><span class="line">    <span class="literal">nullptr</span>,</span><br><span class="line">    <span class="built_in">UE_ARRAY_COUNT</span>(DependentSingletons),</span><br><span class="line">    <span class="built_in">UE_ARRAY_COUNT</span>(FuncInfo),</span><br><span class="line">    <span class="built_in">UE_ARRAY_COUNT</span>(Z_Construct_UClass_AMyActor_Statics::PropPointers),</span><br><span class="line">    <span class="number">0</span>,</span><br><span class="line">    <span class="number">0x009000A4</span>u,</span><br><span class="line">    <span class="built_in">METADATA_PARAMS</span>(Z_Construct_UClass_AMyActor_Statics::Class_MetaDataParams, </span><br><span class="line">        <span class="built_in">UE_ARRAY_COUNT</span>(Z_Construct_UClass_AMyActor_Statics::Class_MetaDataParams))</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 注意 ClassParams</span></span><br><span class="line"><span class="function">UClass* <span class="title">Z_Construct_UClass_AMyActor</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">static</span> UClass* OuterClass = <span class="literal">nullptr</span>;</span><br><span class="line">    <span class="keyword">if</span> (!OuterClass)</span><br><span class="line">    &#123;</span><br><span class="line">        UE4CodeGen_Private::<span class="built_in">ConstructUClass</span>(OuterClass, Z_Construct_UClass_AMyActor_Statics::ClassParams);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> OuterClass;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// UObjectGlobals.cpp</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ConstructUClass</span><span class="params">(UClass*&amp; OutClass, <span class="keyword">const</span> FClassParams&amp; Params)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">/// Params.FunctionLinkArray  -&gt; ClassParams.FuncInfo</span></span><br><span class="line">    NewClass-&gt;<span class="built_in">CreateLinkAndAddChildFunctionsToMap</span>(Params.FunctionLinkArray, Params.NumFunctions);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// Class.cpp</span></span><br><span class="line"><span class="comment">/// Functions-&gt;CreateFuncPtr -&gt; &amp;Z_Construct_UFunction_AMyActor_GetValue</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">UClass::CreateLinkAndAddChildFunctionsToMap</span><span class="params">(<span class="keyword">const</span> FClassFunctionLinkInfo* Functions, uint32 NumFunctions)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (; NumFunctions; --NumFunctions, ++Functions)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">const</span> <span class="keyword">char</span>* FuncNameUTF8 = Functions-&gt;FuncNameUTF8;</span><br><span class="line">        UFunction*  Func         = Functions-&gt;<span class="built_in">CreateFuncPtr</span>();</span><br><span class="line"></span><br><span class="line">        Func-&gt;Next = Children;</span><br><span class="line">        Children = Func;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">AddFunctionToFunctionMap</span>(Func, <span class="built_in">FName</span>(<span class="built_in">UTF8_TO_TCHAR</span>(FuncNameUTF8)));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Functions-&gt;CreateFuncPtr()</span></span><br><span class="line"><span class="comment">// MyActor.gen.cpp</span></span><br><span class="line"><span class="function">UFunction* <span class="title">Z_Construct_UFunction_AMyActor_GetValue</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">static</span> UFunction* ReturnFunction = <span class="literal">nullptr</span>;</span><br><span class="line">    <span class="keyword">if</span> (!ReturnFunction)</span><br><span class="line">    &#123;</span><br><span class="line">        UE4CodeGen_Private::<span class="built_in">ConstructUFunction</span>(ReturnFunction, </span><br><span class="line">            Z_Construct_UFunction_AMyActor_GetValue_Statics::FuncParams);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ReturnFunction;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ConstructUFunction</span><span class="params">(UFunction*&amp; OutFunction, <span class="keyword">const</span> FFunctionParams&amp; Params)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    UFunction* NewFunction;</span><br><span class="line"></span><br><span class="line">    NewFunction-&gt;<span class="built_in">Bind</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// step 3:</span></span><br><span class="line"><span class="comment">// Class.cpp</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">UFunction::Bind</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    UClass* OwnerClass = <span class="built_in">GetOwnerClass</span>();</span><br><span class="line">    FName Name = <span class="built_in">GetFName</span>();</span><br><span class="line">    FNativeFunctionLookup* Found = OwnerClass-&gt;NativeFunctionLookupTable.<span class="built_in">FindByPredicate</span>([=](</span><br><span class="line">        <span class="keyword">const</span> FNativeFunctionLookup&amp; NativeFunctionLookup)</span><br><span class="line">    &#123; <span class="keyword">return</span> Name == NativeFunctionLookup.Name; &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (Found)</span><br><span class="line">    &#123;</span><br><span class="line">        Func = Found-&gt;Pointer;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// step 4:</span></span><br><span class="line"><span class="comment">// Class.h</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">AddFunctionToFunctionMap</span><span class="params">(UFunction* Function, FName FuncName)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    FuncMap.<span class="built_in">Add</span>(FuncName, Function);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Find</span></span><br><span class="line"><span class="function">UFunction* <span class="title">UClass::FindFunctionByName</span><span class="params">(FName InName, EIncludeSuperFlag::Type IncludeSuper)</span> <span class="keyword">const</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    UFunction* Result = FuncMap.<span class="built_in">FindRef</span>(InName);</span><br><span class="line">    <span class="keyword">if</span> (Result == <span class="literal">nullptr</span> &amp;&amp; IncludeSuper == EIncludeSuperFlag::IncludeSuper)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">/// 在基类上查找函数</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> Result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>经过以上操作后，便可以通过反射来调用 UFUNCTION 函数了</p>
+<ul>
+<li>首先通过 FindFunctionChecked 获取到函数</li>
+<li>在通过调用 ProcessEvent 函数执行</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    UFunction* funcSetValue = pMyActor-&gt;<span class="built_in">FindFunctionChecked</span>(<span class="string">&quot;GetValue&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span>(funcSetValue)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// struct define in scope</span></span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">funcSetValueParams</span>&#123;</span>int32 InValue;&#125;InsParam;</span><br><span class="line">        InsParam.InValue = <span class="number">123</span>;</span><br><span class="line">        <span class="comment">// call SetHp</span></span><br><span class="line">        <span class="built_in">ProcessEvent</span>(funcSetValue,(<span class="keyword">void</span>*)(&amp;InsParam));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>下面继续说 DEFINE_FUNCTION</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">DEFINE_FUNCTION</span>(AMyActor::execSetValue)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">P_GET_PROPERTY</span>(FIntProperty,Z_Param_InValue);</span><br><span class="line">    P_FINISH;</span><br><span class="line">    P_NATIVE_BEGIN;</span><br><span class="line">    P_THIS-&gt;<span class="built_in">SetValue</span>(Z_Param_InValue);</span><br><span class="line">    P_NATIVE_END;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">AMyActor::execSetValue</span><span class="params">( UObject* Context, FFrame&amp; Stack, RESULT_DECL)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    PropertyType::FIntProperty Z_Param_InValue = PropertyType::<span class="built_in">GetDefaultPropertyValue</span>();</span><br><span class="line">    Stack.StepCompiledIn&lt;PropertyType&gt;(&amp;Z_Param_InValue);</span><br><span class="line"></span><br><span class="line">    Stack.Code += !!Stack.Code;</span><br><span class="line"></span><br><span class="line">    &#123; <span class="built_in">SCOPED_SCRIPT_NATIVE_TIMER</span>(ScopedNativeCallTimer);</span><br><span class="line"></span><br><span class="line">    ((ThisClass*)(Context))-&gt;<span class="built_in">SetValue</span>(Z_Param_InValue);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Runtime/CoreUObject/Public/Script.h</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Blueprint VM intrinsic return value declaration.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> RESULT_PARAM Z_Param__Result</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> RESULT_DECL void*const RESULT_PARAM</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// RESULT_DECL</span></span><br><span class="line"><span class="keyword">void</span>*<span class="keyword">const</span> Z_Param__Result</span><br></pre></td></tr></table></figure>
+
+<h3 id="UPROPERTY"><a href="#UPROPERTY" class="headerlink" title="UPROPERTY"></a>UPROPERTY</h3><p>在类内对属性加了 UPROPERTY 的标记，不会在 generated.h 中产生额外的代码，但是它会把它的反射信息代码生成到在 gen.cpp 中。</p>
+<p>同样是在</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> UE4CodeGen_Private::FUnsizedIntPropertyParams Z_Construct_UClass_AMyActor_Statics::NewProp_Value = &#123; <span class="string">&quot;Value&quot;</span>, <span class="literal">nullptr</span>, </span><br><span class="line">(EPropertyFlags)<span class="number">0x0040000000000000</span>, UE4CodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative,</span><br><span class="line"> <span class="number">1</span>, <span class="built_in">STRUCT_OFFSET</span>(AMyActor, Value), <span class="built_in">METADATA_PARAMS</span>(Z_Construct_UClass_AMyActor_Statics::NewProp_Value_MetaData, </span><br><span class="line"> <span class="built_in">UE_ARRAY_COUNT</span>(Z_Construct_UClass_AMyActor_Statics::NewProp_Value_MetaData)) &#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> UE4CodeGen_Private::FPropertyParamsBase* <span class="keyword">const</span> Z_Construct_UClass_AMyActor_Statics::PropPointers[] = &#123;</span><br><span class="line">    (<span class="keyword">const</span> UE4CodeGen_Private::FPropertyParamsBase*)&amp;Z_Construct_UClass_AMyActor_Statics::NewProp_Value,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> FCppClassTypeInfoStatic Z_Construct_UClass_AMyActor_Statics::StaticCppClassTypeInfo = &#123;</span><br><span class="line">    TCppClassTypeTraits&lt;AMyActor&gt;::IsAbstract,</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">const</span> UE4CodeGen_Private::FClassParams Z_Construct_UClass_AMyActor_Statics::ClassParams = &#123;</span><br><span class="line">    &amp;AMyActor::StaticClass,</span><br><span class="line">    <span class="string">&quot;Engine&quot;</span>,</span><br><span class="line">    &amp;StaticCppClassTypeInfo,</span><br><span class="line">    DependentSingletons,</span><br><span class="line">    FuncInfo,</span><br><span class="line">    Z_Construct_UClass_AMyActor_Statics::PropPointers, <span class="comment">/// PropertyArray</span></span><br><span class="line">    <span class="literal">nullptr</span>,</span><br><span class="line">    <span class="built_in">UE_ARRAY_COUNT</span>(DependentSingletons),</span><br><span class="line">    <span class="built_in">UE_ARRAY_COUNT</span>(FuncInfo),</span><br><span class="line">    <span class="built_in">UE_ARRAY_COUNT</span>(Z_Construct_UClass_AMyActor_Statics::PropPointers),</span><br><span class="line">    <span class="number">0</span>,</span><br><span class="line">    <span class="number">0x009000A4</span>u,</span><br><span class="line">    <span class="built_in">METADATA_PARAMS</span>(Z_Construct_UClass_AMyActor_Statics::Class_MetaDataParams, </span><br><span class="line">        <span class="built_in">UE_ARRAY_COUNT</span>(Z_Construct_UClass_AMyActor_Statics::Class_MetaDataParams))</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function">UClass* <span class="title">Z_Construct_UClass_AMyActor</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">static</span> UClass* OuterClass = <span class="literal">nullptr</span>;</span><br><span class="line">    <span class="keyword">if</span> (!OuterClass)</span><br><span class="line">    &#123;</span><br><span class="line">        UE4CodeGen_Private::<span class="built_in">ConstructUClass</span>(OuterClass, Z_Construct_UClass_AMyActor_Statics::ClassParams);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> OuterClass;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// UObjectGlobals.cpp</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ConstructUClass</span><span class="params">(UClass*&amp; OutClass, <span class="keyword">const</span> FClassParams&amp; Params)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">/// Params.FunctionLinkArray  -&gt; ClassParams.FuncInfo</span></span><br><span class="line">    <span class="built_in">ConstructFProperties</span>(NewClass, Params.PropertyArray, Params.NumProperties);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> UE4CodeGen_Private</span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">ConstructFProperty</span><span class="params">(FFieldVariant Outer, <span class="keyword">const</span> FPropertyParamsBase* <span class="keyword">const</span>*&amp; PropertyArray, int32&amp; NumProperties)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">const</span> FPropertyParamsBase* PropBase = *--PropertyArray;</span><br><span class="line"></span><br><span class="line">        uint32 ReadMore = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        FProperty* NewProp = <span class="literal">nullptr</span>;</span><br><span class="line">        <span class="built_in"><span class="keyword">switch</span></span> (PropBase-&gt;Flags &amp; PropertyTypeMask)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// Unsupported property type</span></span><br><span class="line">                <span class="built_in">check</span>(<span class="literal">false</span>);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">case</span> EPropertyGenFlags::Byte:</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">case</span> EPropertyGenFlags::Int:</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">const</span> FIntPropertyParams* Prop = (<span class="keyword">const</span> FIntPropertyParams*)PropBase;</span><br><span class="line">                NewProp = <span class="keyword">new</span> <span class="built_in">FIntProperty</span>(Outer, <span class="built_in">UTF8_TO_TCHAR</span>(Prop-&gt;NameUTF8), Prop-&gt;ObjectFlags, </span><br><span class="line">                    Prop-&gt;Offset, Prop-&gt;PropertyFlags);</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> WITH_METADATA</span></span><br><span class="line">                MetaDataArray = Prop-&gt;MetaDataArray;</span><br><span class="line">                NumMetaData   = Prop-&gt;NumMetaData;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.css">
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    小贤
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://xianlong.space/2021/08/12/ue4-reflection/" title="UE4 反射系统">http://xianlong.space/2021/08/12/ue4-reflection/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/C/" rel="tag"># C++</a>
+          
+            <a href="/tags/UE4/" rel="tag"># UE4</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/06/27/ue4-gc/" rel="next" title="UE4 GC原理">
+                <i class="fa fa-chevron-left"></i> UE4 GC原理
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="小贤" />
+            
+              <p class="site-author-name" itemprop="name">小贤</p>
+              <p class="site-description motion-element" itemprop="description">Watch and learn, your magic is mine!</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+                <a href="/archives">
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/qq317423892" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:xianlongok@163.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+            <div class="cc-license motion-element" itemprop="license">
+              <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" target="_blank">
+                <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+              </a>
+            </div>
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://scorpioq.github.io/" title="ScorpioQ" target="_blank">ScorpioQ</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-UE4-%E5%8F%8D%E5%B0%84%E7%B3%BB%E7%BB%9F"><span class="nav-text">1. UE4 反射系统</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-%E5%8F%8D%E5%B0%84%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6%E5%92%8C%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="nav-text">2. 反射实现机制和基本原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-UBT-%E5%92%8C-UHT"><span class="nav-text">2.1 UBT 和 UHT</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-UBT"><span class="nav-text">2.2 UBT</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#UBT-%E6%94%AF%E6%8C%81%E5%A4%9A%E7%A7%8D-TargetType"><span class="nav-text">UBT 支持多种 TargetType</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Modules"><span class="nav-text">Modules</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-UHT-%E9%A2%84%E5%A4%84%E7%90%86"><span class="nav-text">2.3 UHT 预处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#GENERATED-BODY"><span class="nav-text">GENERATED_BODY</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DECLARE-CLASS"><span class="nav-text">DECLARE_CLASS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IMPLEMENT-CLASS"><span class="nav-text">IMPLEMENT_CLASS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UFUCTION"><span class="nav-text">UFUCTION</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UPROPERTY"><span class="nav-text">UPROPERTY</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小贤</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">18k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: true,
+        notify: false,
+        appId: '7TO2HV1Xg9swHbSsI2kFt1H7-gzGzoHsz',
+        appKey: 'FgrhitpMKU9Ff5RhDKrpPgog',
+        placeholder: 'ヾﾉ≧∀≦)o来啊，快活啊!',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
