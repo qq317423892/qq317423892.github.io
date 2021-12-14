@@ -216,11 +216,11 @@
     <title>UE4 Render Pipeline</title>
     <url>/2021/12/14/ue4-render-pipline/</url>
     <content><![CDATA[<p>终于发奋去研究 UE4 渲染管线了，下面是从网上搜集到的资料，后续会逐步了解渲染管线各个步骤的技术方案。</p>
-<p><img src="/images/ue4_render_pipline/render_1.jpg" alt="render_1"></p>
-<p><img src="/images/ue4_render_pipline/render_2.jpg" alt="render_2"></p>
+<p>下图的渲染图详细解释在如下链接中<br><a href="https://www.bilibili.com/video/BV1yb411c7in/">虚幻引擎中文技术直播 第1期 虚幻引擎4的实时渲染流程</a><br><img src="/images/ue4_render_pipline/render_1.jpg" alt="render_1"></p>
+<p><img src="/images/ue4_render_pipline/render_3.jpg" alt="render_2"></p>
 <p>下面是官方的完整管线图</p>
 <p><img src="/images/ue4_render_pipline/ue_render.jpg" alt="render_pipline"></p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://www.cnblogs.com/shiroe/p/15571757.html">代码质疑人生：渲染管线Pipeline</a><br><a href="https://www.bilibili.com/video/BV1yb411c7in/">虚幻引擎中文技术直播 第1期 虚幻引擎4的实时渲染流程</a><br><a href="https://learn.unrealengine.com/home/dashboard">Unreal Engine 官网在线课程</a><br><a href="https://learn.unrealengine.com/home/LearningPath/94219">介绍实时渲染原理</a><br><a href="https://blog.csdn.net/leonwei/article/details/84821849">UE4渲染系统概览：列举了UE4 渲染类视图跟流程图</a></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://www.cnblogs.com/shiroe/p/15571757.html">代码质疑人生：渲染管线Pipeline</a><br><a href="https://learn.unrealengine.com/home/dashboard">Unreal Engine 官网在线课程</a><br><a href="https://learn.unrealengine.com/home/LearningPath/94219">介绍实时渲染原理</a><br><a href="https://blog.csdn.net/leonwei/article/details/84821849">UE4渲染系统概览：列举了UE4 渲染类视图跟流程图</a></p>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.css">]]></content>
       <categories>
         <category>UE4</category>
