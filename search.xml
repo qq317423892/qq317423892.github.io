@@ -213,7 +213,7 @@
       </tags>
   </entry>
   <entry>
-    <title>ue4_render_pipline</title>
+    <title>UE4 Render Pipeline</title>
     <url>/2021/12/14/ue4-render-pipline/</url>
     <content><![CDATA[<p>终于发奋去研究 UE4 渲染管线了，下面是从网上搜集到的资料，后续会逐步了解渲染管线各个步骤的技术方案。</p>
 <p><img src="/images/ue4_render_pipline/render_1.jpg" alt="render_1"></p>
