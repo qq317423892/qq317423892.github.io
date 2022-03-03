@@ -270,7 +270,7 @@
 <img src="/images/landscape_mobile/components_in_actor.png" width="70%" height="70%" />
 
 <p>然后每个 LandscapeComponent 就是一个基础的渲染单元，如下是地形需要的类的继承关系图，</p>
-<p><img src="/images/landscape_mobile/Landscape.svg" alt="stat"></p>
+<p><img src="/images/landscape_mobile/landscape.svg" alt="stat"></p>
 <h4 id="2-2-2-创建-SceneProxy"><a href="#2-2-2-创建-SceneProxy" class="headerlink" title="2.2.2 创建 SceneProxy"></a>2.2.2 创建 SceneProxy</h4><p>按照之前介绍的 UE4 渲染流程，首先会调用 CreateSceneProxy 来创建 SceneProxy（这里对应的就是 FLandscapeComponentSceneProxy 跟 FLandscapeComponentSceneProxyMobile）。</p>
 <p><img src="/images/landscape_mobile/step_create_proxy.png" alt="stat"></p>
 <p>具体调用堆栈如下：</p>
