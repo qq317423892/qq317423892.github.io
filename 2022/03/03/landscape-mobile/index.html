@@ -1,0 +1,1499 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.loli.net/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic|Roboto Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/moon_logo.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="C++,UE4,Landscape," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="UE4 Landscape Mobile1. UE4 渲染流程1.1 UE4 渲染线程 Game Tread（游戏线程） ：游戏逻辑运算 Rendering Thread（渲染线程） ：从 TaskGraph 中取出任务，并生成平台无关的 Command List （渲染指令列表） RHI Thread （Render Hardware Interface 线程）：会执行和转换渲染线程的 Comm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UE4 地形 landscape">
+<meta property="og:url" content="http://xianlong.space/2022/03/03/landscape-mobile/index.html">
+<meta property="og:site_name" content="十三的blog">
+<meta property="og:description" content="UE4 Landscape Mobile1. UE4 渲染流程1.1 UE4 渲染线程 Game Tread（游戏线程） ：游戏逻辑运算 Rendering Thread（渲染线程） ：从 TaskGraph 中取出任务，并生成平台无关的 Command List （渲染指令列表） RHI Thread （Render Hardware Interface 线程）：会执行和转换渲染线程的 Comm">
+<meta property="og:locale">
+<meta property="og:image" content="http://xianlong.space/images/landscape_mobile/ue4_render_thread.png">
+<meta property="og:image" content="http://xianlong.space/images/landscape_mobile/landscape_actor.png">
+<meta property="og:image" content="http://xianlong.space/images/landscape_mobile/alandscape1.png">
+<meta property="og:image" content="http://xianlong.space/images/landscape_mobile/landscape_actor_info.png">
+<meta property="og:image" content="http://xianlong.space/images/landscape_mobile/level_info.png">
+<meta property="og:image" content="http://xianlong.space/images/landscape_mobile/actors_in_level.png">
+<meta property="og:image" content="http://xianlong.space/images/landscape_mobile/components_in_actor.png">
+<meta property="og:image" content="http://xianlong.space/images/landscape_mobile/Landscape.svg">
+<meta property="og:image" content="http://xianlong.space/images/landscape_mobile/step_create_proxy.png">
+<meta property="og:image" content="http://xianlong.space/images/landscape_mobile/add_primitive.png">
+<meta property="og:image" content="http://xianlong.space/images/landscape_mobile/step_create_res_mobile.png">
+<meta property="og:image" content="http://xianlong.space/images/landscape_mobile/step_create_res_pc.png">
+<meta property="og:image" content="http://xianlong.space/images/landscape_mobile/per_quad_1.png">
+<meta property="og:image" content="http://xianlong.space/images/landscape_mobile/per_quad_2.png">
+<meta property="og:image" content="http://xianlong.space/images/landscape_mobile/lod_2_mobile.png">
+<meta property="og:image" content="http://xianlong.space/images/landscape_mobile/lod_1_mobile.png">
+<meta property="og:image" content="http://xianlong.space/images/landscape_mobile/quad_empty.png">
+<meta property="og:image" content="http://xianlong.space/images/landscape_mobile/attribute_1.png">
+<meta property="og:image" content="http://xianlong.space/images/landscape_mobile/component_section_quad.png">
+<meta property="og:image" content="http://xianlong.space/images/landscape_mobile/pc_attri.png">
+<meta property="og:image" content="http://xianlong.space/images/landscape_mobile/mobile_attri.png">
+<meta property="og:image" content="http://xianlong.space/images/landscape_mobile/render_doc_shader.png">
+<meta property="og:image" content="http://xianlong.space/images/landscape_mobile/uniform_buffer.png">
+<meta property="og:image" content="http://xianlong.space/images/landscape_mobile/primitive_param.png">
+<meta property="og:image" content="http://xianlong.space/images/landscape_mobile/landscape_param.png">
+<meta property="og:image" content="http://xianlong.space/images/landscape_mobile/vs_out.png">
+<meta property="article:published_time" content="2022-03-03T06:28:01.000Z">
+<meta property="article:modified_time" content="2022-03-03T06:44:32.407Z">
+<meta property="article:author" content="小贤">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="UE4">
+<meta property="article:tag" content="Landscape">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://xianlong.space/images/landscape_mobile/ue4_render_thread.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://xianlong.space/2022/03/03/landscape-mobile/"/>
+
+
+
+
+
+  <title>UE4 地形 landscape | 十三的blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.1"><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">十三的blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">安心学技术</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://xianlong.space/2022/03/03/landscape-mobile/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="小贤">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="十三的blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">UE4 地形 landscape</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-03-03T14:28:01+08:00">
+                2022-03-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/UE4/" itemprop="url" rel="index">
+                    <span itemprop="name">UE4</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2022/03/03/landscape-mobile/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2022/03/03/landscape-mobile/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3.3k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  16
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="UE4-Landscape-Mobile"><a href="#UE4-Landscape-Mobile" class="headerlink" title="UE4 Landscape Mobile"></a>UE4 Landscape Mobile</h1><h2 id="1-UE4-渲染流程"><a href="#1-UE4-渲染流程" class="headerlink" title="1. UE4 渲染流程"></a>1. UE4 渲染流程</h2><h3 id="1-1-UE4-渲染线程"><a href="#1-1-UE4-渲染线程" class="headerlink" title="1.1 UE4 渲染线程"></a>1.1 UE4 渲染线程</h3><ul>
+<li>Game Tread（游戏线程） ：游戏逻辑运算</li>
+<li>Rendering Thread（渲染线程） ：从 TaskGraph 中取出任务，并生成平台无关的 Command List （渲染指令列表）</li>
+<li>RHI Thread （Render Hardware Interface 线程）：会执行和转换渲染线程的 Command List 成为指定图形 API 的调用（称为Graphical Command），并提交到GPU执行。</li>
+</ul>
+<p><img src="/images/landscape_mobile/ue4_render_thread.png" alt="stat"></p>
+<p>这3个线程处理的数据通常是不同帧的，譬如 GameThread 处理N帧数据，RenderThread 和 RHIThread 处理 N-1 帧数据。</p>
+<p>但也存在例外，比如 RenderThread 和 RHIThread 运行很快，几乎不存在延迟，这种情况下，GameThread 处理N帧，而 RenderThread 可能处理N或N-1帧，RHIThread 也可能在转换N或N-1帧。</p>
+<p>但是，RenderThread 不能落后游戏线程一帧，否则 GameThread 会卡住，直到 RenderThread 处理完所有指令。</p>
+<h3 id="1-2-渲染概念"><a href="#1-2-渲染概念" class="headerlink" title="1.2 渲染概念"></a>1.2 渲染概念</h3><ul>
+<li><p>UPrimitiveComponent : 场景中需要绘制的 Actor 都会有 UPrimitiveComponent，这个数据是存在于 Game Thread 中</p>
+</li>
+<li><p>FPrimitiveSceneProxy 和FPrimitiveSceneInfo :</p>
+<ul>
+<li><p>FPrimitiveSceneProxy：Render thread 上UPrimitiveComponent 的对应代理，只包含渲染Primitive 所需的数据，但和UPrimitiveComponent 引用同样的数据</p>
+</li>
+<li><p>FPrimitiveSceneInfo：和FPrimitiveSceneProxy 一一对应，在引擎的Renderer 模块下</p>
+</li>
+</ul>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>游戏线程</th>
+<th>渲染线程</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>UWorld</td>
+<td>FScene</td>
+</tr>
+<tr>
+<td>UPrimitiveComponent</td>
+<td>FPrimitiveSceneProxy / FPrimitiveSceneInfo</td>
+</tr>
+</tbody></table>
+<h2 id="2-Landscape-渲染流程"><a href="#2-Landscape-渲染流程" class="headerlink" title="2. Landscape 渲染流程"></a>2. Landscape 渲染流程</h2><h3 id="2-1-UE4-地形类结构"><a href="#2-1-UE4-地形类结构" class="headerlink" title="2.1 UE4 地形类结构"></a>2.1 UE4 地形类结构</h3><p>我们创建好地形后，场景中会有一个 Landscape 类型的 Actor</p>
+<p><img src="/images/landscape_mobile/landscape_actor.png" alt="stat"></p>
+<p>ALandscape 类型继承关系如下</p>
+<img src="/images/landscape_mobile/alandscape1.png" width="300" height="188"/>
+
+<p>Detail 面板上显示的属性变量都存放在 ALandscapeProxy 类中，这个类主要用来保存地形的详细信息和属性设定值。</p>
+<p><img src="/images/landscape_mobile/landscape_actor_info.png" alt="stat"></p>
+<p>ALandscape 继承 ALandscapeProxy，在这个基础上实现了更多功能。</p>
+<h3 id="2-2-UE4-地形渲染过程"><a href="#2-2-UE4-地形渲染过程" class="headerlink" title="2.2 UE4 地形渲染过程"></a>2.2 UE4 地形渲染过程</h3><h4 id="2-2-1-地形组成结构"><a href="#2-2-1-地形组成结构" class="headerlink" title="2.2.1 地形组成结构"></a>2.2.1 地形组成结构</h4><p>UE4 地形渲染是以 Component 为基础渲染单元的。我们新建了一个场景，然后创建一个地形，地形参数如下：</p>
+<img src="/images/landscape_mobile/level_info.png" width="50%" height="50%" />
+
+<p>Landscape 由两个 Component 组成，然后运行中，我们断点获取场景中所有的 Actor，下面是调试信息：</p>
+<img src="/images/landscape_mobile/actors_in_level.png" width="50%" height="50%" />
+
+<p>找到 Landscape 对象后，我们查看它的 Component，发现当我们给地形设置了两个 Component 后，对应的 ALandscape 对象就会生成两个 LandscapeComponent 组件：</p>
+<img src="/images/landscape_mobile/components_in_actor.png" width="70%" height="70%" />
+
+<p>然后每个 LandscapeComponent 就是一个基础的渲染单元，如下是地形需要的类的继承关系图，</p>
+<p><img src="/images/landscape_mobile/Landscape.svg" alt="stat"></p>
+<h4 id="2-2-2-创建-SceneProxy"><a href="#2-2-2-创建-SceneProxy" class="headerlink" title="2.2.2 创建 SceneProxy"></a>2.2.2 创建 SceneProxy</h4><p>按照之前介绍的 UE4 渲染流程，首先会调用 CreateSceneProxy 来创建 SceneProxy（这里对应的就是 FLandscapeComponentSceneProxy 跟 FLandscapeComponentSceneProxyMobile）。</p>
+<p><img src="/images/landscape_mobile/step_create_proxy.png" alt="stat"></p>
+<p>具体调用堆栈如下：</p>
+<img src="/images/landscape_mobile/add_primitive.png" width="70%" height="70%" />
+
+<p>这里会判断的当前 renderer feature level 来创建对应的 Proxy，下面是对应的平台的 enum 定义：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> ERHIFeatureLevel</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">enum</span> <span class="title class_">Type</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">/**  OpenGL ES2. Deprecated */</span></span><br><span class="line">        ES2_REMOVED,</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**  OpenGL ES3.1 &amp; Metal/Vulkan. */</span></span><br><span class="line">        ES3_1,</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**  DX10 Shader Model 4.</span></span><br><span class="line"><span class="comment">        * SUPPORT FOR THIS FEATURE LEVEL HAS BEEN ENTIRELY REMOVED. */</span></span><br><span class="line">        SM4_REMOVED,</span><br><span class="line"></span><br><span class="line">        <span class="comment">/** DX11 Shader Model 5. */</span></span><br><span class="line">        SM5,</span><br><span class="line">        Num</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>移动端跟 PC 端的区别：创建的 Proxy 分别是 FLandscapeComponFLandeneProxy 跟 FLandscapeComponentSceneProxyMobile，FLandscapeComponentSceneProxyMobile 是 FLandscapeComponFLandeneProxy 的子类<br>两者都会调用基类的构造函数，在构造函数中差异如下：</p>
+</blockquote>
+<ul>
+<li>AvailableMaterials 来源</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">FLandscapeComponentSceneProxy::<span class="built_in">FLandscapeComponentSceneProxy</span>(...)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">const</span> <span class="keyword">auto</span> FeatureLevel = <span class="built_in">GetScene</span>().<span class="built_in">GetFeatureLevel</span>();</span><br><span class="line">    <span class="comment">// PC</span></span><br><span class="line">    <span class="keyword">if</span> (FeatureLevel &gt;= ERHIFeatureLevel::SM5)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (InComponent-&gt;<span class="built_in">GetLandscapeProxy</span>()-&gt;bUseDynamicMaterialInstance)</span><br><span class="line">        &#123;</span><br><span class="line">            AvailableMaterials.<span class="built_in">Append</span>(InComponent-&gt;MaterialInstancesDynamic);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            AvailableMaterials.<span class="built_in">Append</span>(InComponent-&gt;MaterialInstances);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// Mobile</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        AvailableMaterials.<span class="built_in">Append</span>(InComponent-&gt;MobileMaterialInterfaces);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>SharedBuffersKey : 可以看到如果忽略掉 XYOffsetmapTexture，渲染平台，SharedBuffersKey 只由 SubsectionSizeQuads、NumSubsections 唯一确定。因为所有属于同一个 ALandscape 的 Component 的这两个参数都是一样的，所以这些 Component 的 Proxy 共用一个 SharedBuffersKey.</li>
+</ul>
+<blockquote>
+<p>XYOffsetmapTexture : PC 可以传一张 XYOffsetmapTexture，后面阅读 shader 代码可以看出这个可以对顶点的 xy 坐标做偏移</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// SharedBuffer 根据 SharedBufferKey 来创建</span></span><br><span class="line"><span class="type">const</span> int8 SubsectionSizeLog2 = FMath::<span class="built_in">CeilLogTwo</span>(InComponent-&gt;SubsectionSizeQuads + <span class="number">1</span>);</span><br><span class="line">SharedBuffersKey = (SubsectionSizeLog2 &amp; <span class="number">0xf</span>) | ((NumSubsections &amp; <span class="number">0xf</span>) &lt;&lt; <span class="number">4</span>) |</span><br><span class="line">    (FeatureLevel &lt;= ERHIFeatureLevel::ES3_1 ? <span class="number">0</span> : <span class="number">1</span> &lt;&lt; <span class="number">30</span>) |</span><br><span class="line">    (XYOffsetmapTexture == <span class="literal">nullptr</span> ? <span class="number">0</span> : <span class="number">1</span> &lt;&lt; <span class="number">31</span>);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>HeightMap</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// </span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">FLandscapeNeighborInfo</span></span><br><span class="line">&#123;</span><br><span class="line">    UTexture2D* HeightmapTexture; <span class="comment">// PC : Heightmap, Mobile : Weightmap</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">FLandscapeComponentSceneProxy</span> : <span class="keyword">public</span> FPrimitiveSceneProxy, </span><br><span class="line">    <span class="keyword">public</span> FLandscapeNeighborInfo</span><br><span class="line">&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (FeatureLevel &lt;= ERHIFeatureLevel::ES3_1)</span><br><span class="line">&#123;</span><br><span class="line">    HeightmapTexture = <span class="literal">nullptr</span>;</span><br><span class="line">    HeightmapSubsectionOffsetU = <span class="number">0</span>;</span><br><span class="line">    HeightmapSubsectionOffsetV = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">&#123;</span><br><span class="line">    HeightmapSubsectionOffsetU = ((<span class="type">float</span>)(InComponent-&gt;SubsectionSizeQuads + <span class="number">1</span>) / </span><br><span class="line">        (<span class="type">float</span>)FMath::<span class="built_in">Max</span>&lt;int32&gt;(<span class="number">1</span>, HeightmapTexture-&gt;<span class="built_in">GetSizeX</span>()));</span><br><span class="line">    HeightmapSubsectionOffsetV = ((<span class="type">float</span>)(InComponent-&gt;SubsectionSizeQuads + <span class="number">1</span>) / </span><br><span class="line">        (<span class="type">float</span>)FMath::<span class="built_in">Max</span>&lt;int32&gt;(<span class="number">1</span>, HeightmapTexture-&gt;<span class="built_in">GetSizeY</span>()));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>WeightmapTextures 跟 NormalmapTexture</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// PC</span></span><br><span class="line">FLandscapeComponentSceneProxy::<span class="built_in">FLandscapeComponentSceneProxy</span>(ULandscapeComponent* InComponent) :</span><br><span class="line">    <span class="built_in">WeightmapTextures</span>(InComponent-&gt;<span class="built_in">GetWeightmapTextures</span>())</span><br><span class="line">    , <span class="built_in">NormalmapTexture</span>(InComponent-&gt;<span class="built_in">GetHeightmap</span>())</span><br><span class="line"></span><br><span class="line"><span class="comment">// Mobile</span></span><br><span class="line">FLandscapeComponentSceneProxyMobile::<span class="built_in">FLandscapeComponentSceneProxyMobile</span>(ULandscapeComponent* InComponent)</span><br><span class="line">&#123;</span><br><span class="line">    WeightmapTextures = InComponent-&gt;MobileWeightmapTextures;</span><br><span class="line">    NormalmapTexture = InComponent-&gt;MobileWeightmapTextures[<span class="number">0</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>HasTessellationEnabled ： 手机不支持曲面细分</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="keyword">for</span> (UMaterialInterface*&amp; MaterialInterface : AvailableMaterials)</span><br><span class="line">    &#123;</span><br><span class="line"></span><br><span class="line">        <span class="type">bool</span> HasTessellationEnabled = <span class="literal">false</span>;</span><br><span class="line">        <span class="comment">// PC</span></span><br><span class="line">        <span class="keyword">if</span> (FeatureLevel &gt;= ERHIFeatureLevel::SM5)</span><br><span class="line">        &#123;</span><br><span class="line">            HasTessellationEnabled = LandscapeMaterial-&gt;D3D11TessellationMode !=</span><br><span class="line">                EMaterialTessellationMode::MTM_NoTessellation;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        MaterialHasTessellationEnabled.<span class="built_in">Add</span>(HasTessellationEnabled);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// PC    : true</span></span><br><span class="line"><span class="comment">// Moble : false</span></span><br><span class="line">bSupportsHeightfieldRepresentation = FeatureLevel &lt;= </span><br><span class="line">    ERHIFeatureLevel::ES3_1 ? <span class="literal">false</span> : <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">FPrimitiveSceneProxy</span> &#123;</span><br><span class="line">    <span class="function"><span class="keyword">inline</span> <span class="type">bool</span> <span class="title">SupportsHeightfieldRepresentation</span><span class="params">()</span> <span class="type">const</span> </span></span><br><span class="line"><span class="function">    </span>&#123; <span class="keyword">return</span> bSupportsHeightfieldRepresentation; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-2-3-创建渲染资源"><a href="#2-2-3-创建渲染资源" class="headerlink" title="2.2.3 创建渲染资源"></a>2.2.3 创建渲染资源</h4><p>创建完 Proxy 然后创建 PrimitiveSceneInfo 并且在渲染进程上创建渲染资源：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">FScene::AddPrimitive</span><span class="params">(UPrimitiveComponent* Primitive)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 上面的 CreateProxy</span></span><br><span class="line">    FPrimitiveSceneProxy* PrimitiveSceneProxy = Primitive-&gt;<span class="built_in">CreateSceneProxy</span>();</span><br><span class="line">    Primitive-&gt;SceneProxy = PrimitiveSceneProxy;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Create the primitive scene info.</span></span><br><span class="line">    FPrimitiveSceneInfo* PrimitiveSceneInfo = <span class="keyword">new</span> <span class="built_in">FPrimitiveSceneInfo</span>(Primitive, <span class="keyword">this</span>);</span><br><span class="line">    PrimitiveSceneProxy-&gt;PrimitiveSceneInfo = PrimitiveSceneInfo;</span><br><span class="line"></span><br><span class="line">    FCreateRenderThreadParameters Params =</span><br><span class="line">    &#123;</span><br><span class="line">        PrimitiveSceneProxy,</span><br><span class="line">        RenderMatrix,</span><br><span class="line">        Primitive-&gt;Bounds,</span><br><span class="line">        AttachmentRootPosition,</span><br><span class="line">        Primitive-&gt;<span class="built_in">CalcBounds</span>(FTransform::Identity)</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 放到渲染线程创建资源</span></span><br><span class="line">    <span class="built_in">ENQUEUE_RENDER_COMMAND</span>(AddPrimitiveCommand)(</span><br><span class="line">        [Params = <span class="built_in">MoveTemp</span>(Params), Scene, PrimitiveSceneInfo, PreviousTransform = <span class="built_in">MoveTemp</span>(PreviousTransform)](FRHICommandListImmediate&amp; RHICmdList)</span><br><span class="line">        &#123;</span><br><span class="line">            FPrimitiveSceneProxy* SceneProxy = Params.PrimitiveSceneProxy;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// SetTransform 这里 mark 一下</span></span><br><span class="line">            SceneProxy-&gt;<span class="built_in">SetTransform</span>(Params.RenderMatrix, Params.WorldBounds, </span><br><span class="line">                Params.LocalBounds, Params.AttachmentRootPosition);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 创建渲染资源</span></span><br><span class="line">            SceneProxy-&gt;<span class="built_in">CreateRenderThreadResources</span>();</span><br><span class="line">            Scene-&gt;<span class="built_in">AddPrimitiveSceneInfo_RenderThread</span>(PrimitiveSceneInfo, PreviousTransform);</span><br><span class="line">        &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>首先介绍下  SetTransform 具体做了哪些操作，这个会涉及到后续 Shader 中 Landscape 顶点计算过程，函数参数中包含了 Primitive 的一些基础属性：局部坐标转世界坐标的变换矩阵，包围盒等。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">FPrimitiveSceneProxy::SetTransform</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">const</span> FMatrix&amp; InLocalToWorld, </span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">const</span> FBoxSphereBounds&amp; InBounds, </span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">const</span> FBoxSphereBounds&amp; InLocalBounds, </span></span></span><br><span class="line"><span class="params"><span class="function">    FVector InActorPosition)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    LocalToWorld = InLocalToWorld;</span><br><span class="line">    <span class="comment">// 这里会创建 Primitive 的 UniformBufferObject</span></span><br><span class="line">    <span class="built_in">UpdateUniformBuffer</span>()</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">const</span> FPrimitiveUniformShaderParameters PrimitiveUniformShaderParameters = </span><br><span class="line">            <span class="built_in">GetPrimitiveUniformShaderParameters</span>(</span><br><span class="line">                LocalToWorld, </span><br><span class="line">                PreviousLocalToWorld,</span><br><span class="line">                ActorPosition, </span><br><span class="line">                Bounds, </span><br><span class="line">                LocalBounds, </span><br><span class="line">                PreSkinnedLocalBounds,</span><br><span class="line">                bReceivesDecals, </span><br><span class="line">                <span class="built_in">HasDistanceFieldRepresentation</span>(), </span><br><span class="line">                <span class="built_in">HasDynamicIndirectShadowCasterRepresentation</span>(), </span><br><span class="line">                <span class="built_in">UseSingleSampleShadowFromStationaryLights</span>(),</span><br><span class="line">                bHasPrecomputedVolumetricLightmap,</span><br><span class="line">                <span class="built_in">DrawsVelocity</span>(), </span><br><span class="line">                <span class="built_in">GetLightingChannelMask</span>(),</span><br><span class="line">                LpvBiasMultiplier,</span><br><span class="line">                PrimitiveSceneInfo ? PrimitiveSceneInfo-&gt;<span class="built_in">GetLightmapDataOffset</span>() : <span class="number">0</span>,</span><br><span class="line">                SingleCaptureIndex, </span><br><span class="line">                bOutputVelocity || <span class="built_in">AlwaysHasVelocity</span>(),</span><br><span class="line">                <span class="built_in">GetCustomPrimitiveData</span>(),</span><br><span class="line">                <span class="built_in">CastsContactShadow</span>());</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (UniformBuffer.<span class="built_in">GetReference</span>())</span><br><span class="line">        &#123;</span><br><span class="line">            UniformBuffer.<span class="built_in">UpdateUniformBufferImmediate</span>(PrimitiveUniformShaderParameters);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            UniformBuffer = TUniformBufferRef&lt;FPrimitiveUniformShaderParameters&gt;::<span class="built_in">CreateUniformBufferImmediate</span>(PrimitiveUniformShaderParameters, UniformBuffer_MultiFrame);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Primitive Uniform 参数定义</span></span><br><span class="line"><span class="function"><span class="keyword">inline</span> FPrimitiveUniformShaderParameters <span class="title">GetPrimitiveUniformShaderParameters</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">const</span> FMatrix&amp; LocalToWorld,</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">const</span> FMatrix&amp; PreviousLocalToWorld,</span></span></span><br><span class="line"><span class="params"><span class="function">    FVector ActorPosition,</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">const</span> FBoxSphereBounds&amp; WorldBounds,</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">const</span> FBoxSphereBounds&amp; LocalBounds,</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">const</span> FBoxSphereBounds&amp; PreSkinnedLocalBounds,</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">bool</span> bReceivesDecals,</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">bool</span> bHasDistanceFieldRepresentation,   <span class="comment">// Currently unused</span></span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">bool</span> bHasCapsuleRepresentation,</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">bool</span> bUseSingleSampleShadowFromStationaryLights,</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">bool</span> bUseVolumetricLightmap,</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">bool</span> bDrawsVelocity,</span></span></span><br><span class="line"><span class="params"><span class="function">    uint32 LightingChannelMask,</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">float</span> LpvBiasMultiplier,</span></span></span><br><span class="line"><span class="params"><span class="function">    uint32 LightmapDataIndex,</span></span></span><br><span class="line"><span class="params"><span class="function">    int32 SingleCaptureIndex,</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">bool</span> bOutputVelocity,</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">const</span> FCustomPrimitiveData* CustomPrimitiveData,</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">bool</span> bCastContactShadow = <span class="literal">true</span></span></span></span><br><span class="line"><span class="params"><span class="function">)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    FPrimitiveUniformShaderParameters Result;</span><br><span class="line">    Result.LocalToWorld = LocalToWorld;</span><br><span class="line">    Result.WorldToLocal = LocalToWorld.<span class="built_in">Inverse</span>();</span><br><span class="line">    <span class="comment">// 省略一堆参数设置</span></span><br><span class="line">    <span class="keyword">return</span> Result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>接下来在渲染进程中调用函数 CreateRenderThreadResource 中初始化顶点 Buffer 以及 Shader 所需要的 UBO</p>
+<p><img src="/images/landscape_mobile/step_create_res_mobile.png" alt="stat"></p>
+<p>PC 端创建流程如下：</p>
+<p><img src="/images/landscape_mobile/step_create_res_pc.png" alt="stat"></p>
+<ul>
+<li>SharedBuffers<br>SharedBuffers 是根据 Proxy 构造时生成的 SharedBuffersKey 来创建，</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">SharedBuffers = FLandscapeComponentSceneProxy::SharedBuffersMap.<span class="built_in">FindRef</span>(SharedBuffersKey);</span><br><span class="line"><span class="keyword">if</span> (SharedBuffers == <span class="literal">nullptr</span>)</span><br><span class="line">&#123;</span><br><span class="line">    int32 NumOcclusionVertices = MobileRenderData-&gt;OccluderVerticesSP.<span class="built_in">IsValid</span>() ? </span><br><span class="line">        MobileRenderData-&gt;OccluderVerticesSP-&gt;<span class="built_in">Num</span>() : <span class="number">0</span>;</span><br><span class="line">            </span><br><span class="line">    SharedBuffers = <span class="keyword">new</span> <span class="built_in">FLandscapeSharedBuffers</span>(</span><br><span class="line">        SharedBuffersKey, SubsectionSizeQuads, NumSubsections,</span><br><span class="line">        <span class="built_in">GetScene</span>().<span class="built_in">GetFeatureLevel</span>(), <span class="literal">false</span>, NumOcclusionVertices);</span><br><span class="line"></span><br><span class="line">    FLandscapeComponentSceneProxy::SharedBuffersMap.<span class="built_in">Add</span>(SharedBuffersKey, SharedBuffers);</span><br><span class="line">&#125;</span><br><span class="line">SharedBuffers-&gt;<span class="built_in">AddRef</span>();</span><br></pre></td></tr></table></figure>
+
+<p>FLandscapeSharedBuffer 创建时，会新建 VertexIndex Buff。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">FLandscapeSharedBuffers::<span class="built_in">FLandscapeSharedBuffers</span>(...)</span><br><span class="line">    :  <span class="built_in">NumIndexBuffers</span>(FMath::<span class="built_in">CeilLogTwo</span>(InSubsectionSizeQuads + <span class="number">1</span>))</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// SubsectionSizeVerts 7 * 7 : 8 | 15 * 15 : 16</span></span><br><span class="line">    <span class="comment">// NumSubsections      2 * 2 : 2 | 1 * 1 : 1</span></span><br><span class="line">    NumVertices = FMath::<span class="built_in">Square</span>(SubsectionSizeVerts) * </span><br><span class="line">        FMath::<span class="built_in">Square</span>(NumSubsections);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// PC </span></span><br><span class="line">    <span class="comment">// Mobile 的 VertextBuffer 在 </span></span><br><span class="line">    <span class="comment">// FLandscapeComponentSceneProxyMobile::MobileRenderData.VertexBuffer</span></span><br><span class="line">    <span class="keyword">if</span> (InFeatureLevel &gt; ERHIFeatureLevel::ES3_1)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// Vertex Buffer cannot be shared</span></span><br><span class="line">        VertexBuffer = <span class="keyword">new</span> <span class="built_in">FLandscapeVertexBuffer</span>(InFeatureLevel, </span><br><span class="line">            NumVertices, SubsectionSizeVerts, NumSubsections);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 7 -&gt; 3</span></span><br><span class="line">    <span class="comment">// 15 -&gt; 4</span></span><br><span class="line">    IndexBuffers = <span class="keyword">new</span> FIndexBuffer*[NumIndexBuffers];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (NumVertices &gt; <span class="number">65535</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        bUse32BitIndices = <span class="literal">true</span>;</span><br><span class="line">        <span class="built_in">CreateIndexBuffers</span>&lt;uint32&gt;(InFeatureLevel, bRequiresAdjacencyInformation);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">CreateIndexBuffers</span>&lt;uint16&gt;(InFeatureLevel, bRequiresAdjacencyInformation);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>CreateIndexBuffer 函数大致如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">int32 MaxLOD = NumIndexBuffers - <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 逐 LOD</span></span><br><span class="line"><span class="keyword">for</span> (int32 Mip = MaxLOD; Mip &gt;= <span class="number">0</span>; Mip--)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 每个 Section 2 * 2/ 1 * 1</span></span><br><span class="line">    <span class="keyword">for</span> (int32 SubY = <span class="number">0</span>; SubY &lt; NumSubsections; SubY++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">for</span> (int32 SubX = <span class="number">0</span>; SubX &lt; NumSubsections; SubX++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 逐 Quad 遍历</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>顶点排列顺序如下</p>
+<ul>
+<li>Component 只有一个 Section，每个 Section 有 15 * 15 个 Quad 时</li>
+</ul>
+<img src="/images/landscape_mobile/per_quad_1.png" width="50%" height="50%" />
+
+<ul>
+<li>Component 有 2 * 2 个 Section，每个 Section 有 7 * 7 个 Quad 时：</li>
+</ul>
+<img src="/images/landscape_mobile/per_quad_2.png" width="50%" height="50%" />
+
+<p>Mobile 计算就稍微有点复杂了，需要计算两个变量 LodSubsectionSizeQuads 和 MipRatio。</p>
+<p>假如 Section 构成是 15 * 15，则</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">NumLOD = NumIndexBuffers <span class="comment">// IndexBuffer 数量</span></span><br><span class="line">       = FMath::<span class="built_in">CeilLogTwo</span>(InSubsectionSizeQuads + <span class="number">1</span>)</span><br><span class="line">       = <span class="built_in">log</span>(<span class="number">2</span>, <span class="number">15</span> + <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">MaxLOD = NumLOD - <span class="number">1</span></span><br><span class="line">       = <span class="number">4</span> - <span class="number">1</span> = <span class="number">3</span>  <span class="comment">// LOD(0, 1, 2, 3)</span></span><br><span class="line"></span><br><span class="line">LodSubsectionSizeQuads = (SubsectionSizeVerts &gt;&gt; Mip) - <span class="number">1</span>;</span><br><span class="line">                       = (<span class="number">16</span> &gt;&gt; LOD) - <span class="number">1</span></span><br><span class="line"></span><br><span class="line">MipRatio = (<span class="type">float</span>)SubectionSizeQuads / (<span class="type">float</span>)LodSubsectionSizeQuads;</span><br><span class="line">         = <span class="number">15.0</span> / LodSubsectionSizeQuads</span><br></pre></td></tr></table></figure>
+
+<p>于是有如下表格：</p>
+<p>LOD       | LodSubsectionSizeQuads    | MipRatio|<br>| ——–   | —–   | —- |<br>| 3 | 1 | 15.00 |<br>| 2| 3 | 5.00 |<br>| 1 | 7 | 2.143 |<br>| 0 | 15 | 1.00 |</p>
+<p>则 7 * 7 Section 的表格如下：</p>
+<p>LOD       | LodSubsectionSizeQuads    | MipRatio|<br>| ——–   | —–   | —- |<br>| 2 | 1 | 7.00 |<br>| 1 | 3 | 2.33 |<br>| 0 | 7 | 1.00 |</p>
+<p>最终计算得出的 LOD 如下：</p>
+<ul>
+<li>LOD2:</li>
+</ul>
+<img src="/images/landscape_mobile/lod_2_mobile.png" width="50%" height="50%" />
+
+<ul>
+<li>LOD1:</li>
+</ul>
+<img src="/images/landscape_mobile/lod_1_mobile.png" width="50%" height="50%" />
+
+<ul>
+<li>LOD0:</li>
+</ul>
+<img src="/images/landscape_mobile/quad_empty.png" width="50%" height="50%" />
+
+<p>随后构造 FLandscapeVertexFactoryMobile，主要是用来定义如何将顶点数据以正确的格式发送到 GPU。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">FLandscapeVertexFactory</span> : <span class="keyword">public</span> FVertexFactory</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">FDataType</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">/** The stream to read the vertex position from. */</span></span><br><span class="line">        FVertexStreamComponent PositionComponent;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">FLandscapeVertexFactoryMobile</span> : <span class="keyword">public</span> FLandscapeVertexFactory</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">FDataType</span> : FLandscapeVertexFactory::FDataType</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">/** stream which has heights of each LOD levels */</span></span><br><span class="line">        TArray&lt;FVertexStreamComponent,TFixedAllocator&lt;LANDSCAPE_MAX_ES_LOD_COMP&gt; &gt; LODHeightsComponent;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> LANDSCAPE_MAX_ES_LOD_COMP   2</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> LANDSCAPE_MAX_ES_LOD        6</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">FLandscapeMobileVertex</span></span><br><span class="line">&#123;</span><br><span class="line">    uint8 Position[<span class="number">4</span>]; <span class="comment">// Pos + LOD 0 Height</span></span><br><span class="line">    uint8 LODHeights[LANDSCAPE_MAX_ES_LOD_COMP*<span class="number">4</span>];</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">FLandscapeComponentSceneProxyMobile::CreateRenderThreadResources</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// Init vertex buffer</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">check</span>(MobileRenderData-&gt;VertexBuffer);</span><br><span class="line">        MobileRenderData-&gt;VertexBuffer-&gt;<span class="built_in">InitResource</span>();</span><br><span class="line"></span><br><span class="line">        FLandscapeVertexFactoryMobile* LandscapeVertexFactory = <span class="keyword">new</span> <span class="built_in">FLandscapeVertexFactoryMobile</span>(FeatureLevel);</span><br><span class="line">        LandscapeVertexFactory-&gt;MobileData.PositionComponent = <span class="built_in">FVertexStreamComponent</span>(MobileRenderData-&gt;VertexBuffer, </span><br><span class="line">            <span class="built_in">STRUCT_OFFSET</span>(FLandscapeMobileVertex, Position), <span class="built_in">sizeof</span>(FLandscapeMobileVertex), VET_UByte4N);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (uint32 Index = <span class="number">0</span>; Index &lt; LANDSCAPE_MAX_ES_LOD_COMP; ++Index)</span><br><span class="line">        &#123;</span><br><span class="line">            LandscapeVertexFactory-&gt;MobileData.LODHeightsComponent.<span class="built_in">Add</span>(<span class="built_in">FVertexStreamComponent</span>(MobileRenderData-&gt;VertexBuffer, </span><br><span class="line">                <span class="built_in">STRUCT_OFFSET</span>(FLandscapeMobileVertex, LODHeights) + <span class="built_in">sizeof</span>(uint8) * <span class="number">4</span> * Index, <span class="built_in">sizeof</span>(FLandscapeMobileVertex), VET_UByte4N));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        LandscapeVertexFactory-&gt;<span class="built_in">InitResource</span>();</span><br><span class="line">        VertexFactory = LandscapeVertexFactory;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">````</span><br><span class="line"></span><br><span class="line">分两个 FVertexStreamComponent：PositionComponent 和 LODHeightsComponent.</span><br><span class="line"></span><br><span class="line">* PositionComponent 对应 <span class="built_in">STRUCT_OFFSET</span>(FLandscapeMobileVertex, Position)，即来源为 MobileRenderData-&gt;VertexBuffer 的每个顶点数据 (FLandscapeMobileVertex)的高度 Field</span><br><span class="line"></span><br><span class="line">* LODHeightsComponent 对应 <span class="built_in">STRUCT_OFFSET</span>(FLandscapeMobileVertex, LODHeights) + <span class="built_in">sizeof</span>(uint8) * <span class="number">4</span> * Index，即来源为 MobileRenderData-&gt;VertexBuffer 的每个顶点数据(FLandscapeMobileVertex) 的 LOD 高度(LODHeights)数据，加上此 LOD 的偏移，一共有多少 LOD 就有多少 FVertexStreamComponent 被添加到了 LODHeightsComponent. 这里的 MobileRenderData 就是FLandscapeComponentSceneProxyMobile::MobileRenderData，之前从 Platform 反序列化来的。</span><br><span class="line"></span><br><span class="line">这两个分别对应 Shader 里的参数 PackedPosition 跟 LODHeights</span><br><span class="line"></span><br><span class="line">```hlsl</span><br><span class="line"><span class="comment">// Engine\Shaders\Private\LandscapeVertexFactory.ush</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">FVertexFactoryInput</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="meta">#<span class="keyword">if</span> FEATURE_LEVEL &gt;= FEATURE_LEVEL_SM4</span></span><br><span class="line">    float4 Position: ATTRIBUTE0;</span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line">    float4 PackedPosition: ATTRIBUTE0; <span class="comment">// </span></span><br><span class="line">    float4 LODHeights[<span class="number">2</span>]: ATTRIBUTE1;  </span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>这里详细解释一下 LODHeights 中的数据<br>LODHeights：每个顶点的各LOD高度数组，这样编码：<br>LODHeights[0].x：MinHeight &gt;&gt; 8，其中 MinHeight 为此顶点的所有LOD高度的最小值<br>LODHeights[0].y：MaxHeight &gt;&gt; 8，其中 MaxHeight 为此顶点的所有LOD高度的最大值<br>LODHeights[0].zw ~ LODHeight[1].xyzw 为 LOD0~LOD5 的高度值，被归一化到了 LODHeights[0] 到 LODHeight[1] 之间，后面可以看到，在 shader 里会反向解码这些数据。</p>
+</blockquote>
+<h4 id="2-2-4-顶点数据"><a href="#2-2-4-顶点数据" class="headerlink" title="2.2.4 顶点数据"></a>2.2.4 顶点数据</h4><p>VertextBuffer 里的数据存储如下：Position 是由 4 个 float 组成的，数据结构如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">FLandscapeVertex</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">float</span> VertexX; <span class="comment">// 对应到 Section 中的 x</span></span><br><span class="line">    <span class="type">float</span> VertexY; <span class="comment">// 对应到 Section 中的 y</span></span><br><span class="line">    <span class="type">float</span> SubX;    <span class="comment">// Component 中 Section 位置</span></span><br><span class="line">    <span class="type">float</span> SubY;    </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>VertextX/VertexY 表示的是顶点在 Section 中的位置:</p>
+<img src="/images/landscape_mobile/attribute_1.png" width="50%" height="50%" />
+
+<p>SubX/SubY 表示的是 Section 在 Component 中的位置</p>
+<img src="/images/landscape_mobile/component_section_quad.png" width="50%" height="50%" />
+
+<p>在 PC 下是在创建 FLandscapeSharedBuffers 时创建，然后通过调用 FLandscapeVertextBuffer::InitRHI，新建的，</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">FLandscapeVertexBuffer::InitRHI</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    FRHIResourceCreateInfo CreateInfo;</span><br><span class="line">    <span class="type">void</span>* BufferData = <span class="literal">nullptr</span>;</span><br><span class="line">    int32 VertexIndex = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (int32 SubY = <span class="number">0</span>; SubY &lt; NumSubsections; SubY++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">for</span> (int32 SubX = <span class="number">0</span>; SubX &lt; NumSubsections; SubX++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">for</span> (int32 y = <span class="number">0</span>; y &lt; SubsectionSizeVerts; y++)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">for</span> (int32 x = <span class="number">0</span>; x &lt; SubsectionSizeVerts; x++)</span><br><span class="line">                &#123;</span><br><span class="line">                    Vertex-&gt;VertexX = x;</span><br><span class="line">                    Vertex-&gt;VertexY = y;</span><br><span class="line">                    Vertex-&gt;SubX = SubX;</span><br><span class="line">                    Vertex-&gt;SubY = SubY;</span><br><span class="line">                    Vertex++;</span><br><span class="line">                    VertexIndex++;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>RenderDoc 中抓帧数据如下：对应到 ATTRIBUTE 中的数据，下面这个顶点是 Section 0,0 下的顶点  7,2</p>
+<img src="/images/landscape_mobile/pc_attri.png" width="50%" height="50%" />
+
+<p>Mobile 下则是读取 PlatformData 中的数据，不过这里的数据需要乘以 255 才能得出最终的坐标值：</p>
+<img src="/images/landscape_mobile/mobile_attri.png" width="50%" height="50%" />
+
+<p>最终地表的顶点数据是在 LandscapeVertextFactory.ush 中生成的，PC 通过 VertexBuffers 跟 HeightMapTexture 生成最终的 Mesh 顶点，Mobile 中的顶点跟高度数据通过读取 PlatformData 中的数据，分别将 VertextBuffers 跟高度数据传给 Shader 计算。</p>
+<h4 id="2-2-5-vertext-shader"><a href="#2-2-5-vertext-shader" class="headerlink" title="2.2.5 vertext shader"></a>2.2.5 vertext shader</h4><p>下面是从 RenderDoc 抓帧查看 Shader 代码逻辑</p>
+<img src="/images/landscape_mobile/render_doc_shader.png" width="100%" height="100%" />
+
+<p>下面列出 vertext shader 主要逻辑，GetVertexFactoryIntermediates 。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">/ Engine\Shaders\Private\LandscapeVertexFactory.ush</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">FVertexFactoryInput</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="meta">#<span class="keyword">if</span> FEATURE_LEVEL &gt;= FEATURE_LEVEL_SM4</span></span><br><span class="line">    float4 Position: ATTRIBUTE0;</span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line">    float4 PackedPosition: ATTRIBUTE0; <span class="comment">// </span></span><br><span class="line">    float4 LODHeights[<span class="number">2</span>]: ATTRIBUTE1;  </span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// mobile</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> TERRAIN_ZSCALE (1.0f/128.0f)</span></span><br><span class="line"></span><br><span class="line"><span class="function">FVertexFactoryIntermediates <span class="title">GetVertexFactoryIntermediates</span><span class="params">(FVertexFactoryInput Input)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    FVertexFactoryIntermediates Intermediates;</span><br><span class="line">    <span class="comment">// 从 PackedPosition 中 xy 读取顶点在 Section 中的位置</span></span><br><span class="line">    Intermediates.InputPosition.xy = Input.PackedPosition.xy * <span class="number">255.f</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// PackedPosition.z 最后两位存储 Section 编号 00,01,10,11</span></span><br><span class="line">    uint PackedExtraData = (uint)(Input.PackedPosition.z * <span class="number">255.f</span>);</span><br><span class="line">    <span class="type">float</span> SubX = (<span class="type">float</span>)((PackedExtraData &gt;&gt; <span class="number">1</span>) &amp; <span class="number">1</span>);</span><br><span class="line">    <span class="type">float</span> SubY = (<span class="type">float</span>)((PackedExtraData &gt;&gt; <span class="number">0</span>) &amp; <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    Intermediates.InputPosition.zw = <span class="built_in">float2</span>(SubX, SubY);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 计算高度</span></span><br><span class="line">    <span class="type">float</span> MinHeight = <span class="built_in">DecodePackedHeight</span>(<span class="built_in">float2</span>(Input.LODHeights[<span class="number">0</span>].x, Input.LODHeights[<span class="number">0</span>].y));</span><br><span class="line">    <span class="type">float</span> HeightDelta = Input.PackedPosition.w * <span class="number">255.0</span> * <span class="number">256.0</span> * TERRAIN_ZSCALE;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 忽略 LOD 计算过程 LODHeightIndex 是计算结果</span></span><br><span class="line">    <span class="type">float</span> InputHeight = Input.LODHeights[LODHeightIndex &gt;&gt; <span class="number">2</span>][LODHeightIndex &amp; <span class="number">3</span>];</span><br><span class="line"></span><br><span class="line">    <span class="type">float</span> Height = MinHeight + InputHeight * HeightDelta;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 计算 xy</span></span><br><span class="line">    <span class="type">float</span> InvLODScaleFactor = <span class="number">1.f</span> / (<span class="type">float</span>)(<span class="number">1</span> &lt;&lt; (uint)LodValue);</span><br><span class="line">    <span class="comment">// LodValues.x is always 0 on mobile.</span></span><br><span class="line">    float2 ActualLODCoordsInt = <span class="built_in">floor</span>(Intermediates.InputPosition.xy * InvLODScaleFactor);</span><br><span class="line"></span><br><span class="line">    float2 CoordTranslate = <span class="built_in">float2</span>( LandscapeParameters.SubsectionSizeVertsLayerUVPan.x * InvLODScaleFactor - <span class="number">1</span>, </span><br><span class="line">        <span class="built_in">max</span>(LandscapeParameters.SubsectionSizeVertsLayerUVPan.x * <span class="number">0.5f</span> * InvLODScaleFactor, <span class="number">2</span>) - <span class="number">1</span> )</span><br><span class="line">         * LandscapeParameters.SubsectionSizeVertsLayerUVPan.y;</span><br><span class="line">    float2 InputPositionLODAdjusted = ActualLODCoordsInt / CoordTranslate.x;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// InputPositionNextLOD : Position for next LOD in base LOD units</span></span><br><span class="line">    float2 NextLODCoordsInt = <span class="built_in">floor</span>(ActualLODCoordsInt * <span class="number">0.5</span>);</span><br><span class="line">    float2 InputPositionNextLOD = NextLODCoordsInt / CoordTranslate.y;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// InputPositionLODAdjusted 怎么算出来的还没弄懂？</span></span><br><span class="line">    Intermediates.LocalPosition = <span class="built_in">lerp</span>( <span class="built_in">float3</span>(InputPositionLODAdjusted, Height), </span><br><span class="line">        <span class="built_in">float3</span>(InputPositionNextLOD, HeightNextLOD), MorphAlpha );</span><br><span class="line">    <span class="keyword">return</span> Intermediates;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后下面是 PC 上的逻辑</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">FVertexFactoryIntermediates <span class="title">GetVertexFactoryIntermediates</span><span class="params">(FVertexFactoryInput Input)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    FVertexFactoryIntermediates Intermediates;</span><br><span class="line"><span class="meta">#<span class="keyword">if</span> FEATURE_LEVEL &gt;= FEATURE_LEVEL_SM4</span></span><br><span class="line">    Intermediates.InputPosition = Input.Position;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">    <span class="comment">// 计算采样纹理坐标</span></span><br><span class="line">    float2 SampleCoords = InputPositionLODAdjusted * LandscapeParameters.HeightmapUVScaleBias.xy</span><br><span class="line">        + LandscapeParameters.HeightmapUVScaleBias.zw + <span class="number">0.5</span>*LandscapeParameters.HeightmapUVScaleBias.xy </span><br><span class="line">        + Intermediates.InputPosition.zw * LandscapeParameters.SubsectionOffsetParams.xy;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 采样高度图</span></span><br><span class="line">    float4 SampleValue = <span class="built_in">Texture2DSampleLevel</span>(LandscapeParameters.HeightmapTexture, </span><br><span class="line">        LandscapeParameters.HeightmapTextureSampler, SampleCoords, LodValue-Intermediates.LodBias.x);</span><br><span class="line">    <span class="type">float</span> Height = <span class="built_in">DecodePackedHeight</span>(SampleValue.xy);</span><br><span class="line"></span><br><span class="line">    Intermediates.LocalPosition = <span class="built_in">lerp</span>( <span class="built_in">float3</span>(InputPositionLODAdjusted, Height), </span><br><span class="line">        <span class="built_in">float3</span>(InputPositionNextLOD, HeightNextLOD), MorphAlpha );</span><br><span class="line">    <span class="keyword">return</span> Intermediates;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">float3 <span class="title">GetLocalPosition</span><span class="params">(FVertexFactoryIntermediates Intermediates)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">INVARIANT</span>(Intermediates.LocalPosition+<span class="built_in">float3</span>(Intermediates.InputPosition.zw * </span><br><span class="line">        LandscapeParameters.SubsectionOffsetParams.ww,<span class="number">0</span>));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">float4 <span class="title">VertexFactoryGetWorldPosition</span><span class="params">(FVertexFactoryInput Input, FVertexFactoryIntermediates Intermediates)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">INVARIANT</span>(<span class="built_in">TransformLocalToTranslatedWorld</span>(<span class="built_in">GetLocalPosition</span>(Intermediates)));</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>然后是将局部坐标转成世界坐标</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">float3 <span class="title">GetLocalPosition</span><span class="params">(FVertexFactoryIntermediates Intermediates)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">INVARIANT</span>(Intermediates.LocalPosition + </span><br><span class="line">        <span class="built_in">float3</span>(Intermediates.InputPosition.zw * LandscapeParameters.SubsectionOffsetParams.ww,<span class="number">0</span>));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">float4 <span class="title">VertexFactoryGetWorldPosition</span><span class="params">(FVertexFactoryInput Input, </span></span></span><br><span class="line"><span class="params"><span class="function">    FVertexFactoryIntermediates Intermediates)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">INVARIANT</span>(<span class="built_in">TransformLocalToTranslatedWorld</span>(<span class="built_in">GetLocalPosition</span>(Intermediates)));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Engine\Shaders\Private\VertexFactoryCommon.ush</span></span><br><span class="line"><span class="function">float4 <span class="title">TransformLocalToTranslatedWorld</span><span class="params">(float3 LocalPosition)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    float3 RotatedPosition = Primitive.LocalToWorld[<span class="number">0</span>].xyz * LocalPosition.xxx + </span><br><span class="line">        Primitive.LocalToWorld[<span class="number">1</span>].xyz * LocalPosition.yyy + </span><br><span class="line">        Primitive.LocalToWorld[<span class="number">2</span>].xyz * LocalPosition.zzz;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">float4</span>(RotatedPosition + (Primitive.LocalToWorld[<span class="number">3</span>].xyz + </span><br><span class="line">        ResolvedView.PreViewTranslation.xyz),<span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>下面是 Uniform 结构体定义，对应 Shader 中的 LandscapeParameters</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** The uniform shader parameters for a landscape draw call. */</span></span><br><span class="line"><span class="built_in">BEGIN_GLOBAL_SHADER_PARAMETER_STRUCT</span>(FLandscapeUniformShaderParameters, LANDSCAPE_API)</span><br><span class="line"><span class="built_in">SHADER_PARAMETER</span>(int32, ComponentBaseX)</span><br><span class="line"><span class="built_in">SHADER_PARAMETER</span>(int32, ComponentBaseY)</span><br><span class="line"><span class="built_in">SHADER_PARAMETER</span>(int32, SubsectionSizeVerts)</span><br><span class="line"><span class="built_in">SHADER_PARAMETER</span>(int32, NumSubsections)</span><br><span class="line"><span class="built_in">SHADER_PARAMETER</span>(int32, LastLOD)</span><br><span class="line"><span class="built_in">SHADER_PARAMETER</span>(FVector4, HeightmapUVScaleBias)</span><br><span class="line"><span class="built_in">SHADER_PARAMETER</span>(FVector4, WeightmapUVScaleBias)</span><br><span class="line"><span class="built_in">SHADER_PARAMETER</span>(FVector4, LandscapeLightmapScaleBias)</span><br><span class="line"><span class="built_in">SHADER_PARAMETER</span>(FVector4, SubsectionSizeVertsLayerUVPan)</span><br><span class="line"><span class="built_in">SHADER_PARAMETER</span>(FVector4, SubsectionOffsetParams)</span><br><span class="line"><span class="built_in">SHADER_PARAMETER</span>(FVector4, LightmapSubsectionOffsetParams)</span><br><span class="line">    <span class="built_in">SHADER_PARAMETER</span>(FVector4, BlendableLayerMask)</span><br><span class="line"><span class="built_in">SHADER_PARAMETER</span>(FMatrix, LocalToWorldNoScaling)</span><br><span class="line"><span class="built_in">SHADER_PARAMETER_TEXTURE</span>(Texture2D, HeightmapTexture)</span><br><span class="line"><span class="built_in">SHADER_PARAMETER_SAMPLER</span>(SamplerState, HeightmapTextureSampler)</span><br><span class="line"><span class="built_in">SHADER_PARAMETER_TEXTURE</span>(Texture2D, NormalmapTexture)</span><br><span class="line"><span class="built_in">SHADER_PARAMETER_SAMPLER</span>(SamplerState, NormalmapTextureSampler)</span><br><span class="line"><span class="built_in">SHADER_PARAMETER_TEXTURE</span>(Texture2D, XYOffsetmapTexture)</span><br><span class="line"><span class="built_in">SHADER_PARAMETER_SAMPLER</span>(SamplerState, XYOffsetmapTextureSampler)</span><br><span class="line"><span class="built_in">END_GLOBAL_SHADER_PARAMETER_STRUCT</span>()</span><br><span class="line"></span><br><span class="line"><span class="comment">// 在下面函数会对这个 Uniform 进行赋值</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">FLandscapeComponentSceneProxy::OnTransformChanged</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// Set FLandscapeUniformVSParameters for this subsection</span></span><br><span class="line">    FLandscapeUniformShaderParameters LandscapeParams;</span><br><span class="line">    LandscapeParams.ComponentBaseX = ComponentBase.X;</span><br><span class="line">    LandscapeParams.ComponentBaseY = ComponentBase.Y;</span><br><span class="line">    LandscapeParams.SubsectionSizeVerts = SubsectionSizeVerts;</span><br><span class="line">    LandscapeParams.NumSubsections = NumSubsections;</span><br><span class="line">    LandscapeParams.LastLOD = LastLOD;</span><br><span class="line">    LandscapeParams.HeightmapUVScaleBias = HeightmapScaleBias;</span><br><span class="line">    LandscapeParams.WeightmapUVScaleBias = WeightmapScaleBias;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>RenderDoc 抓帧查看 Uniform Buff 数据</p>
+<img src="/images/landscape_mobile/uniform_buffer.png" width="100%" height="100%" />
+
+<p>Primitive 数据如下：</p>
+<img src="/images/landscape_mobile/primitive_param.png" width="80%" height="80%" />
+
+<p>Landscape 参数</p>
+<img src="/images/landscape_mobile/landscape_param.png" width="80%" height="80%" />
+
+<p>最终计算得出的 Mesh 如下：</p>
+<img src="/images/landscape_mobile/vs_out.png" width="80%" height="80%" />
+
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/144031549">1.UE4 Mobile Landscape 总览及源码解析</a><br><a target="_blank" rel="noopener" href="https://zwcloud.net/#blog/109">2.UE4移动端地形理解 - 高度LOD</a></p>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.css">
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    小贤
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://xianlong.space/2022/03/03/landscape-mobile/" title="UE4 地形 landscape">http://xianlong.space/2022/03/03/landscape-mobile/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/C/" rel="tag"># C++</a>
+          
+            <a href="/tags/UE4/" rel="tag"># UE4</a>
+          
+            <a href="/tags/Landscape/" rel="tag"># Landscape</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/12/14/ue4-render-pipline/" rel="next" title="UE4 Render Pipeline">
+                <i class="fa fa-chevron-left"></i> UE4 Render Pipeline
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="小贤" />
+            
+              <p class="site-author-name" itemprop="name">小贤</p>
+              <p class="site-description motion-element" itemprop="description">Watch and learn, your magic is mine!</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+                <a href="/archives">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/qq317423892" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:xianlongok@163.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+            <div class="cc-license motion-element" itemprop="license">
+              <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" target="_blank">
+                <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+              </a>
+            </div>
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://scorpioq.github.io/" title="ScorpioQ" target="_blank">ScorpioQ</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#UE4-Landscape-Mobile"><span class="nav-text">UE4 Landscape Mobile</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-UE4-%E6%B8%B2%E6%9F%93%E6%B5%81%E7%A8%8B"><span class="nav-text">1. UE4 渲染流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-UE4-%E6%B8%B2%E6%9F%93%E7%BA%BF%E7%A8%8B"><span class="nav-text">1.1 UE4 渲染线程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E6%B8%B2%E6%9F%93%E6%A6%82%E5%BF%B5"><span class="nav-text">1.2 渲染概念</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Landscape-%E6%B8%B2%E6%9F%93%E6%B5%81%E7%A8%8B"><span class="nav-text">2. Landscape 渲染流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-UE4-%E5%9C%B0%E5%BD%A2%E7%B1%BB%E7%BB%93%E6%9E%84"><span class="nav-text">2.1 UE4 地形类结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-UE4-%E5%9C%B0%E5%BD%A2%E6%B8%B2%E6%9F%93%E8%BF%87%E7%A8%8B"><span class="nav-text">2.2 UE4 地形渲染过程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-1-%E5%9C%B0%E5%BD%A2%E7%BB%84%E6%88%90%E7%BB%93%E6%9E%84"><span class="nav-text">2.2.1 地形组成结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-2-%E5%88%9B%E5%BB%BA-SceneProxy"><span class="nav-text">2.2.2 创建 SceneProxy</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-3-%E5%88%9B%E5%BB%BA%E6%B8%B2%E6%9F%93%E8%B5%84%E6%BA%90"><span class="nav-text">2.2.3 创建渲染资源</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-4-%E9%A1%B6%E7%82%B9%E6%95%B0%E6%8D%AE"><span class="nav-text">2.2.4 顶点数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-5-vertext-shader"><span class="nav-text">2.2.5 vertext shader</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="nav-text">参考文献</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小贤</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">21.5k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: true,
+        notify: false,
+        appId: '7TO2HV1Xg9swHbSsI2kFt1H7-gzGzoHsz',
+        appKey: 'FgrhitpMKU9Ff5RhDKrpPgog',
+        placeholder: 'ヾﾉ≧∀≦)o来啊，快活啊!',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

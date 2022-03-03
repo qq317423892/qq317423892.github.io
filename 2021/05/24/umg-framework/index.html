@@ -107,7 +107,7 @@
 
 
 
-  <meta name="keywords" content="UE4,C++," />
+  <meta name="keywords" content="C++,UE4," />
 
 
 
@@ -128,8 +128,8 @@
 <meta property="article:published_time" content="2021-05-24T12:27:11.000Z">
 <meta property="article:modified_time" content="2021-06-16T13:21:59.778Z">
 <meta property="article:author" content="小贤">
-<meta property="article:tag" content="UE4">
 <meta property="article:tag" content="C++">
+<meta property="article:tag" content="UE4">
 <meta name="twitter:card" content="summary">
 
 
@@ -176,7 +176,7 @@
 
 
 
-<meta name="generator" content="Hexo 5.4.0"><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+<meta name="generator" content="Hexo 5.4.1"><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 
@@ -490,9 +490,9 @@
 <img  src=http://www.plantuml.com/plantuml/svg/VPB1Ri8m44Jl-GgVA_45HHo2ggeILL6JmDaas-1YwiesAWZrtyjclH37eHoGipDvCtPSQ-cSgDusdr1xSVxDicgbt45gCPbCPYnaDTc2XBQiMgkc1HzyfB2Ff7CcBhzgARz05zhu1u7_Zzrq3NAtz7PQa7KcNa-q6iYKVpCzpzc6LUTclp6vELvA7Bwn1ebSuofJaxBOIWiDSaN1sZHiyM4caCzZuZyroikDXXAEk56hsgrFOo9N4bNqPOpeFrFCorws40uoHfEIChivmhe5KHRA-PM2drowSLXaI9abbc8TsT4WpWZyFd6OCfB0qktCCOQdbB2qfhNWN2xjw2RwUfhGKn7TUoGwdlb2dip1Ns-lXe-HRveOpztxxwhUefHhK-z2lw6L4R4txHhfs3OQKDz2gmRidUiTn9HC0Y9fTTixzoRSlUR_jOuQ3zgMYkxBu7PSiIoFK8CKtmoU1he5flCtInA2PIGWA8E0CCM0Fm00>
 
 <h2 id="1-2-可以增加子节点的控件："><a href="#1-2-可以增加子节点的控件：" class="headerlink" title="1.2 可以增加子节点的控件："></a>1.2 可以增加子节点的控件：</h2><h3 id="1-2-1-可以有一个子节点控件"><a href="#1-2-1-可以有一个子节点控件" class="headerlink" title="1.2.1 可以有一个子节点控件"></a>1.2.1 可以有一个子节点控件</h3><p>有一个子节点的控件继承的父类依次是 <strong>UComponentWidget</strong> -&gt; <strong>UPanelWidget</strong>，父类<strong>UComponentWidget</strong>构造函数中设置了不允许多个孩子标记位：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">UContentWidget::<span class="built_in">UContentWidget</span>(<span class="keyword">const</span> FObjectInitializer&amp; ObjectInitializer)</span><br><span class="line">    : <span class="built_in">Super</span>(ObjectInitializer)</span><br><span class="line">&#123;</span><br><span class="line">    bCanHaveMultipleChildren = <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">UContentWidget::<span class="built_in">UContentWidget</span>(<span class="type">const</span> FObjectInitializer&amp; ObjectInitializer)</span><br><span class="line">    : <span class="built_in">Super</span>(ObjectInitializer)</span><br><span class="line">&#123;</span><br><span class="line">    bCanHaveMultipleChildren = <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>公共基类<strong>UPanelWidget</strong>定义了<strong>AddChild</strong>函数，可以增加对应的子节点：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">UPanelSlot* <span class="title">UPanelWidget::AddChild</span><span class="params">(UWidget* Content)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> ( Content == <span class="literal">nullptr</span> )</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ( !bCanHaveMultipleChildren &amp;&amp; <span class="built_in">GetChildrenCount</span>() &gt; <span class="number">0</span> )</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Content-&gt;<span class="built_in">RemoveFromParent</span>();</span><br><span class="line"></span><br><span class="line">    EObjectFlags NewObjectFlags = RF_Transactional;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">HasAnyFlags</span>(RF_Transient))</span><br><span class="line">    &#123;</span><br><span class="line">        NewObjectFlags |= RF_Transient;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    UPanelSlot* PanelSlot = NewObject&lt;UPanelSlot&gt;(<span class="keyword">this</span>, <span class="built_in">GetSlotClass</span>(), NAME_None, NewObjectFlags);</span><br><span class="line">    PanelSlot-&gt;Content = Content;</span><br><span class="line">    PanelSlot-&gt;Parent = <span class="keyword">this</span>;</span><br><span class="line"></span><br><span class="line">    Content-&gt;Slot = PanelSlot;</span><br><span class="line"></span><br><span class="line">    Slots.<span class="built_in">Add</span>(PanelSlot);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">OnSlotAdded</span>(PanelSlot);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">InvalidateLayoutAndVolatility</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> PanelSlot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">UPanelSlot* <span class="title">UPanelWidget::AddChild</span><span class="params">(UWidget* Content)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> ( Content == <span class="literal">nullptr</span> )</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ( !bCanHaveMultipleChildren &amp;&amp; <span class="built_in">GetChildrenCount</span>() &gt; <span class="number">0</span> )</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Content-&gt;<span class="built_in">RemoveFromParent</span>();</span><br><span class="line"></span><br><span class="line">    EObjectFlags NewObjectFlags = RF_Transactional;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">HasAnyFlags</span>(RF_Transient))</span><br><span class="line">    &#123;</span><br><span class="line">        NewObjectFlags |= RF_Transient;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    UPanelSlot* PanelSlot = <span class="built_in">NewObject</span>&lt;UPanelSlot&gt;(<span class="keyword">this</span>, <span class="built_in">GetSlotClass</span>(), NAME_None, NewObjectFlags);</span><br><span class="line">    PanelSlot-&gt;Content = Content;</span><br><span class="line">    PanelSlot-&gt;Parent = <span class="keyword">this</span>;</span><br><span class="line"></span><br><span class="line">    Content-&gt;Slot = PanelSlot;</span><br><span class="line"></span><br><span class="line">    Slots.<span class="built_in">Add</span>(PanelSlot);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">OnSlotAdded</span>(PanelSlot);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">InvalidateLayoutAndVolatility</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> PanelSlot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>其中，<strong>GetSlotClass</strong>返回对应控件的<strong>Slot</strong>的类型，在类视图里，带红色方格的标记的，是各自控件<strong>GetSlotClass</strong>返回的<strong>Slot</strong>的类型。Slot会分别指向父节点跟子节点。</p>
 <img  src=http://www.plantuml.com/plantuml/svg/VLFBRe905Dtp5RDK6xv0Ow8iN3MQKchItGXNeHAc6SP4Q_hlPUwT5mLbGUREEPp707dDsvPbsyCNv8hTVwCe-wZQ2wzP7ClgLAfuQT4e9wx1aRklYXEea4kevH9-ZrXtxO6VTqekKjfSijSRhUPzcDmyQPDO6lBYRCSRgDDQg1dJztcaaxZDBimmXqSfYmasOube53Gc0j4ijECI4QVkocfz6dhwOTdtbPJyjl36IypQaj5Bbk1pCxO1fVTnd4mj6ZHS5KLILdKn-HzvEZmFochmNjeWdutSfzqVYAs5B41sAfTlhTDxo2ePZYcUbjsv5VWc2T3la5OkCOs1oqKfqPYiunx46F5003rmvJrm38wbXFoy5jTdBeupzB6GTiBrGLn9EEL7-1GDF1DsdA6mWxIo7LmBk-5xl87YLGEIgjHmL0zTG-hGsAB-J-llc7RL3v2L-yN76nhUs5U0XsO8lXdDjjWV>
 
@@ -544,9 +544,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/UE4/" rel="tag"># UE4</a>
-          
             <a href="/tags/C/" rel="tag"># C++</a>
+          
+            <a href="/tags/UE4/" rel="tag"># UE4</a>
           
         </div>
       
@@ -653,7 +653,7 @@
             
               <div class="site-state-item site-state-posts">
                 <a href="/archives">
-                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-count">11</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -675,7 +675,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">9</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -771,7 +771,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
@@ -785,7 +785,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">18.2k</span>
+    <span title="Site words total count">21.5k</span>
   
 </div>
 
