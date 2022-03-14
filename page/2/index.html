@@ -333,6 +333,217 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://xianlong.space/2021/03/25/injectfix-doc/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="小贤">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="十三的blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2021/03/25/injectfix-doc/" itemprop="url">InjectFix学习笔记</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-03-25T12:52:30+08:00">
+                2021-03-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Unity%E5%BC%80%E5%8F%91/" itemprop="url" rel="index">
+                    <span itemprop="name">Unity开发</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2021/03/25/injectfix-doc/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2021/03/25/injectfix-doc/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1.8k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  8
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="1-InjectFix-工作流程"><a href="#1-InjectFix-工作流程" class="headerlink" title="1.InjectFix 工作流程"></a>1.InjectFix 工作流程</h2><ul>
+<li>打新包<ul>
+<li>其他预处理</li>
+<li>预先配置好需要Patch的类跟函数，提交配置Configure代码</li>
+<li>打包机打包时，自动reload被Inject的dll，保证当前的dll没有被注入过</li>
+<li>调用InjectFix提供的注入函数，注入WrappersManagerImpl，ILFixInterfaceBridge，ILFixDynamicMethodWrapper，IDMAP-1跟插桩代码dll</li>
+<li>执行il2cpp处理</li>
+<li>执行其他预处理</li>
+</ul>
+</li>
+<li>Patch阶段<ul>
+<li>修复代码<ul>
+<li>修复函数：使用标签[IFix.Patch]</li>
+<li>新增类、属性、方法：使用标签[IFix.Interpret] </li>
+</ul>
+</li>
+<li>调用InjectFix提供的打Patch函数，生成Patch文件</li>
+<li>生成Patch文件的AssetsBuddle包</li>
+<li>上传更新过后的AssetsBuddle包</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>ps：在patch过程中，如果没有重新打出新的包体，不要删除Patch标签</p>
+</blockquote>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2021/03/25/injectfix-doc/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://xianlong.space/2021/03/21/hello-world/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -566,7 +777,7 @@
             
               <div class="site-state-item site-state-posts">
                 <a href="/archives">
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -682,7 +893,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">21.5k</span>
+    <span title="Site words total count">24k</span>
   
 </div>
 
