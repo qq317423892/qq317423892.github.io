@@ -157,7 +157,7 @@
 <meta property="og:image" content="http://xianlong.space/images/landscape_texture_array/block_bug.png">
 <meta property="og:image" content="http://xianlong.space/images/landscape_texture_array/hp_diff.png">
 <meta property="article:published_time" content="2022-03-14T09:18:28.000Z">
-<meta property="article:modified_time" content="2022-03-14T09:42:06.094Z">
+<meta property="article:modified_time" content="2022-03-15T01:07:54.535Z">
 <meta property="article:author" content="小贤">
 <meta property="article:tag" content="C++">
 <meta property="article:tag" content="UE4">
@@ -625,7 +625,7 @@
 <p>可以得出计算得出的 LayerTexCoord 其实就是 Landscape 中每个顶点对应在 Component 中的位置。最终计算出来的 TextCorrd_0 结果如下图，可以看到计算得出的 UV 其实大部分都会大于 1，采样的时候贴图设置的是 Wrap，因此最终地形上的纹理会平铺。</p>
 <img src="/images/landscape_texture_array/fs_out_texcoord0.png" width="100%" height="100%" />
 
-<p>下面是不同方式采样贴图，跟是否使用高精度的对照图，左边列的是使用 TextureCoord 采样贴图的，右边列是使用 LandScapeCorrd 方式，上面一排是为勾选高精度，下面一排是勾选了高精度的。<br><img src="/images/landscape_texture_array/compare.png" width="100%" height="100%" /></p>
+<p>下面是不同方式采样贴图，跟是否使用高精度的对照图，左边列的是使用 TextureCoord 采样贴图的（Corrd），右边列是使用 LandScapeCorrd 方式（LandScape），上面一排是未勾选高精度（normal），下面一排是勾选了高精度的（hp）。<br><img src="/images/landscape_texture_array/compare.png" width="100%" height="100%" /></p>
 <p>而且离地形远点越远，偏差越大</p>
 <img src="/images/landscape_texture_array/block_bug.png" width="100%" height="100%" />
 
