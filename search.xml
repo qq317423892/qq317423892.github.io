@@ -601,6 +601,7 @@
       <tags>
         <tag>C++</tag>
         <tag>UE4</tag>
+        <tag>GC</tag>
       </tags>
   </entry>
   <entry>
@@ -765,6 +766,7 @@
         <tag>C++</tag>
         <tag>UE4</tag>
         <tag>Landscape</tag>
+        <tag>TextureArray</tag>
       </tags>
   </entry>
   <entry>
@@ -892,6 +894,7 @@
       <tags>
         <tag>C++</tag>
         <tag>UE4</tag>
+        <tag>Reflection</tag>
       </tags>
   </entry>
   <entry>
@@ -948,6 +951,7 @@
       <tags>
         <tag>C++</tag>
         <tag>UE4</tag>
+        <tag>UMG</tag>
       </tags>
   </entry>
   <entry>
@@ -982,6 +986,8 @@
       <tags>
         <tag>C++</tag>
         <tag>UE4</tag>
+        <tag>GC</tag>
+        <tag>Static</tag>
       </tags>
   </entry>
   <entry>
@@ -1026,6 +1032,7 @@
       <tags>
         <tag>C++</tag>
         <tag>UE4</tag>
+        <tag>UMG</tag>
       </tags>
   </entry>
   <entry>
@@ -1163,10 +1170,13 @@
       <categories>
         <category>UE4</category>
         <category>SlateUI</category>
+        <category>UMG</category>
       </categories>
       <tags>
         <tag>C++</tag>
         <tag>UE4</tag>
+        <tag>UMG</tag>
+        <tag>Slate</tag>
       </tags>
   </entry>
   <entry>
