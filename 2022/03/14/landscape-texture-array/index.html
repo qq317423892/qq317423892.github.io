@@ -157,7 +157,7 @@
 <meta property="og:image" content="http://xianlong.space/images/landscape_texture_array/block_bug.png">
 <meta property="og:image" content="http://xianlong.space/images/landscape_texture_array/hp_diff.png">
 <meta property="article:published_time" content="2022-03-14T09:18:28.000Z">
-<meta property="article:modified_time" content="2022-03-15T01:07:54.535Z">
+<meta property="article:modified_time" content="2022-03-15T02:44:23.977Z">
 <meta property="article:author" content="小贤">
 <meta property="article:tag" content="C++">
 <meta property="article:tag" content="UE4">
@@ -463,7 +463,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2.5k
+                  2.6k
                 </span>
               
 
@@ -479,7 +479,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  11
+                  12
                 </span>
               
             </div>
@@ -647,6 +647,9 @@
 
 <p>反编译后的代码 diff 如下：</p>
 <img src="/images/landscape_texture_array/hp_diff.png" width="80%" height="80%" />
+
+<p>然后抓帧查看 Landscape 开启高精度后的 ps 代码，来验证一下之前的问题：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 开启高精度后，v13 被定义成了 highp，对比未开启高精度的 v30</span></span><br><span class="line">highp vec2 v13;</span><br><span class="line">v13.x = <span class="built_in">dot</span>(in_TEXCOORD0, <span class="built_in">vec2</span>(<span class="number">1.0</span>, <span class="number">0.0</span>));</span><br><span class="line">v13.y = <span class="built_in">dot</span>(in_TEXCOORD0, <span class="built_in">vec2</span>(<span class="number">-0.0</span>, <span class="number">1.0</span>));</span><br><span class="line">highp vec2 v14 = v13 * _16.pu_h[<span class="number">7</span>].xx;</span><br><span class="line">highp vec3 v15 = <span class="built_in">clamp</span>((<span class="built_in">texture</span>(Material_Texture2D_0, v14).xyz * <span class="built_in">vec3</span>(<span class="built_in">dot</span>(v5, _16.pu_h[<span class="number">5</span>]))) + </span><br><span class="line">    (<span class="built_in">texture</span>(Material_Texture2D_1, v14).xyz * <span class="built_in">vec3</span>(<span class="built_in">dot</span>(v5, _16.pu_h[<span class="number">6</span>]))), <span class="built_in">vec3</span>(<span class="number">0.0</span>), <span class="built_in">vec3</span>(<span class="number">1.0</span>));</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p>应用修改后，效果也完全正确，因此，当使用 LandscapeCord 节点获取 UV 坐标时，UE4 编译生成的代码，会对变量做优化，增加 RelaxedPrecision，这就导致在不同的设备上，运行计算的精度是不确定的，因此在使用该节点时需要注意。</p>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.css">
@@ -923,7 +926,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">24k</span>
+    <span title="Site words total count">24.1k</span>
   
 </div>
 
