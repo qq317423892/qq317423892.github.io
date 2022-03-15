@@ -129,8 +129,9 @@
 <meta property="og:image" content="http://xianlong.space/images/hello_world/next_theme_err.png">
 <meta property="og:image" content="http://xianlong.space/images/hello_world/site_info.png">
 <meta property="og:image" content="http://xianlong.space/images/hello_world/site_info_avatar.png">
+<meta property="og:image" content="http://xianlong.space/images/hello_world/busuanzi.png">
 <meta property="article:published_time" content="2021-03-21T04:52:30.000Z">
-<meta property="article:modified_time" content="2021-06-17T06:11:36.053Z">
+<meta property="article:modified_time" content="2022-03-15T05:14:03.946Z">
 <meta property="article:author" content="小贤">
 <meta property="article:tag" content="others">
 <meta name="twitter:card" content="summary">
@@ -393,8 +394,19 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/" itemprop="url" rel="index">
-                    <span itemprop="name">杂七杂八</span>
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index">
+                    <span itemprop="name">博客</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/Hexo/" itemprop="url" rel="index">
+                    <span itemprop="name">Hexo</span>
                   </a>
                 </span>
 
@@ -439,7 +451,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.5k
+                  1.6k
                 </span>
               
 
@@ -455,7 +467,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  6
+                  7
                 </span>
               
             </div>
@@ -568,10 +580,23 @@
 <h3 id="2-8-站内搜索"><a href="#2-8-站内搜索" class="headerlink" title="2.8 站内搜索"></a>2.8 站内搜索</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo<span class="operator">-</span>generator<span class="operator">-</span><span class="keyword">search</span> <span class="comment">--save</span></span><br><span class="line">npm install hexo<span class="operator">-</span>generator<span class="operator">-</span>searchdb <span class="comment">--save</span></span><br></pre></td></tr></table></figure>
 
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># Dependencies: https:<span class="operator">/</span><span class="operator">/</span>github.com<span class="operator">/</span>flashlab<span class="operator">/</span>hexo<span class="operator">-</span>generator<span class="operator">-</span><span class="keyword">search</span></span><br><span class="line">local_search:</span><br><span class="line">  enable: <span class="literal">true</span></span><br><span class="line">  # if auto, <span class="keyword">trigger</span> <span class="keyword">search</span> <span class="keyword">by</span> changing input</span><br><span class="line">  # if manual, <span class="keyword">trigger</span> <span class="keyword">search</span> <span class="keyword">by</span> pressing enter key <span class="keyword">or</span> <span class="keyword">search</span> button</span><br><span class="line">  <span class="keyword">trigger</span>: auto</span><br><span class="line">  # <span class="keyword">show</span> top n results <span class="keyword">per</span> article, <span class="keyword">show</span> <span class="keyword">all</span> results <span class="keyword">by</span> setting <span class="keyword">to</span> <span class="number">-1</span></span><br><span class="line">  top_n_per_article: <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
 <h3 id="2-9-plantUML"><a href="#2-9-plantUML" class="headerlink" title="2.9 plantUML"></a>2.9 plantUML</h3><p>npm install hexo-tag-plantuml</p>
 <figure class="highlight axapta"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&#123;% plantuml %&#125;</span><br><span class="line">title Relationships - Class Diagram</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Dwelling</span> &#123;</span><br><span class="line">  +Int Windows</span><br><span class="line">  +<span class="keyword">void</span> LockTheDoor()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Apartment</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">House</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Commune</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Window</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Door</span></span><br><span class="line"></span><br><span class="line">Dwelling &lt;|-down- Apartment: Inheritance</span><br><span class="line">Dwelling &lt;|-down- Commune: Inheritance</span><br><span class="line">Dwelling &lt;|-down- House: Inheritance</span><br><span class="line">Dwelling <span class="string">&quot;1&quot;</span> *-up- <span class="string">&quot;many&quot;</span> Window: Composition</span><br><span class="line">Dwelling <span class="string">&quot;1&quot;</span> *-up- <span class="string">&quot;many&quot;</span> Door: Composition</span><br><span class="line">&#123;% endplantuml %&#125;</span><br></pre></td></tr></table></figure>
 <p>效果如下：</p>
-<img  src=http://www.plantuml.com/plantuml/svg/XP0z2y8m48Rt_8gZanzaS2qkKWSBJY8uXpQqXybTQ5ABgF_TrhQAuCUMbpptt4V0O3Jij541cNo9peE4n2ZlOOsgg9GL8kjZeur1Ak0Y0EOf1JWWvTpuBfuOSzXoTjoNUirSJQRYDXQkdAg2rHI6lE7Qw-6TiBKrZQaNZlrQZH3FhikhRFz8ldGnf5Jg2eEYJ7y01_S_x37E5oXQH32JjPCGMKNdQ9WmxjoEFNP7-q5tAxonTm00><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.css">
+<img  src=http://www.plantuml.com/plantuml/svg/XP0z2y8m48Rt_8gZanzaS2qkKWSBJY8uXpQqXybTQ5ABgF_TrhQAuCUMbpptt4V0O3Jij541cNo9peE4n2ZlOOsgg9GL8kjZeur1Ak0Y0EOf1JWWvTpuBfuOSzXoTjoNUirSJQRYDXQkdAg2rHI6lE7Qw-6TiBKrZQaNZlrQZH3FhikhRFz8ldGnf5Jg2eEYJ7y01_S_x37E5oXQH32JjPCGMKNdQ9WmxjoEFNP7-q5tAxonTm00>
+
+<h2 id="2-10-不算子统计访问量"><a href="#2-10-不算子统计访问量" class="headerlink" title="2.10 不算子统计访问量"></a>2.10 不算子统计访问量</h2><p>打开 \themes\next_config.yml，搜索找到 busuanzi_count，把 enable 设置为 true，并增加如下配置：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># <span class="title class_">Show</span> <span class="variable constant_">PV</span>/<span class="variable constant_">UV</span> <span class="keyword">of</span> the website/page <span class="keyword">with</span> busuanzi.</span><br><span class="line"># <span class="title class_">Get</span> more information on <span class="attr">http</span>:<span class="comment">//ibruce.info/2015/04/04/busuanzi/</span></span><br><span class="line"><span class="attr">busuanzi_count</span>:</span><br><span class="line">  # count values only <span class="keyword">if</span> the other configs are <span class="literal">false</span></span><br><span class="line">  <span class="attr">enable</span>: <span class="literal">true</span> </span><br><span class="line">  <span class="attr">total_visitors</span>: <span class="literal">true</span>  # 统计访客数</span><br><span class="line">  <span class="attr">total_visitors_icon</span>: user</span><br><span class="line">  <span class="attr">total_views</span>: <span class="literal">true</span>     # 统计访问数</span><br><span class="line">  <span class="attr">total_views_icon</span>: eye</span><br><span class="line">  <span class="attr">post_views</span>: <span class="literal">true</span>      # 统计文章阅读数</span><br><span class="line">  <span class="attr">post_views_icon</span>: eye</span><br></pre></td></tr></table></figure>
+
+<p>在该文件中找到 footer，并在该配置下增加 counter，设置值为 true</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">counter</span>: <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<p>来到 themes\next\layout_partials，找到footer.swig文件，打开编辑，在底下添加代码</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;% <span class="keyword">if</span> theme.<span class="property">footer</span>.<span class="property">counter</span> %&#125;</span><br><span class="line">    &lt;script <span class="keyword">async</span> src=<span class="string">&quot;//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js&quot;</span>&gt;&lt;/script&gt;</span><br><span class="line">&#123;% endif %&#125;</span><br></pre></td></tr></table></figure>
+
+<p>效果如下：</p>
+<img src="/images/hello_world/busuanzi.png" width=50% height=50% /><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.css">
       
     </div>
     
@@ -720,7 +745,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -800,7 +825,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%89%8D%E6%9C%9F%E5%87%86%E5%A4%87"><span class="nav-text">1. 前期准备</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E5%AE%89%E8%A3%85%E5%BF%85%E8%A6%81%E5%B7%A5%E5%85%B7"><span class="nav-text">1.1 安装必要工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E5%88%9B%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84github-io"><span class="nav-text">1.2 创建自己的github.io</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E7%94%9F%E6%88%90%E5%85%AC%E7%A7%81%E9%92%A5"><span class="nav-text">1.3 生成公私钥</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-%E9%85%8D%E7%BD%AESSH-Key%E5%88%B0GitHub"><span class="nav-text">1.4 配置SSH Key到GitHub</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Hexo%E4%BD%BF%E7%94%A8"><span class="nav-text">2. Hexo使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%AE%89%E8%A3%85Hexo"><span class="nav-text">2.1 安装Hexo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E9%83%A8%E7%BD%B2Hexo"><span class="nav-text">2.1 部署Hexo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E6%9B%B4%E6%8D%A2%E4%B8%BB%E9%A2%98NexT"><span class="nav-text">2.2 更换主题NexT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E7%AB%99%E7%82%B9%E6%A6%82%E5%86%B5"><span class="nav-text">2.3 站点概况</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-%E6%96%B0%E5%A2%9E%E7%9B%AE%E5%BD%95"><span class="nav-text">2.4 新增目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-%E6%96%B0%E5%BB%BA%E6%96%87%E7%AB%A0"><span class="nav-text">2.5 新建文章</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-6-%E8%AE%BE%E7%BD%AE%E6%96%87%E7%AB%A0%E5%AD%97%E6%95%B0"><span class="nav-text">2.6 设置文章字数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-7-%E8%AE%BE%E7%BD%AE%E6%96%87%E7%AB%A0%E5%88%86%E5%89%B2%EF%BC%88%E5%85%A8%E9%83%A8%E6%98%BE%E7%A4%BA%EF%BC%89"><span class="nav-text">2.7 设置文章分割（全部显示）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-8-%E7%AB%99%E5%86%85%E6%90%9C%E7%B4%A2"><span class="nav-text">2.8 站内搜索</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-9-plantUML"><span class="nav-text">2.9 plantUML</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%89%8D%E6%9C%9F%E5%87%86%E5%A4%87"><span class="nav-text">1. 前期准备</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E5%AE%89%E8%A3%85%E5%BF%85%E8%A6%81%E5%B7%A5%E5%85%B7"><span class="nav-text">1.1 安装必要工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E5%88%9B%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84github-io"><span class="nav-text">1.2 创建自己的github.io</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E7%94%9F%E6%88%90%E5%85%AC%E7%A7%81%E9%92%A5"><span class="nav-text">1.3 生成公私钥</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-%E9%85%8D%E7%BD%AESSH-Key%E5%88%B0GitHub"><span class="nav-text">1.4 配置SSH Key到GitHub</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Hexo%E4%BD%BF%E7%94%A8"><span class="nav-text">2. Hexo使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%AE%89%E8%A3%85Hexo"><span class="nav-text">2.1 安装Hexo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E9%83%A8%E7%BD%B2Hexo"><span class="nav-text">2.1 部署Hexo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E6%9B%B4%E6%8D%A2%E4%B8%BB%E9%A2%98NexT"><span class="nav-text">2.2 更换主题NexT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E7%AB%99%E7%82%B9%E6%A6%82%E5%86%B5"><span class="nav-text">2.3 站点概况</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-%E6%96%B0%E5%A2%9E%E7%9B%AE%E5%BD%95"><span class="nav-text">2.4 新增目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-%E6%96%B0%E5%BB%BA%E6%96%87%E7%AB%A0"><span class="nav-text">2.5 新建文章</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-6-%E8%AE%BE%E7%BD%AE%E6%96%87%E7%AB%A0%E5%AD%97%E6%95%B0"><span class="nav-text">2.6 设置文章字数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-7-%E8%AE%BE%E7%BD%AE%E6%96%87%E7%AB%A0%E5%88%86%E5%89%B2%EF%BC%88%E5%85%A8%E9%83%A8%E6%98%BE%E7%A4%BA%EF%BC%89"><span class="nav-text">2.7 设置文章分割（全部显示）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-8-%E7%AB%99%E5%86%85%E6%90%9C%E7%B4%A2"><span class="nav-text">2.8 站内搜索</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-9-plantUML"><span class="nav-text">2.9 plantUML</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-10-%E4%B8%8D%E7%AE%97%E5%AD%90%E7%BB%9F%E8%AE%A1%E8%AE%BF%E9%97%AE%E9%87%8F"><span class="nav-text">2.10 不算子统计访问量</span></a></li></ol></div>
             
 
           </div>
@@ -841,7 +866,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">24.1k</span>
+    <span title="Site words total count">24.3k</span>
   
 </div>
 
