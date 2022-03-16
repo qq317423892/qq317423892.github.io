@@ -2575,7 +2575,7 @@ mark.search-keyword {
 }
 .header-inner {
   background: var(--content-bg-color);
-  border-radius: initial;
+  border-radius: 6px 6px 6px 6px;
   box-shadow: initial;
   width: 240px;
 }
@@ -2609,7 +2609,7 @@ mark.search-keyword {
   }
 }
 .main-inner {
-  border-radius: initial;
+  border-radius: 6px 6px 6px 6px;
   box-sizing: border-box;
   width: calc(100% - 252px);
 }
@@ -2751,7 +2751,7 @@ mark.search-keyword {
 }
 .sidebar-inner {
   background: var(--content-bg-color);
-  border-radius: initial;
+  border-radius: 6px;
   box-shadow: initial;
   box-sizing: border-box;
   color: var(--text-color);
