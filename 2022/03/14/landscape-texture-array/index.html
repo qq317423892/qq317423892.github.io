@@ -20,46 +20,46 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
   <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"xianlong.site","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.10.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"xianlongok.site","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.10.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
     <meta name="description" content="Landscape 使用 TextureArray UE4 中 Landscape 一般会用到多张贴图来丰富地形地貌，例如下面是一个地形的例子：  这个地形包含 7 个 Layer，每个 Layer 由三张贴图组成：  然后再加上权重图，在打安卓包时，就会出现如下错误：  1 2 3 4 5 6 7   UATHelper: Packaging (Android (ASTC)):   LogSha">
 <meta property="og:type" content="article">
 <meta property="og:title" content="UE4 landscape 使用 Texture Array">
-<meta property="og:url" content="http://xianlong.site/2022/03/14/landscape-texture-array/index.html">
+<meta property="og:url" content="http://xianlongok.site/2022/03/14/landscape-texture-array/index.html">
 <meta property="og:site_name" content="十三的blog">
 <meta property="og:description" content="Landscape 使用 TextureArray UE4 中 Landscape 一般会用到多张贴图来丰富地形地貌，例如下面是一个地形的例子：  这个地形包含 7 个 Layer，每个 Layer 由三张贴图组成：  然后再加上权重图，在打安卓包时，就会出现如下错误：  1 2 3 4 5 6 7   UATHelper: Packaging (Android (ASTC)):   LogSha">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://xianlong.site/images/landscape_texture_array/landscape_layer.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_texture_array/landscape_texture.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_texture_array/create_texture_array.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_texture_array/create_texture_array_batch.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_texture_array/add_texture.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_texture_array/mipmaps.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_texture_array/compression.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_texture_array/mat_normal.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_texture_array/mat_texture_array.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_texture_array/normal_sample.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_texture_array/texture_array_sample.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_texture_array/lit_sample.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_texture_array/shader_before.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_texture_array/shader_after.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_texture_array/texture_type.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_texture_array/sample_type.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_texture_array/android_pic.jpg">
-<meta property="og:image" content="http://xianlong.site/images/landscape_texture_array/android_near.jpg">
-<meta property="og:image" content="http://xianlong.site/images/landscape_texture_array/android_far.jpg">
-<meta property="og:image" content="http://xianlong.site/images/landscape_texture_array/shader.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_texture_array/render_debug.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_texture_array/fs_index_detail.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_texture_array/fs_uniform.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_texture_array/fs_uniform_primitive.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_texture_array/uniform_primitive.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_texture_array/fs_uniform_landscape.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_texture_array/fs_out.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_texture_array/fs_out_texcoord0.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_texture_array/compare.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_texture_array/block_bug.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_texture_array/hp_diff.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_texture_array/landscape_layer.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_texture_array/landscape_texture.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_texture_array/create_texture_array.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_texture_array/create_texture_array_batch.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_texture_array/add_texture.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_texture_array/mipmaps.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_texture_array/compression.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_texture_array/mat_normal.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_texture_array/mat_texture_array.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_texture_array/normal_sample.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_texture_array/texture_array_sample.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_texture_array/lit_sample.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_texture_array/shader_before.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_texture_array/shader_after.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_texture_array/texture_type.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_texture_array/sample_type.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_texture_array/android_pic.jpg">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_texture_array/android_near.jpg">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_texture_array/android_far.jpg">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_texture_array/shader.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_texture_array/render_debug.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_texture_array/fs_index_detail.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_texture_array/fs_uniform.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_texture_array/fs_uniform_primitive.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_texture_array/uniform_primitive.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_texture_array/fs_uniform_landscape.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_texture_array/fs_out.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_texture_array/fs_out_texcoord0.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_texture_array/compare.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_texture_array/block_bug.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_texture_array/hp_diff.png">
 <meta property="article:published_time" content="2022-03-14T09:18:28.000Z">
 <meta property="article:modified_time" content="2022-03-15T04:35:43.397Z">
 <meta property="article:author" content="小贤">
@@ -68,14 +68,14 @@
 <meta property="article:tag" content="Landscape">
 <meta property="article:tag" content="TextureArray">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://xianlong.site/images/landscape_texture_array/landscape_layer.png">
+<meta name="twitter:image" content="http://xianlongok.site/images/landscape_texture_array/landscape_layer.png">
 
 
-<link rel="canonical" href="http://xianlong.site/2022/03/14/landscape-texture-array/">
+<link rel="canonical" href="http://xianlongok.site/2022/03/14/landscape-texture-array/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://xianlong.site/2022/03/14/landscape-texture-array/","path":"2022/03/14/landscape-texture-array/","title":"UE4 landscape 使用 Texture Array"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://xianlongok.site/2022/03/14/landscape-texture-array/","path":"2022/03/14/landscape-texture-array/","title":"UE4 landscape 使用 Texture Array"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>UE4 landscape 使用 Texture Array | 十三的blog</title>
@@ -274,7 +274,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xianlong.site/2022/03/14/landscape-texture-array/">
+    <link itemprop="mainEntityOfPage" href="http://xianlongok.site/2022/03/14/landscape-texture-array/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">

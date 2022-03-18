@@ -20,41 +20,41 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
   <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"xianlong.site","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.10.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"xianlongok.site","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.10.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
     <meta name="description" content="UE4 Landscape Mobile 1. UE4 渲染流程 1.1 UE4 渲染线程  * Game Tread（游戏线程） ：游戏逻辑运算  * Rendering Thread（渲染线程） ：从 TaskGraph 中取出任务，并生成平台无关的 Command List （渲染指令列表）  * RHI Thread （Render Hardware Interface 线程）：会执行和转">
 <meta property="og:type" content="article">
 <meta property="og:title" content="UE4 地形 landscape">
-<meta property="og:url" content="http://xianlong.site/2022/03/03/landscape-mobile/index.html">
+<meta property="og:url" content="http://xianlongok.site/2022/03/03/landscape-mobile/index.html">
 <meta property="og:site_name" content="十三的blog">
 <meta property="og:description" content="UE4 Landscape Mobile 1. UE4 渲染流程 1.1 UE4 渲染线程  * Game Tread（游戏线程） ：游戏逻辑运算  * Rendering Thread（渲染线程） ：从 TaskGraph 中取出任务，并生成平台无关的 Command List （渲染指令列表）  * RHI Thread （Render Hardware Interface 线程）：会执行和转">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://xianlong.site/images/landscape_mobile/ue4_render_thread.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_mobile/landscape_actor.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_mobile/ALandscape.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_mobile/landscape_actor_info.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_mobile/level_info.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_mobile/actors_in_level.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_mobile/components_in_actor.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_mobile/Landscape.svg">
-<meta property="og:image" content="http://xianlong.site/images/landscape_mobile/step_create_proxy.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_mobile/add_primitive.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_mobile/step_create_res_mobile.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_mobile/step_create_res_pc.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_mobile/per_quad_1.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_mobile/per_quad_2.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_mobile/lod_2_mobile.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_mobile/lod_1_mobile.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_mobile/quad_empty.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_mobile/attribute_1.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_mobile/component_section_quad.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_mobile/pc_attri.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_mobile/mobile_attri.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_mobile/render_doc_shader.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_mobile/uniform_buffer.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_mobile/primitive_param.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_mobile/landscape_param.png">
-<meta property="og:image" content="http://xianlong.site/images/landscape_mobile/vs_out.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_mobile/ue4_render_thread.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_mobile/landscape_actor.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_mobile/ALandscape.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_mobile/landscape_actor_info.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_mobile/level_info.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_mobile/actors_in_level.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_mobile/components_in_actor.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_mobile/Landscape.svg">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_mobile/step_create_proxy.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_mobile/add_primitive.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_mobile/step_create_res_mobile.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_mobile/step_create_res_pc.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_mobile/per_quad_1.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_mobile/per_quad_2.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_mobile/lod_2_mobile.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_mobile/lod_1_mobile.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_mobile/quad_empty.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_mobile/attribute_1.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_mobile/component_section_quad.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_mobile/pc_attri.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_mobile/mobile_attri.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_mobile/render_doc_shader.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_mobile/uniform_buffer.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_mobile/primitive_param.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_mobile/landscape_param.png">
+<meta property="og:image" content="http://xianlongok.site/images/landscape_mobile/vs_out.png">
 <meta property="article:published_time" content="2022-03-03T06:28:01.000Z">
 <meta property="article:modified_time" content="2022-03-03T10:05:40.643Z">
 <meta property="article:author" content="小贤">
@@ -62,14 +62,14 @@
 <meta property="article:tag" content="UE4">
 <meta property="article:tag" content="Landscape">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://xianlong.site/images/landscape_mobile/ue4_render_thread.png">
+<meta name="twitter:image" content="http://xianlongok.site/images/landscape_mobile/ue4_render_thread.png">
 
 
-<link rel="canonical" href="http://xianlong.site/2022/03/03/landscape-mobile/">
+<link rel="canonical" href="http://xianlongok.site/2022/03/03/landscape-mobile/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://xianlong.site/2022/03/03/landscape-mobile/","path":"2022/03/03/landscape-mobile/","title":"UE4 地形 landscape"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://xianlongok.site/2022/03/03/landscape-mobile/","path":"2022/03/03/landscape-mobile/","title":"UE4 地形 landscape"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>UE4 地形 landscape | 十三的blog</title>
@@ -268,7 +268,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xianlong.site/2022/03/03/landscape-mobile/">
+    <link itemprop="mainEntityOfPage" href="http://xianlongok.site/2022/03/03/landscape-mobile/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
