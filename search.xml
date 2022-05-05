@@ -335,19 +335,23 @@ class="math inline">\(\textcolor{Darkorange}{D(PA)}\)</span> 等在 Shader
 <p><img src="/images/atmosphere_scatter/scattering_08b.png" width="50%" height="50%" /></p>
 </div>
 <p><span class="math display">\[\begin{aligned}
-I_A &amp;= \sum_{i=0}^{n}I_{P_n} \newline
-&amp;= \int_{A}^{B} I_{PA} ds \newline
-&amp;= \int_{A}^{B} I_S \textcolor{DarkRed}{ \{
-\textcolor{DodgerBlue}{\beta(\lambda)} \textcolor{Gold}{\rho(h)}
-\textcolor{Purple}{\gamma(\theta)} \} }
-\textcolor{Green}{\{exp\{  -\textcolor{DodgerBlue}{\beta(\lambda)}
-\{  \textcolor{Darkorange}{D(CP)} +
-\textcolor{Darkorange}{D(PA)}   \}  \} \} } ds \newline
-&amp;= I_S \textcolor{DodgerBlue}{\beta(\lambda)}
-\textcolor{Purple}{\gamma(\theta)}
-\int_{A}^{B}  {exp\{  -\textcolor{DodgerBlue}{\beta(\lambda)}
-\{  \textcolor{Darkorange}{D(CP)} + \textcolor{Darkorange}{D(PA)} } \}\}
-\textcolor{Gold}{\rho(h)}  ds
+I_{PA} &amp;= \boxed{I_P}\textcolor{DarkRed}{S(\lambda,\theta,h)}
+\underline {\textcolor{Green}{T(PA)} } \\
+&amp;=\boxed{I_S\textcolor{Green}{T(CP)}}  \textcolor{DarkRed}{S(\lambda,\theta,h)}
+\underline { \textcolor{Green}{T(PA)} } \\
+&amp;= \boxed { I_S
+\{exp\{-\textcolor{DodgerBlue}{\beta(\lambda)}\textcolor{Darkorange}{D(CP)}\}\}
+}  \textcolor{DarkRed}{ \{ \textcolor{DodgerBlue}{
+\beta(\lambda)}  \textcolor{Gold}{\rho(h)}  \textcolor{Purple}{\gamma(\theta)}
+\} }  \underline {
+\{exp\{-\textcolor{DodgerBlue}{\beta(\lambda)}\textcolor{Darkorange}{D(PA)}\}\}
+}\\
+&amp;= I_S \textcolor{DarkRed}{ \{
+\textcolor{DodgerBlue}{\beta(\lambda)}
+\textcolor{Gold}{\rho(h)}  \textcolor{Purple}{\gamma(\theta)}  \} }
+\{exp\{  -\textcolor{DodgerBlue}{\beta(\lambda)}
+\{  \textcolor{Darkorange}{D(CP)} + \textcolor{Darkorange}{D(PA)}   \}
+\} \}
 \end{aligned} \]</span></p>
 <blockquote>
 <p>在大气shader中，我们将 <span class="math inline">\(AB\)</span>
