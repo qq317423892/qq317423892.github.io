@@ -359,18 +359,22 @@ class="math inline">\(I_{P_i}\)</span>，最后将这些点的光照累加起来
 <h2 id="参考资料">参考资料</h2>
 <p><a
 href="https://www.alanzucconi.com/2017/10/10/atmospheric-scattering-1/">1.Volumetric
-Atmospheric Scattering</a> <a
-href="https://blog.csdn.net/weixin_43803133/article/details/116354462">2.Unity基于体绘制的大气散射shader</a>
-<a
-href="https://zhuanlan.zhihu.com/p/237502022">3.【实战】从零实现一套完整单次大气散射</a>
-<a href="https://zhuanlan.zhihu.com/p/36498679">4.基于物理的大气渲染 --
-冯乐乐</a> <a
+Atmospheric Scattering</a></p>
+<p><a
+href="https://blog.csdn.net/weixin_43803133/article/details/116354462">2.Unity基于体绘制的大气散射shader</a></p>
+<p><a
+href="https://zhuanlan.zhihu.com/p/237502022">3.【实战】从零实现一套完整单次大气散射</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/36498679">4.基于物理的大气渲染
+-- 冯乐乐</a></p>
+<p><a
 href="http://igorsklyar.com/main/development_description/26?locale=en">5.Extended
-Disney "principled" Shader</a> <a
+Disney "principled" Shader</a></p>
+<p><a
 href="https://github.com/SlightlyMad/AtmosphericScattering">6.Atmospheric
-Scattering for Unity 5</a> <a
-href="https://sebh.github.io/publications/">7.Sébastien Hillaire
-Website</a> <a
+Scattering for Unity 5</a></p>
+<p><a href="https://sebh.github.io/publications/">7.Sébastien Hillaire
+Website</a></p>
+<p><a
 href="https://freehyan.github.io/2020/03/05/sky-rendering-1/">8.基于物理的大气散射</a></p>
 <div id="ref-anchor-9">
 
