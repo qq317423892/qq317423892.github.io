@@ -1,1 +1,566 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.1"><link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png"><link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png"><link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png"><link rel="mask-icon" href="/images/logo.svg" color="#222"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="//fonts.loli.net/css?family=Noto+Serif+SC:300,300italic,400,400italic,700,700italic%7CRoboto+Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" integrity="sha256-jTIdiMuX/e3DGJUGwl3pKSxuc6YOuqtJYkM0bGQESA4=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css"><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script><script class="next-config" data-name="main" type="application/json">{"hostname":"xianlongok.site","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.10.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script><meta name="description" content="整理下最近学习UE4 UMG的进度。  1.UMG类视图 UMG 控件跟Unity UGUI不太一样，不是所有的控件节点，都能拥有子节点，为了区分这三种控件，整理了下他们基类：   * UWidget : 所有UMG 控件的公共基类，不提供增加子节点功能  * UPanelWidget : 提供了增加子节点功能，可以有多个子节点  * UContentWidget : 继承于UPanelWidge"><meta property="og:type" content="article"><meta property="og:title" content="UMG源码笔记"><meta property="og:url" content="http://xianlongok.site/2021/05/24/umg-framework/index.html"><meta property="og:site_name" content="十三的blog"><meta property="og:description" content="整理下最近学习UE4 UMG的进度。  1.UMG类视图 UMG 控件跟Unity UGUI不太一样，不是所有的控件节点，都能拥有子节点，为了区分这三种控件，整理了下他们基类：   * UWidget : 所有UMG 控件的公共基类，不提供增加子节点功能  * UPanelWidget : 提供了增加子节点功能，可以有多个子节点  * UContentWidget : 继承于UPanelWidge"><meta property="og:locale" content="zh_CN"><meta property="article:published_time" content="2021-05-24T12:27:11.000Z"><meta property="article:modified_time" content="2022-03-15T04:36:30.162Z"><meta property="article:author" content="小贤"><meta property="article:tag" content="C++"><meta property="article:tag" content="UE4"><meta property="article:tag" content="UMG"><meta name="twitter:card" content="summary"><link rel="canonical" href="http://xianlongok.site/2021/05/24/umg-framework/"><script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://xianlongok.site/2021/05/24/umg-framework/","path":"2021/05/24/umg-framework/","title":"UMG源码笔记"}</script><script class="next-config" data-name="calendar" type="application/json">""</script><title>UMG源码笔记 | 十三的blog</title><noscript><link rel="stylesheet" href="/css/noscript.css"></noscript><style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}</style><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head><body itemscope itemtype="http://schema.org/WebPage" class="use-motion"><div class="headband"></div><main class="main"><header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-container"><div class="site-nav-toggle"><div class="toggle" aria-label="切换导航栏" role="button"><span class="toggle-line"></span> <span class="toggle-line"></span> <span class="toggle-line"></span></div></div><div class="site-meta"><a href="/" class="brand" rel="start"><i class="logo-line"></i><p class="site-title">十三的blog</p><i class="logo-line"></i></a><p class="site-subtitle" itemprop="description">安心学技术</p></div><div class="site-nav-right"><div class="toggle popup-trigger"><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class="site-nav"><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fa fa-book fa-fw"></i>留言板</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-search"><a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索</a></li></ul></nav><div class="search-pop-overlay"><div class="popup search-popup"><div class="search-header"><span class="search-icon"><i class="fa fa-search"></i></span><div class="search-input-container"><input autocomplete="off" autocapitalize="off" maxlength="80" placeholder="搜索..." spellcheck="false" type="search" class="search-input"></div><span class="popup-btn-close" role="button"><i class="fa fa-times-circle"></i></span></div><div class="search-result-container no-result"><div class="search-result-icon"><i class="fa fa-spinner fa-pulse fa-5x"></i></div></div></div></div></div><div class="toggle sidebar-toggle" role="button"><span class="toggle-line"></span> <span class="toggle-line"></span> <span class="toggle-line"></span></div><aside class="sidebar"><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class="sidebar-nav"><li class="sidebar-nav-toc">文章目录</li><li class="sidebar-nav-overview">站点概览</li></ul><div class="sidebar-panel-container"><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-UMG%E7%B1%BB%E8%A7%86%E5%9B%BE"><span class="nav-number">1.</span> <span class="nav-text">1.UMG类视图</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-%E4%B8%8D%E8%83%BD%E6%9C%89%E5%AD%90%E8%8A%82%E7%82%B9%E7%9A%84%E6%8E%A7%E4%BB%B6%E5%A6%82%E4%B8%8B%EF%BC%9A"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 不能有子节点的控件如下：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-%E5%8F%AF%E4%BB%A5%E5%A2%9E%E5%8A%A0%E5%AD%90%E8%8A%82%E7%82%B9%E7%9A%84%E6%8E%A7%E4%BB%B6%EF%BC%9A"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 可以增加子节点的控件：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-1-%E5%8F%AF%E4%BB%A5%E6%9C%89%E4%B8%80%E4%B8%AA%E5%AD%90%E8%8A%82%E7%82%B9%E6%8E%A7%E4%BB%B6"><span class="nav-number">1.2.1.</span> <span class="nav-text">1.2.1 可以有一个子节点控件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-2-%E5%8F%AF%E4%BB%A5%E6%9C%89%E5%A4%9A%E4%B8%AA%E5%AD%90%E8%8A%82%E7%82%B9%E6%8E%A7%E4%BB%B6"><span class="nav-number">1.2.2.</span> <span class="nav-text">1.2.2 可以有多个子节点控件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-Slate%E6%8E%A7%E4%BB%B6%E7%B1%BB%E8%A7%86%E5%9B%BE"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 Slate控件类视图</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-UMG%E6%B8%B2%E6%9F%93%E6%B5%81%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">2 UMG渲染流程</span></a></li></ol></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person"><img class="site-author-image" itemprop="image" alt="小贤" src="/images/avatar.jpg"><p class="site-author-name" itemprop="name">小贤</p><div class="site-description" itemprop="description"></div></div><div class="site-state-wrap site-overview-item animated"><nav class="site-state"><div class="site-state-item site-state-posts"><a href="/archives/"><span class="site-state-item-count">12</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"><a href="/categories/"><span class="site-state-item-count">7</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"><a href="/tags/"><span class="site-state-item-count">15</span> <span class="site-state-item-name">标签</span></a></div></nav></div><div class="links-of-author site-overview-item animated"><span class="links-of-author-item"><a href="https://github.com/qq317423892" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qq317423892" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a> </span><span class="links-of-author-item"><a href="mailto:xianlongok@163.com" title="E-Mail → mailto:xianlongok@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a></span></div><div class="links-of-blogroll site-overview-item animated"><div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i> Links</div><ul class="links-of-blogroll-list"><li class="links-of-blogroll-item"><a href="https://scorpioq.github.io/" title="https:&#x2F;&#x2F;scorpioq.github.io&#x2F;" rel="noopener" target="_blank">ScorpioQ</a></li></ul></div></div></div></div></aside><div class="sidebar-dimmer"></div></header><div class="back-to-top" role="button" aria-label="返回顶部"><i class="fa fa-arrow-up"></i> <span>0%</span></div><div class="reading-progress-bar"></div><a href="https://github.com/qq317423892" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin:130px 106px" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><noscript><div class="noscript-warning">Theme NexT works best with JavaScript enabled</div></noscript><div class="main-inner post posts-expand"><div class="post-block"><article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN"><link itemprop="mainEntityOfPage" href="http://xianlongok.site/2021/05/24/umg-framework/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="/images/avatar.jpg"><meta itemprop="name" content="小贤"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="十三的blog"><meta itemprop="description" content=""></span><span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork"><meta itemprop="name" content="UMG源码笔记 | 十三的blog"><meta itemprop="description" content=""></span><header class="post-header"><h1 class="post-title" itemprop="name headline">UMG源码笔记</h1><div class="post-meta-container"><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-calendar"></i> </span><span class="post-meta-item-text">发表于</span> <time title="创建时间：2021-05-24 20:27:11" itemprop="dateCreated datePublished" datetime="2021-05-24T20:27:11+08:00">2021-05-24</time> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-calendar-check"></i> </span><span class="post-meta-item-text">更新于</span> <time title="修改时间：2022-03-15 12:36:30" itemprop="dateModified" datetime="2022-03-15T12:36:30+08:00">2022-03-15</time> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-folder"></i> </span><span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/UE4/" itemprop="url" rel="index"><span itemprop="name">UE4</span></a> </span>， <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/UE4/SlateUI/" itemprop="url" rel="index"><span itemprop="name">SlateUI</span></a> </span></span><span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv"><span class="post-meta-item-icon"><i class="far fa-eye"></i> </span><span class="post-meta-item-text">阅读次数：</span> <span id="busuanzi_value_page_pv"></span> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-comment"></i> </span><span class="post-meta-item-text">Valine：</span> <a title="valine" href="/2021/05/24/umg-framework/#valine-comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/2021/05/24/umg-framework/" itemprop="commentCount"></span> </a></span><span class="post-meta-break"></span> <span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="far fa-file-word"></i> </span><span class="post-meta-item-text">本文字数：</span> <span>1.5k</span> </span><span class="post-meta-item" title="阅读时长"><span class="post-meta-item-icon"><i class="far fa-clock"></i> </span><span class="post-meta-item-text">阅读时长 &asymp;</span> <span>1 分钟</span></span></div></div></header><div class="post-body" itemprop="articleBody"><p>整理下最近学习UE4 UMG的进度。</p><h1 id="1-UMG类视图"><a href="#1-UMG类视图" class="headerlink" title="1.UMG类视图"></a>1.UMG类视图</h1><p>UMG 控件跟Unity UGUI不太一样，不是所有的控件节点，都能拥有子节点，为了区分这三种控件，整理了下他们基类：</p><ul><li><strong>UWidget</strong> : 所有UMG 控件的公共基类，不提供增加子节点功能</li><li><strong>UPanelWidget</strong> : 提供了增加子节点功能，可以有多个子节点</li><li><strong>UContentWidget</strong> : 继承于<strong>UPanelWidget</strong>，是<strong>UPanelWidget</strong>的一种特例，只能有一个子节点</li></ul><p>UMG常用控件的继承关系如下图所示:</p><h2 id="1-1-不能有子节点的控件如下："><a href="#1-1-不能有子节点的控件如下：" class="headerlink" title="1.1 不能有子节点的控件如下："></a>1.1 不能有子节点的控件如下：</h2><p>这个类别的控件的公共基类都是<strong>UWidget</strong>，每个UMG控件，都持有一个Slate控件的智能指针。</p><img src="http://www.plantuml.com/plantuml/svg/VPB1Ri8m44Jl-GgVA_45HHo2ggeILL6JmDaas-1YwiesAWZrtyjclH37eHoGipDvCtPSQ-cSgDusdr1xSVxDicgbt45gCPbCPYnaDTc2XBQiMgkc1HzyfB2Ff7CcBhzgARz05zhu1u7_Zzrq3NAtz7PQa7KcNa-q6iYKVpCzpzc6LUTclp6vELvA7Bwn1ebSuofJaxBOIWiDSaN1sZHiyM4caCzZuZyroikDXXAEk56hsgrFOo9N4bNqPOpeFrFCorws40uoHfEIChivmhe5KHRA-PM2drowSLXaI9abbc8TsT4WpWZyFd6OCfB0qktCCOQdbB2qfhNWN2xjw2RwUfhGKn7TUoGwdlb2dip1Ns-lXe-HRveOpztxxwhUefHhK-z2lw6L4R4txHhfs3OQKDz2gmRidUiTn9HC0Y9fTTixzoRSlUR_jOuQ3zgMYkxBu7PSiIoFK8CKtmoU1he5flCtInA2PIGWA8E0CCM0Fm00"><h2 id="1-2-可以增加子节点的控件："><a href="#1-2-可以增加子节点的控件：" class="headerlink" title="1.2 可以增加子节点的控件："></a>1.2 可以增加子节点的控件：</h2><h3 id="1-2-1-可以有一个子节点控件"><a href="#1-2-1-可以有一个子节点控件" class="headerlink" title="1.2.1 可以有一个子节点控件"></a>1.2.1 可以有一个子节点控件</h3><p>有一个子节点的控件继承的父类依次是 <strong>UComponentWidget</strong> -&gt; <strong>UPanelWidget</strong>，父类<strong>UComponentWidget</strong>构造函数中设置了不允许多个孩子标记位：</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">UContentWidget::<span class="built_in">UContentWidget</span>(<span class="type">const</span> FObjectInitializer&amp; ObjectInitializer)</span><br><span class="line">    : <span class="built_in">Super</span>(ObjectInitializer)</span><br><span class="line">&#123;</span><br><span class="line">    bCanHaveMultipleChildren = <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>公共基类<strong>UPanelWidget</strong>定义了<strong>AddChild</strong>函数，可以增加对应的子节点：</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">UPanelSlot* <span class="title">UPanelWidget::AddChild</span><span class="params">(UWidget* Content)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> ( Content == <span class="literal">nullptr</span> )</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ( !bCanHaveMultipleChildren &amp;&amp; <span class="built_in">GetChildrenCount</span>() &gt; <span class="number">0</span> )</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Content-&gt;<span class="built_in">RemoveFromParent</span>();</span><br><span class="line"></span><br><span class="line">    EObjectFlags NewObjectFlags = RF_Transactional;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">HasAnyFlags</span>(RF_Transient))</span><br><span class="line">    &#123;</span><br><span class="line">        NewObjectFlags |= RF_Transient;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    UPanelSlot* PanelSlot = <span class="built_in">NewObject</span>&lt;UPanelSlot&gt;(<span class="keyword">this</span>, <span class="built_in">GetSlotClass</span>(), NAME_None, NewObjectFlags);</span><br><span class="line">    PanelSlot-&gt;Content = Content;</span><br><span class="line">    PanelSlot-&gt;Parent = <span class="keyword">this</span>;</span><br><span class="line"></span><br><span class="line">    Content-&gt;Slot = PanelSlot;</span><br><span class="line"></span><br><span class="line">    Slots.<span class="built_in">Add</span>(PanelSlot);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">OnSlotAdded</span>(PanelSlot);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">InvalidateLayoutAndVolatility</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> PanelSlot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>其中，<strong>GetSlotClass</strong>返回对应控件的<strong>Slot</strong>的类型，在类视图里，带红色方格的标记的，是各自控件<strong>GetSlotClass</strong>返回的<strong>Slot</strong>的类型。Slot会分别指向父节点跟子节点。</p><img src="http://www.plantuml.com/plantuml/svg/VLFBRe905Dtp5RDK6xv0Ow8iN3MQKchItGXNeHAc6SP4Q_hlPUwT5mLbGUREEPp707dDsvPbsyCNv8hTVwCe-wZQ2wzP7ClgLAfuQT4e9wx1aRklYXEea4kevH9-ZrXtxO6VTqekKjfSijSRhUPzcDmyQPDO6lBYRCSRgDDQg1dJztcaaxZDBimmXqSfYmasOube53Gc0j4ijECI4QVkocfz6dhwOTdtbPJyjl36IypQaj5Bbk1pCxO1fVTnd4mj6ZHS5KLILdKn-HzvEZmFochmNjeWdutSfzqVYAs5B41sAfTlhTDxo2ePZYcUbjsv5VWc2T3la5OkCOs1oqKfqPYiunx46F5003rmvJrm38wbXFoy5jTdBeupzB6GTiBrGLn9EEL7-1GDF1DsdA6mWxIo7LmBk-5xl87YLGEIgjHmL0zTG-hGsAB-J-llc7RL3v2L-yN76nhUs5U0XsO8lXdDjjWV"><h3 id="1-2-2-可以有多个子节点控件"><a href="#1-2-2-可以有多个子节点控件" class="headerlink" title="1.2.2 可以有多个子节点控件"></a>1.2.2 可以有多个子节点控件</h3><img src="http://www.plantuml.com/plantuml/svg/TPDDReCm48NtdCBBX8eJ949AMT1D5IH2itR1JPnQK1adAaMzUx77lmLO8C-yXxytjgWPxdjK7Tzlf1Pe_8sYwetsTynGad1wkOeaDMfKWrVhodkcpOM8oIjj81WRI6E4fkTCy6SX-Bw4PefU1rZjGXb0pfHdngPyILNWbh2ITI96yhsBP0ZRz3E7OPm50kbqCSgwLf1Mvm2RaGhCbM8HmR1G1Flx4vyEdEDXxy2f2jm3wAdAr7SnoecGVLLkjaRrnZmqJNQbhDdyZxoT7mfarRfDoyY7EX4leuaTMiVb3QSTSVl0lUhgwPVsyapg34xbTJh1Hbti1Ee5nxGLO9EN2okO8l4_TwEyT9p-J1anU-w-_TjTu8TUVGjUX42N_A1X3pFekYJ71-4C3-lZ6yCSh1M9r4iBqxN3b3Nlc1vs1UGiSvJL9CmM5cSx3fXpsfYBlN-j89rfZhIQ-bzDOP6oOsX_"><h2 id="1-3-Slate控件类视图"><a href="#1-3-Slate控件类视图" class="headerlink" title="1.3 Slate控件类视图"></a>1.3 Slate控件类视图</h2><p>Slate中除了<strong>SWidget</strong>之外有三个基础类，其他控件都是继承者三个基类。</p><ul><li><strong>SPanel</strong> : 有多个子节点</li><li><strong>SLeafWidget</strong> : 没有子节点</li><li><strong>SCompoundWidget</strong> : 可以有一个子节点</li></ul><img src="http://www.plantuml.com/plantuml/svg/VP3H2i8W58RlVGfVm2TOx6Om2882YrtBj2Ku7MgBYDwzJO-rZJMlnE_pdF-SMZ7dCAqaRuH7BuJU2D4Jqq9XGaZ-9NNq0adQiHTMiIU84O47Q33nSCWvmE8c5RT2xqh0L1cVu_ISXQ87mQwnvsg07quf2jDsvgxvngUvaaALLBQT4cE8c66yPL1JEs-PrBvWkcTkRSIbysTMN8O6op4lJjXPuaL6Q3BHODnzone1VoRB03zIK2kfkNbirezAMEK7"><h1 id="2-UMG渲染流程"><a href="#2-UMG渲染流程" class="headerlink" title="2 UMG渲染流程"></a>2 UMG渲染流程</h1><p>TODO</p><img src="http://www.plantuml.com/plantuml/svg/NOxV2e8m5CRlVGelDT07s4LWfH0OIHPvEzn13wupiP7HqxSvI-fcS7xVdtrUi0hzA5fdAJL8a2lLCtR6klCCzAkgOimyVX37SMXHLagk8UbxYJNNg8YntS37Av9GOq9Ysw8K0z0KBnrchE18sXrBoPuUNAAOMavAwTdsZstWjwYKQYouRcT5DF39Mc8t7-bxkh_inbJ23SXO3xo3ZNekgckVzHplnfC8SI4ar6Z6l41uRm00"><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.css"></div><footer class="post-footer"><div class="post-tags"><a href="/tags/C/" rel="tag"># C++</a> <a href="/tags/UE4/" rel="tag"># UE4</a> <a href="/tags/UMG/" rel="tag"># UMG</a></div><div class="post-nav"><div class="post-nav-item"><a href="/2021/04/29/ue4-slate-event/" rel="prev" title="UE4 SlateUI事件机制"><i class="fa fa-chevron-left"></i> UE4 SlateUI事件机制</a></div><div class="post-nav-item"><a href="/2021/06/17/umg-render/" rel="next" title="UMG源码笔记2-渲染过程">UMG源码笔记2-渲染过程 <i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div class="comments" id="valine-comments"></div></div></main><footer class="footer"><div class="footer-inner"><div class="copyright">&copy; <span itemprop="copyrightYear">2022</span> <span class="with-love"><i class="fa fa-heart"></i> </span><span class="author" itemprop="copyrightHolder">小贤</span></div><div class="wordcount"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-chart-line"></i> </span><span title="站点总字数">145k</span> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-coffee"></i> </span><span title="站点阅读时长">2:12</span></span></div><div class="busuanzi-count"><span class="post-meta-item" id="busuanzi_container_site_uv"><span class="post-meta-item-icon"><i class="fa fa-user"></i> </span><span class="site-uv" title="总访客量"><span id="busuanzi_value_site_uv"></span> </span></span><span class="post-meta-item" id="busuanzi_container_site_pv"><span class="post-meta-item-icon"><i class="fa fa-eye"></i> </span><span class="site-pv" title="总访问量"><span id="busuanzi_value_site_pv"></span></span></span></div><div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动</div><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span><script>var now=new Date,create_time="03/25/2021 20:25:22",grt=new Date(create_time);function createtime(){now.setTime(now.getTime()+250),days=(now-grt)/1e3/60/60/24,dnum=Math.floor(days),hours=(now-grt)/1e3/60/60-24*dnum,hnum=Math.floor(hours),1==String(hnum).length&&(hnum="0"+hnum),minutes=(now-grt)/1e3/60-1440*dnum-60*hnum,mnum=Math.floor(minutes),1==String(mnum).length&&(mnum="0"+mnum),seconds=(now-grt)/1e3-86400*dnum-3600*hnum-60*mnum,snum=Math.round(seconds),1==String(snum).length&&(snum="0"+snum),document.getElementById("timeDate").innerHTML=" | 本站已安全运行 "+dnum+" 天 ",document.getElementById("times").innerHTML=hnum+" 小时 "+mnum+" 分 "+snum+" 秒"}setInterval("createtime()",250)</script></div></footer><script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script><script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script><script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script><script src="/js/third-party/search/local-search.js"></script><script src="/js/third-party/pace.js"></script><script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script><script>var options={bottom:"64px",right:"unset",left:"32px",time:"0.5s",mixColor:"transparent",backgroundColor:"transparent",buttonColorDark:"#100f2c",buttonColorLight:"#fff",saveInCookies:!0,label:"🌓",autoMatchOsTheme:!0};const darkmode=new Darkmode(options);window.darkmode=darkmode,darkmode.showWidget()</script><script class="next-config" data-name="valine" type="application/json">{"enable":true,"appId":"7TO2HV1Xg9swHbSsI2kFt1H7-gzGzoHsz","appKey":"FgrhitpMKU9Ff5RhDKrpPgog","serverURLs":"https://7to2hv1x.lc-cn-n1-shared.com","placeholder":"ヾﾉ≧∀≦)o来啊，快活啊!","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":false,"comment_count":true,"recordIP":true,"enableQQ":false,"requiredFields":[],"el":"#valine-comments","path":"/2021/05/24/umg-framework/"}</script><script>document.addEventListener("page:loaded",()=>{NexT.utils.loadComments(CONFIG.valine.el).then(()=>NexT.utils.getScript("https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js",{condition:window.Valine})).then(()=>{new Valine(CONFIG.valine)})})</script><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false}});</script></body></html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.1">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.loli.net/css?family=Noto+Serif+SC:300,300italic,400,400italic,700,700italic%7CRoboto+Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" integrity="sha256-jTIdiMuX/e3DGJUGwl3pKSxuc6YOuqtJYkM0bGQESA4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"xianlongok.site","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.10.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="整理下最近学习UE4 UMG的进度。  1.UMG类视图 UMG 控件跟Unity UGUI不太一样，不是所有的控件节点，都能拥有子节点，为了区分这三种控件，整理了下他们基类： * UWidget : 所有UMG 控件的公共基类，不提供增加子节点功能 * UPanelWidget : 提供了增加子节点功能，可以有多个子节点 * UContentWidget: 继承于UPanelWidget，是UP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UMG源码笔记">
+<meta property="og:url" content="http://xianlongok.site/2021/05/24/umg-framework/index.html">
+<meta property="og:site_name" content="十三的blog">
+<meta property="og:description" content="整理下最近学习UE4 UMG的进度。  1.UMG类视图 UMG 控件跟Unity UGUI不太一样，不是所有的控件节点，都能拥有子节点，为了区分这三种控件，整理了下他们基类： * UWidget : 所有UMG 控件的公共基类，不提供增加子节点功能 * UPanelWidget : 提供了增加子节点功能，可以有多个子节点 * UContentWidget: 继承于UPanelWidget，是UP">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-05-24T12:27:11.000Z">
+<meta property="article:modified_time" content="2022-03-15T04:36:30.162Z">
+<meta property="article:author" content="小贤">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="UE4">
+<meta property="article:tag" content="UMG">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://xianlongok.site/2021/05/24/umg-framework/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://xianlongok.site/2021/05/24/umg-framework/","path":"2021/05/24/umg-framework/","title":"UMG源码笔记"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>UMG源码笔记 | 十三的blog</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}</style><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">十三的blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">安心学技术</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fa fa-book fa-fw"></i>留言板</a></li>
+        <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#umg%E7%B1%BB%E8%A7%86%E5%9B%BE"><span class="nav-number">1.</span> <span class="nav-text">1.UMG类视图</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8D%E8%83%BD%E6%9C%89%E5%AD%90%E8%8A%82%E7%82%B9%E7%9A%84%E6%8E%A7%E4%BB%B6%E5%A6%82%E4%B8%8B"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 不能有子节点的控件如下：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%AF%E4%BB%A5%E5%A2%9E%E5%8A%A0%E5%AD%90%E8%8A%82%E7%82%B9%E7%9A%84%E6%8E%A7%E4%BB%B6"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 可以增加子节点的控件：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E4%BB%A5%E6%9C%89%E4%B8%80%E4%B8%AA%E5%AD%90%E8%8A%82%E7%82%B9%E6%8E%A7%E4%BB%B6"><span class="nav-number">1.2.1.</span> <span class="nav-text">1.2.1 可以有一个子节点控件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E4%BB%A5%E6%9C%89%E5%A4%9A%E4%B8%AA%E5%AD%90%E8%8A%82%E7%82%B9%E6%8E%A7%E4%BB%B6"><span class="nav-number">1.2.2.</span> <span class="nav-text">1.2.2 可以有多个子节点控件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#slate%E6%8E%A7%E4%BB%B6%E7%B1%BB%E8%A7%86%E5%9B%BE"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 Slate控件类视图</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#umg%E6%B8%B2%E6%9F%93%E6%B5%81%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">2 UMG渲染流程</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小贤"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">小贤</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/qq317423892" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qq317423892" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:xianlongok@163.com" title="E-Mail → mailto:xianlongok@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://scorpioq.github.io/" title="https:&#x2F;&#x2F;scorpioq.github.io&#x2F;" rel="noopener" target="_blank">ScorpioQ</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/qq317423892" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xianlongok.site/2021/05/24/umg-framework/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="小贤">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="十三的blog">
+      <meta itemprop="description" content="">
+    </span>
+    
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="UMG源码笔记 | 十三的blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          UMG源码笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-05-24 20:27:11" itemprop="dateCreated datePublished" datetime="2021-05-24T20:27:11+08:00">2021-05-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-03-15 12:36:30" itemprop="dateModified" datetime="2022-03-15T12:36:30+08:00">2022-03-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/UE4/" itemprop="url" rel="index"><span itemprop="name">UE4</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/UE4/SlateUI/" itemprop="url" rel="index"><span itemprop="name">SlateUI</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Valine：</span>
+  
+    <a title="valine" href="/2021/05/24/umg-framework/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/05/24/umg-framework/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>整理下最近学习UE4 UMG的进度。</p>
+<h1 id="umg类视图">1.UMG类视图</h1>
+<p>UMG 控件跟Unity
+UGUI不太一样，不是所有的控件节点，都能拥有子节点，为了区分这三种控件，整理了下他们基类：
+* <strong>UWidget</strong> : 所有UMG
+控件的公共基类，不提供增加子节点功能 * <strong>UPanelWidget</strong> :
+提供了增加子节点功能，可以有多个子节点 * <strong>UContentWidget</strong>
+:
+继承于<strong>UPanelWidget</strong>，是<strong>UPanelWidget</strong>的一种特例，只能有一个子节点</p>
+<p>UMG常用控件的继承关系如下图所示:</p>
+<h2 id="不能有子节点的控件如下">1.1 不能有子节点的控件如下：</h2>
+<p>这个类别的控件的公共基类都是<strong>UWidget</strong>，每个UMG控件，都持有一个Slate控件的智能指针。
+<img  src=http://www.plantuml.com/plantuml/svg/VPB1Ri8m44Jl-GgVA_45HHo2ggeILL6JmDaas-1YwiesAWZrtyjclH37eHoGipDvCtPSQ-cSgDusdr1xSVxDicgbt45gCPbCPYnaDTc2XBQiMgkc1HzyfB2Ff7CcBhzgARz05zhu1u7_Zzrq3NAtz7PQa7KcNa-q6iYKVpCzpzc6LUTclp6vELvA7Bwn1ebSuofJaxBOIWiDSaN1sZHiyM4caCzZuZyroikDXXAEk56hsgrFOo9N4bNqPOpeFrFCorws40uoHfEIChivmhe5KHRA-PM2drowSLXaI9abbc8TsT4WpWZyFd6OCfB0qktCCOQdbB2qfhNWN2xjw2RwUfhGKn7TUoGwdlb2dip1Ns-lXe-HRveOpztxxwhUefHhK-z2lw6L4R4txHhfs3OQKDz2gmRidUiTn9HC0Y9fTTixzoRSlUR_jOuQ3zgMYkxBu7PSiIoFK8CKtmoU1he5flCtInA2PIGWA8E0CCM0Fm00></p>
+<h2 id="可以增加子节点的控件">1.2 可以增加子节点的控件：</h2>
+<h3 id="可以有一个子节点控件">1.2.1 可以有一个子节点控件</h3>
+<p>有一个子节点的控件继承的父类依次是 <strong>UComponentWidget</strong>
+-&gt;
+<strong>UPanelWidget</strong>，父类<strong>UComponentWidget</strong>构造函数中设置了不允许多个孩子标记位：
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">UContentWidget::<span class="built_in">UContentWidget</span>(<span class="type">const</span> FObjectInitializer&amp; ObjectInitializer)</span><br><span class="line">    : <span class="built_in">Super</span>(ObjectInitializer)</span><br><span class="line">&#123;</span><br><span class="line">    bCanHaveMultipleChildren = <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+公共基类<strong>UPanelWidget</strong>定义了<strong>AddChild</strong>函数，可以增加对应的子节点：
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">UPanelSlot* <span class="title">UPanelWidget::AddChild</span><span class="params">(UWidget* Content)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> ( Content == <span class="literal">nullptr</span> )</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ( !bCanHaveMultipleChildren &amp;&amp; <span class="built_in">GetChildrenCount</span>() &gt; <span class="number">0</span> )</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Content-&gt;<span class="built_in">RemoveFromParent</span>();</span><br><span class="line"></span><br><span class="line">    EObjectFlags NewObjectFlags = RF_Transactional;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">HasAnyFlags</span>(RF_Transient))</span><br><span class="line">    &#123;</span><br><span class="line">        NewObjectFlags |= RF_Transient;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    UPanelSlot* PanelSlot = <span class="built_in">NewObject</span>&lt;UPanelSlot&gt;(<span class="keyword">this</span>, <span class="built_in">GetSlotClass</span>(), NAME_None, NewObjectFlags);</span><br><span class="line">    PanelSlot-&gt;Content = Content;</span><br><span class="line">    PanelSlot-&gt;Parent = <span class="keyword">this</span>;</span><br><span class="line"></span><br><span class="line">    Content-&gt;Slot = PanelSlot;</span><br><span class="line"></span><br><span class="line">    Slots.<span class="built_in">Add</span>(PanelSlot);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">OnSlotAdded</span>(PanelSlot);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">InvalidateLayoutAndVolatility</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> PanelSlot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+其中，<strong>GetSlotClass</strong>返回对应控件的<strong>Slot</strong>的类型，在类视图里，带红色方格的标记的，是各自控件<strong>GetSlotClass</strong>返回的<strong>Slot</strong>的类型。Slot会分别指向父节点跟子节点。</p>
+<img  src=http://www.plantuml.com/plantuml/svg/VLFBRe905Dtp5RDK6xv0Ow8iN3MQKchItGXNeHAc6SP4Q_hlPUwT5mLbGUREEPp707dDsvPbsyCNv8hTVwCe-wZQ2wzP7ClgLAfuQT4e9wx1aRklYXEea4kevH9-ZrXtxO6VTqekKjfSijSRhUPzcDmyQPDO6lBYRCSRgDDQg1dJztcaaxZDBimmXqSfYmasOube53Gc0j4ijECI4QVkocfz6dhwOTdtbPJyjl36IypQaj5Bbk1pCxO1fVTnd4mj6ZHS5KLILdKn-HzvEZmFochmNjeWdutSfzqVYAs5B41sAfTlhTDxo2ePZYcUbjsv5VWc2T3la5OkCOs1oqKfqPYiunx46F5003rmvJrm38wbXFoy5jTdBeupzB6GTiBrGLn9EEL7-1GDF1DsdA6mWxIo7LmBk-5xl87YLGEIgjHmL0zTG-hGsAB-J-llc7RL3v2L-yN76nhUs5U0XsO8lXdDjjWV>
+<h3 id="可以有多个子节点控件">1.2.2 可以有多个子节点控件</h3>
+<img  src=http://www.plantuml.com/plantuml/svg/TPDDReCm48NtdCBBX8eJ949AMT1D5IH2itR1JPnQK1adAaMzUx77lmLO8C-yXxytjgWPxdjK7Tzlf1Pe_8sYwetsTynGad1wkOeaDMfKWrVhodkcpOM8oIjj81WRI6E4fkTCy6SX-Bw4PefU1rZjGXb0pfHdngPyILNWbh2ITI96yhsBP0ZRz3E7OPm50kbqCSgwLf1Mvm2RaGhCbM8HmR1G1Flx4vyEdEDXxy2f2jm3wAdAr7SnoecGVLLkjaRrnZmqJNQbhDdyZxoT7mfarRfDoyY7EX4leuaTMiVb3QSTSVl0lUhgwPVsyapg34xbTJh1Hbti1Ee5nxGLO9EN2okO8l4_TwEyT9p-J1anU-w-_TjTu8TUVGjUX42N_A1X3pFekYJ71-4C3-lZ6yCSh1M9r4iBqxN3b3Nlc1vs1UGiSvJL9CmM5cSx3fXpsfYBlN-j89rfZhIQ-bzDOP6oOsX_>
+<h2 id="slate控件类视图">1.3 Slate控件类视图</h2>
+<p>Slate中除了<strong>SWidget</strong>之外有三个基础类，其他控件都是继承者三个基类。
+* <strong>SPanel</strong> : 有多个子节点 * <strong>SLeafWidget</strong>
+: 没有子节点 * <strong>SCompoundWidget</strong> : 可以有一个子节点</p>
+<img  src=http://www.plantuml.com/plantuml/svg/VP3H2i8W58RlVGfVm2TOx6Om2882YrtBj2Ku7MgBYDwzJO-rZJMlnE_pdF-SMZ7dCAqaRuH7BuJU2D4Jqq9XGaZ-9NNq0adQiHTMiIU84O47Q33nSCWvmE8c5RT2xqh0L1cVu_ISXQ87mQwnvsg07quf2jDsvgxvngUvaaALLBQT4cE8c66yPL1JEs-PrBvWkcTkRSIbysTMN8O6op4lJjXPuaL6Q3BHODnzone1VoRB03zIK2kfkNbirezAMEK7>
+<h1 id="umg渲染流程">2 UMG渲染流程</h1>
+<p>TODO <img  src=http://www.plantuml.com/plantuml/svg/NOxV2e8m5CRlVGelDT07s4LWfH0OIHPvEzn13wupiP7HqxSvI-fcS7xVdtrUi0hzA5fdAJL8a2lLCtR6klCCzAkgOimyVX37SMXHLagk8UbxYJNNg8YntS37Av9GOq9Ysw8K0z0KBnrchE18sXrBoPuUNAAOMavAwTdsZstWjwYKQYouRcT5DF39Mc8t7-bxkh_inbJ23SXO3xo3ZNekgckVzHplnfC8SI4ar6Z6l41uRm00></p>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C++</a>
+              <a href="/tags/UE4/" rel="tag"># UE4</a>
+              <a href="/tags/UMG/" rel="tag"># UMG</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/04/29/ue4-slate-event/" rel="prev" title="UE4 SlateUI事件机制">
+                  <i class="fa fa-chevron-left"></i> UE4 SlateUI事件机制
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/06/17/umg-render/" rel="next" title="UMG源码笔记2-渲染过程">
+                  UMG源码笔记2-渲染过程 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="valine-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小贤</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">153k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">2:19</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<!--《添加网站运行时间 -->
+<!--<br/>-->
+<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+<script>
+    var now = new Date();
+    var create_time = '03/25/2021 20:25:22';
+    var grt = new Date(create_time); //此处修改你的建站时间或者网站上线时间 
+
+    function createtime() {
+        now.setTime(now.getTime() + 250);
+        days = (now - grt) / 1000 / 60 / 60 / 24;
+        dnum = Math.floor(days);
+        hours = (now - grt) / 1000 / 60 / 60 - (24 * dnum);
+        hnum = Math.floor(hours);
+        if (String(hnum).length == 1) {
+            hnum = "0" + hnum;
+        }
+        minutes = (now - grt) / 1000 / 60 - (24 * 60 * dnum) - (60 * hnum);
+        mnum = Math.floor(minutes);
+        if (String(mnum).length == 1) {
+            mnum = "0" + mnum;
+        }
+        seconds = (now - grt) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
+        snum = Math.round(seconds);
+        if (String(snum).length == 1) {
+            snum = "0" + snum;
+        }
+        document.getElementById("timeDate").innerHTML = " | 本站已安全运行 " + dnum + " 天 ";
+        document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
+    }
+    setInterval("createtime()", 250);
+</script>
+<!-- 添加网站运行时间》 -->
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+
+
+<script class="next-config" data-name="valine" type="application/json">{"enable":true,"appId":"7TO2HV1Xg9swHbSsI2kFt1H7-gzGzoHsz","appKey":"FgrhitpMKU9Ff5RhDKrpPgog","serverURLs":"https://7to2hv1x.lc-cn-n1-shared.com","placeholder":"ヾﾉ≧∀≦)o来啊，快活啊!","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":false,"comment_count":true,"recordIP":true,"enableQQ":false,"requiredFields":[],"el":"#valine-comments","path":"/2021/05/24/umg-framework/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.valine.el)
+    .then(() => NexT.utils.getScript(
+      'https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js',
+      { condition: window.Valine }
+    ))
+    .then(() => {
+      new Valine(CONFIG.valine);
+    });
+});
+</script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false}});</script></body>
+</html>
