@@ -45,7 +45,7 @@ Scattering，考虑光线多次散射过程的模型。显然这更符合现实�
 <blockquote>
 <p>由于第二次散射以上的能量较少，对最终视觉的影响程度有限，所以目前Single
 Scattering 还是一种相对实现简单效果也不会差很多的模型，这里也主要介绍
-Single Scattering：</p>
+Single Scattering。</p>
 </blockquote>
 <p>因此单次散射大气模型求解问题如下： 我们从路径 AB 观察大气，并且求解 B
 点的大气颜色，光线在大气中只发生一次散射，散射点为 P：</p>
@@ -183,10 +183,11 @@ d\phi}\]</span></p>
 \frac{8\pi^3(n^2-1)^2}{3} \frac{ \textcolor{Gold}{1} }{N}
 \frac{1}{\lambda^4} \]</span></p>
 <p>举例来说就，对于红绿蓝的波长，在海平面时，可以得出这些结果：</p>
-<p><span
-class="math display">\[\beta(\textcolor{Red}{680nm})=5.2*10^{-6} \\
-\beta(\textcolor{Green}{550nm})=12.1*10^{-6} \\
-\beta(\textcolor{Blue}{440nm})=29.6*10^{-6}\]</span></p>
+<p><span class="math display">\[\begin{aligned}
+\beta(\textcolor{Red}{680nm}) &amp;= 5.2*10^{-6} \\
+\beta(\textcolor{Green}{550nm}) &amp;= 12.1*10^{-6} \\
+\beta(\textcolor{Blue}{440nm}) &amp;= 29.6*10^{-6}
+\end{aligned}\]</span></p>
 <blockquote>
 <p>有些博客跟论文里计算结果如下: <span
 class="math inline">\(\beta_rrgb=(5.8, 13.5, 33.1) \cdot
