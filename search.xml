@@ -1494,13 +1494,7 @@ href="https://blog.csdn.net/leonwei/article/details/84821849">UE4渲染系统概
     <content><![CDATA[<h1 id="ue4-反射系统">1. UE4 反射系统</h1>
 <p>反射的概念是由Smith在1982年首次提出的，主要是指程序可以访问、检测和修改它本身状态或行为的一种能力，即在运行过程中检查自己的C++类，函数，成员变量，结构体等等。</p>
 <p>在UE4里面，通过如下的宏定义，来实现发射：</p>
-<blockquote>
-<p>#define UPROPERTY(...) #define UFUNCTION(...) #define USTRUCT(...)
-#define UMETA(...) #define UPARAM(...) #define UENUM(...) #define
-UDELEGATE(...) #define UCLASS(...)
-BODY_MACRO_COMBINE(CURRENT_FILE_ID,_,<strong>LINE</strong>,_PROLOG)
-#define UINTERFACE(...) UCLASS()</p>
-</blockquote>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> UPROPERTY(...)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> UFUNCTION(...)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> USTRUCT(...)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> UMETA(...)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> UPARAM(...)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> UENUM(...)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> UDELEGATE(...)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> UCLASS(...) BODY_MACRO_COMBINE(CURRENT_FILE_ID,_,__LINE__,_PROLOG)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> UINTERFACE(...) UCLASS()</span></span><br></pre></td></tr></table></figure>
 <p>这些宏分别用在属性，函数，结构体/类型定义等，然后有这些宏定义的属性，函数，类型就能够被蓝图调用</p>
 <h1 id="反射实现机制和基本原理">2. 反射实现机制和基本原理</h1>
 <p>在了解反射系统之前，我们必须要知道两个UE4特有的文件类型</p>
