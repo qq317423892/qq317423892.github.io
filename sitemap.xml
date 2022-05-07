@@ -2,15 +2,6 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://xianlongok.site/baidu_verify_code-U4hAzaI6sm.html</loc>
-    
-    <lastmod>2022-05-07</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://xianlongok.site/2022/05/07/hexo-math/</loc>
     
     <lastmod>2022-05-07</lastmod>
@@ -261,14 +252,14 @@
   </url>
   
   <url>
-    <loc>https://xianlongok.site/tags/Reflection/</loc>
+    <loc>https://xianlongok.site/tags/RenderPipline/</loc>
     <lastmod>2022-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://xianlongok.site/tags/RenderPipline/</loc>
+    <loc>https://xianlongok.site/tags/Reflection/</loc>
     <lastmod>2022-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -289,14 +280,14 @@
   </url>
   
   <url>
-    <loc>https://xianlongok.site/tags/Slate/</loc>
+    <loc>https://xianlongok.site/tags/Python/</loc>
     <lastmod>2022-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://xianlongok.site/tags/Python/</loc>
+    <loc>https://xianlongok.site/tags/Slate/</loc>
     <lastmod>2022-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -347,14 +338,14 @@
   </url>
   
   <url>
-    <loc>https://xianlongok.site/categories/UE4/SlateUI/UMG/</loc>
+    <loc>https://xianlongok.site/categories/UE4/Python/</loc>
     <lastmod>2022-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://xianlongok.site/categories/UE4/Python/</loc>
+    <loc>https://xianlongok.site/categories/UE4/SlateUI/UMG/</loc>
     <lastmod>2022-05-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
