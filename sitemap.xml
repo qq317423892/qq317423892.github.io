@@ -200,14 +200,14 @@
 
   
   <url>
-    <loc>https://www.xianlongok.site/tags/others/</loc>
+    <loc>https://www.xianlongok.site/tags/Atmosphere/</loc>
     <lastmod>2022-05-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://www.xianlongok.site/tags/Atmosphere/</loc>
+    <loc>https://www.xianlongok.site/tags/others/</loc>
     <lastmod>2022-05-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -314,13 +314,6 @@
 
   
   <url>
-    <loc>https://www.xianlongok.site/categories/%E5%8D%9A%E5%AE%A2/</loc>
-    <lastmod>2022-05-09</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://www.xianlongok.site/categories/Graphics/</loc>
     <lastmod>2022-05-09</lastmod>
     <changefreq>weekly</changefreq>
@@ -328,7 +321,7 @@
   </url>
   
   <url>
-    <loc>https://www.xianlongok.site/categories/%E5%8D%9A%E5%AE%A2/Hexo/</loc>
+    <loc>https://www.xianlongok.site/categories/%E5%8D%9A%E5%AE%A2/</loc>
     <lastmod>2022-05-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -343,6 +336,13 @@
   
   <url>
     <loc>https://www.xianlongok.site/categories/UE4/</loc>
+    <lastmod>2022-05-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.xianlongok.site/categories/%E5%8D%9A%E5%AE%A2/Hexo/</loc>
     <lastmod>2022-05-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
