@@ -2,7 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.xianlongok.site/2022/05/08/hexo-deploy-on-zeit/</loc>
-    <lastmod>2022-05-08</lastmod>
+    <lastmod>2022-05-09</lastmod>
+  </url>
+  <url>
+    <loc>https://www.xianlongok.site/2022/05/07/web-sitemap/</loc>
+    <lastmod>2022-05-09</lastmod>
   </url>
   <url>
     <loc>https://www.xianlongok.site/2021/06/27/ue4-gc/</loc>
@@ -18,10 +22,6 @@
   </url>
   <url>
     <loc>https://www.xianlongok.site/2022/05/07/hexo-math/</loc>
-    <lastmod>2022-05-07</lastmod>
-  </url>
-  <url>
-    <loc>https://www.xianlongok.site/2022/05/07/web-sitemap/</loc>
     <lastmod>2022-05-07</lastmod>
   </url>
   <url>

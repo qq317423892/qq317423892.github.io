@@ -782,7 +782,7 @@ href="https://console.cloud.tencent.com/domain">腾讯云</a>，找到你的域�
 <div data-align="center">
 <p><img src="/images/hexo_zeit/tencent_domain_modify.png" width="50%" height="50%" /></p>
 </div>
-<p>改成 zeit 给你的 DNS 服务器，也就是坐标的 DNS 服务器：</p>
+<p>改成 zeit 给你的 DNS 服务器，也就是左边的 DNS 服务器：</p>
 <div data-align="center">
 <p><img src="/images/hexo_zeit/zeit_dns.png" width="70%" height="70%" /></p>
 </div>
@@ -2102,6 +2102,7 @@ href="https://www.google.com/webmasters/tools/home?hl=zh-CN">Google
 引擎验证申请地址</a></p>
 <p><a href="https://ziyuan.baidu.com/linksubmit/url">百度
 引擎验证申请地址</a></p>
+<p><a href="https://www.bing.com/webmasters/">Bing 站长工具</a></p>
 <h2 id="sitemap">sitemap</h2>
 <p>首先要生成博客的 sitemap，需要安装两个插件</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-generator-sitemap --save</span><br><span class="line">npm install hexo-generator-baidu-sitemap --save</span><br></pre></td></tr></table></figure>
@@ -2211,6 +2212,9 @@ code-XXXXXXX</p>
 </div>
 <p>最后可以通过 <a href="https://tool.chinaz.com/baidu/">站长工具</a>
 查询收录情况。</p>
+<h2 id="bing-收录">Bing 收录</h2>
+<p>Bing 收录配置也比较简单，使用微软账号登陆后，可以直接从 Google
+中导入你的网站，非常好用，收录也比较快。</p>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.css">]]></content>
       <categories>
         <category>博客</category>
