@@ -1,5 +1,5 @@
-https://www.xianlongok.site/2022/05/08/hexo-deploy-on-zeit/
-https://www.xianlongok.site/2022/05/07/web-sitemap/
-https://www.xianlongok.site/2022/05/07/hexo-math/
-https://www.xianlongok.site/2022/05/05/atmosphere-scatter/
-https://www.xianlongok.site/2022/03/14/landscape-texture-array/
+https://www.xianlongok.site/post/5bf5a952/
+https://www.xianlongok.site/post/fe9b04dd/
+https://www.xianlongok.site/post/367fa45b/
+https://www.xianlongok.site/post/8e5d3b12/
+https://www.xianlongok.site/post/e4cef16/
