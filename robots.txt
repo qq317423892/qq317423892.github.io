@@ -5,12 +5,7 @@ Allow: /about/
 Allow: /archives/
 Allow: /categories/
 Allow: /tags/
-Disallow: /js/
-Disallow: /css/
-Disallow: /fonts/
-Disallow: /vendors/
-Disallow: /fancybox/
-Disallow: /categories/
+
 
 Sitemap: https://xianlongok.site/sitemap.xml
 Sitemap: https://xianlongok.site/baidusitemap.xml
