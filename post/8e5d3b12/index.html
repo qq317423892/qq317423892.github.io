@@ -1,1 +1,1033 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2"><link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png"><link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png"><link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png"><link rel="mask-icon" href="/images/logo.svg" color="#222"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="//fonts.loli.net/css?family=Noto+Serif+SC:300,300italic,400,400italic,700,700italic%7CRoboto+Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css"><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script><script class="next-config" data-name="main" type="application/json">{"hostname":"www.xianlongok.site","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.11.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script><meta name="description" content="大气散射介绍 当你看到蓝天白云，日落黄昏，或者从太空遥望地球，地球周围一圈蓝色光晕，有没有想过这些现象产生的原因是什么？这些物理现象用一句话解释：太阳光与大气层中的参与介质发生了大气散射现象，从而形成了天空颜色    散射 光源的辐射沿着路径前行时，碰到参与介质时会发生几种不同散射现象的行为:   * 出射散射（Out-Scattering） 出射散射也就是光子碰到空气中的分子后，原本要射向摄像机"><meta property="og:type" content="article"><meta property="og:title" content="大气散射 ( Atmosphere Scattering)"><meta property="og:url" content="https://www.xianlongok.site/post/8e5d3b12/index.html"><meta property="og:site_name" content="十三的blog"><meta property="og:description" content="大气散射介绍 当你看到蓝天白云，日落黄昏，或者从太空遥望地球，地球周围一圈蓝色光晕，有没有想过这些现象产生的原因是什么？这些物理现象用一句话解释：太阳光与大气层中的参与介质发生了大气散射现象，从而形成了天空颜色    散射 光源的辐射沿着路径前行时，碰到参与介质时会发生几种不同散射现象的行为:   * 出射散射（Out-Scattering） 出射散射也就是光子碰到空气中的分子后，原本要射向摄像机"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/atmosphere_intro.png"><meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/disney_1.jpeg"><meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/scattering01.png"><meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/scattering_02.png"><meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/scattering05.png"><meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/scattering_06a.png"><meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/scattering_08a.png"><meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/scattering_07.png"><meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/scattering_06a.png"><meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/scattering_9.png"><meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/rayleigh.svg"><meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/rayleigh_rgb.svg"><meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/rayleigh_co.webp"><meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/rayleigh.svg"><meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/mie.png"><meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/mie_g.png"><meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/scattering_06a.png"><meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/scattering_08c.png"><meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/shader_ab.png"><meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/shader_ab02.png"><meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/shader_ab03.png"><meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/shader_ab.png"><meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/shader_ab04.png"><meta property="article:published_time" content="2022-05-05T12:35:31.000Z"><meta property="article:modified_time" content="2022-05-10T12:17:49.681Z"><meta property="article:author" content="小贤"><meta property="article:tag" content="Atmosphere"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.xianlongok.site/images/atmosphere_scatter/atmosphere_intro.png"><link rel="canonical" href="https://www.xianlongok.site/post/8e5d3b12/"><script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://www.xianlongok.site/post/8e5d3b12/","path":"post/8e5d3b12/","title":"大气散射 ( Atmosphere Scattering)"}</script><script class="next-config" data-name="calendar" type="application/json">""</script><title>大气散射 ( Atmosphere Scattering) | 十三的blog</title><script async src="https://www.googletagmanager.com/gtag/js?id=UA-228435313-1"></script><script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-228435313-1","only_pageview":false}</script><script src="/js/third-party/analytics/google-analytics.js"></script><noscript><link rel="stylesheet" href="/css/noscript.css"></noscript><style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head><body itemscope itemtype="http://schema.org/WebPage" class="use-motion"><div class="headband"></div><main class="main"><header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-container"><div class="site-nav-toggle"><div class="toggle" aria-label="切换导航栏" role="button"><span class="toggle-line"></span> <span class="toggle-line"></span> <span class="toggle-line"></span></div></div><div class="site-meta"><a href="/" class="brand" rel="start"><i class="logo-line"></i><p class="site-title">十三的blog</p><i class="logo-line"></i></a><p class="site-subtitle" itemprop="description">安心学技术</p></div><div class="site-nav-right"><div class="toggle popup-trigger"><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class="site-nav"><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fa fa-book fa-fw"></i>guestbook</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-search"><a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索</a></li></ul></nav><div class="search-pop-overlay"><div class="popup search-popup"><div class="search-header"><span class="search-icon"><i class="fa fa-search"></i></span><div class="search-input-container"><input autocomplete="off" autocapitalize="off" maxlength="80" placeholder="搜索..." spellcheck="false" type="search" class="search-input"></div><span class="popup-btn-close" role="button"><i class="fa fa-times-circle"></i></span></div><div class="search-result-container no-result"><div class="search-result-icon"><i class="fa fa-spinner fa-pulse fa-5x"></i></div></div></div></div></div><div class="toggle sidebar-toggle" role="button"><span class="toggle-line"></span> <span class="toggle-line"></span> <span class="toggle-line"></span></div><aside class="sidebar"><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class="sidebar-nav"><li class="sidebar-nav-toc">文章目录</li><li class="sidebar-nav-overview">站点概览</li></ul><div class="sidebar-panel-container"><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%A7%E6%B0%94%E6%95%A3%E5%B0%84%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">大气散射介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%A3%E5%B0%84"><span class="nav-number">2.</span> <span class="nav-text">散射</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%A7%E6%B0%94%E6%95%A3%E5%B0%84%E6%A8%A1%E5%9E%8B"><span class="nav-number">3.</span> <span class="nav-text">大气散射模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%8F%E5%B0%84%E5%87%BD%E6%95%B0"><span class="nav-number">3.1.</span> <span class="nav-text">透射函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%A3%E5%B0%84%E5%87%BD%E6%95%B0s%CE%BB%CE%B8h"><span class="nav-number">3.2.</span> <span class="nav-text">散射函数：S(λ,θ,h)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%A3%E5%B0%84-1"><span class="nav-number">3.3.</span> <span class="nav-text">散射</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#rayleigh-%E6%95%A3%E5%B0%84"><span class="nav-number">3.3.1.</span> <span class="nav-text">Rayleigh 散射</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rayleigh-%E6%95%A3%E5%B0%84%E7%B3%BB%E6%95%B0"><span class="nav-number">3.3.2.</span> <span class="nav-text">Rayleigh 散射系数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rayleigh-%E7%9B%B8%E4%BD%8D%E5%87%BD%E6%95%B0"><span class="nav-number">3.3.3.</span> <span class="nav-text">Rayleigh 相位函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mie-%E6%95%A3%E5%B0%84"><span class="nav-number">3.3.4.</span> <span class="nav-text">Mie 散射</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mie-%E6%95%A3%E5%B0%84%E7%B3%BB%E6%95%B0"><span class="nav-number">3.3.5.</span> <span class="nav-text">Mie 散射系数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mie-%E6%95%A3%E5%B0%84%E7%9B%B8%E4%BD%8D%E5%87%BD%E6%95%B0"><span class="nav-number">3.3.6.</span> <span class="nav-text">Mie 散射相位函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A1%B0%E5%87%8F%E7%B3%BB%E6%95%B0-textcolorgreent"><span class="nav-number">3.3.7.</span> <span class="nav-text">衰减系数 \(\textcolor{Green}{T}\)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E5%80%BC%E7%A7%AF%E5%88%86"><span class="nav-number">3.5.</span> <span class="nav-text">数值积分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%89%E7%BA%BF%E4%B8%8E%E5%A4%A7%E6%B0%94%E7%9B%B8%E4%BA%A4"><span class="nav-number">3.6.</span> <span class="nav-text">光线与大气相交</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%89%E7%BA%BF%E4%B8%8E%E8%A1%8C%E6%98%9F%E7%9B%B8%E4%BA%A4"><span class="nav-number">3.7.</span> <span class="nav-text">光线与行星相交</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%87%E6%A0%B7%E8%A7%86%E7%BA%BF"><span class="nav-number">3.8.</span> <span class="nav-text">采样视线</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%89%E5%AD%A6%E6%B7%B1%E5%BA%A6-pa"><span class="nav-number">3.9.</span> <span class="nav-text">光学深度 \(PA\)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%89%E5%AD%A6%E6%B7%B1%E5%BA%A6-cp"><span class="nav-number">3.10.</span> <span class="nav-text">光学深度 \(CP\)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%A3%E5%B0%84%E7%B3%BB%E6%95%B0"><span class="nav-number">3.11.</span> <span class="nav-text">散射系数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person"><img class="site-author-image" itemprop="image" alt="小贤" src="/images/avatar.jpg"><p class="site-author-name" itemprop="name">小贤</p><div class="site-description" itemprop="description">Watch and learn, your magic is mine!</div></div><div class="site-state-wrap site-overview-item animated"><nav class="site-state"><div class="site-state-item site-state-posts"><a href="/archives/"><span class="site-state-item-count">16</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"><a href="/categories/"><span class="site-state-item-count">11</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"><a href="/tags/"><span class="site-state-item-count">16</span> <span class="site-state-item-name">标签</span></a></div></nav></div><div class="links-of-author site-overview-item animated"><span class="links-of-author-item"><a href="https://github.com/qq317423892" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qq317423892" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a> </span><span class="links-of-author-item"><a href="mailto:xianlongok@163.com" title="E-Mail → mailto:xianlongok@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a></span></div><div class="links-of-blogroll site-overview-item animated"><div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i> Links</div><ul class="links-of-blogroll-list"><li class="links-of-blogroll-item"><a href="https://scorpioq.github.io/" title="https:&#x2F;&#x2F;scorpioq.github.io&#x2F;" rel="noopener" target="_blank">ScorpioQ</a></li></ul></div></div></div><div class="back-to-top animated" role="button" aria-label="返回顶部"><i class="fa fa-arrow-up"></i> <span>0%</span></div></div></aside><div class="sidebar-dimmer"></div></header><div class="reading-progress-bar"></div><a href="https://github.com/qq317423892" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin:130px 106px" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><noscript><div class="noscript-warning">Theme NexT works best with JavaScript enabled</div></noscript><div class="main-inner post posts-expand"><div class="post-block"><article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN"><link itemprop="mainEntityOfPage" href="https://www.xianlongok.site/post/8e5d3b12/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="/images/avatar.jpg"><meta itemprop="name" content="小贤"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="十三的blog"><meta itemprop="description" content="Watch and learn, your magic is mine!"></span><span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork"><meta itemprop="name" content="大气散射 ( Atmosphere Scattering) | 十三的blog"><meta itemprop="description" content=""></span><header class="post-header"><h1 class="post-title" itemprop="name headline">大气散射 ( Atmosphere Scattering)</h1><div class="post-meta-container"><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-calendar"></i> </span><span class="post-meta-item-text">发表于</span> <time title="创建时间：2022-05-05 20:35:31" itemprop="dateCreated datePublished" datetime="2022-05-05T20:35:31+08:00">2022-05-05</time> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-calendar-check"></i> </span><span class="post-meta-item-text">更新于</span> <time title="修改时间：2022-05-10 20:17:49" itemprop="dateModified" datetime="2022-05-10T20:17:49+08:00">2022-05-10</time> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-folder"></i> </span><span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Graphics/" itemprop="url" rel="index"><span itemprop="name">Graphics</span></a> </span></span><span id="/post/8e5d3b12/" class="post-meta-item leancloud_visitors" data-flag-title="大气散射 ( Atmosphere Scattering)" title="阅读次数"><span class="post-meta-item-icon"><i class="far fa-eye"></i> </span><span class="post-meta-item-text">阅读次数：</span> <span class="leancloud-visitors-count"></span> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-comment"></i> </span><span class="post-meta-item-text">Valine：</span> <a title="valine" href="/post/8e5d3b12/#valine-comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/post/8e5d3b12/" itemprop="commentCount"></span> </a></span><span class="post-meta-break"></span> <span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="far fa-file-word"></i> </span><span class="post-meta-item-text">本文字数：</span> <span>16k</span> </span><span class="post-meta-item" title="阅读时长"><span class="post-meta-item-icon"><i class="far fa-clock"></i> </span><span class="post-meta-item-text">阅读时长 &asymp;</span> <span>15 分钟</span></span></div></div></header><div class="post-body" itemprop="articleBody"><h2 id="大气散射介绍">大气散射介绍</h2><p>当你看到蓝天白云，日落黄昏，或者从太空遥望地球，地球周围一圈蓝色光晕，有没有想过这些现象产生的原因是什么？这些物理现象用一句话解释：太阳光与大气层中的参与介质发生了大气散射现象，从而形成了天空颜色</p><p><img src="/images/atmosphere_scatter/atmosphere_intro.png" width="100%" height="100%"></p><h2 id="散射">散射</h2><p>光源的辐射沿着路径前行时，碰到参与介质时会发生几种不同散射现象的行为:</p><ul><li><p>出射散射（Out-Scattering） 出射散射也就是光子碰到空气中的分子后，原本要射向摄像机的光线发生了偏转，光线的方向改变了</p><div data-align="center"><img src="/images/atmosphere_scatter/scattering01.png" width="50%" height="50%"></div></li><li><p>入射散射（In-Scattering） 入射散射与出射散射相反，本来不指向相机的光线也可能被偏转到相机的方向，这就是入射散射。</p><div data-align="center"><img src="/images/atmosphere_scatter/scattering_02.png" width="50%" height="50%"></div></li></ul><p>根据粒子大小不同可分为<strong>瑞利散射（Rayleigh Scattering）</strong> 和 <strong>米氏散射（Mie Scattering）</strong> &gt; 光碰到不同大小粒子后发生散射，不同方向上的光强如下图，箭头长度表示光线强弱，箭头越长，光线越强。</p><div data-align="center"><p><img src="/images/atmosphere_scatter/scattering05.png" width="80%" height="80%"></p></div><h2 id="大气散射模型">大气散射模型</h2><p>大气散射模型分为两种：Single Scattering和Multi Scattering。</p><ul><li><p>Single Scattering 即只考虑太阳光经过一次散射后抵达我们的眼睛。</p></li><li><p>Multi Scattering，考虑光线多次散射过程的模型。显然这更符合现实世界的情况，但下一级的散射取决于与上一级散射的结果，也就是说这是一个递归方程，实现起来并不太容易。</p></li></ul><blockquote><p>由于第二次散射以上的能量较少，对最终视觉的影响程度有限，所以目前Single Scattering 还是一种相对实现简单效果也不会差很多的模型，这里也主要介绍 Single Scattering。</p></blockquote><p>因此单次散射大气模型求解问题如下： 我们从路径 AB 观察大气，并且求解 B 点的大气颜色，光线在大气中只发生一次散射，散射点为 P：</p><div data-align="center"><p><img src="/images/atmosphere_scatter/scattering_06a.png" width="50%" height="50%"></p></div><p>实际上在路径 AB 上有无数个 P 点，因此最终求解是对 AB 路径上每一个点的光照贡献进行累加(求积分)</p><div data-align="center"><p><img src="/images/atmosphere_scatter/scattering_08a.png" width="50%" height="50%"></p></div><p>因此整个模型可以分解成如下问题：</p><ul><li>P 点光照 ：光线穿过大气会衰减，到达 P 点后的光照强度。</li><li>光线在 P 散射：进入相机方向的光照，即入射散射部分</li><li>累加所有 P 点光照</li></ul><h3 id="透射函数">透射函数</h3><p>为了计算散射点的光照，我们先考虑如下一段光线：</p><div data-align="center"><p><img src="/images/atmosphere_scatter/scattering_07.png" width="50%" height="50%"></p></div><ul><li>光线从太阳传到 C，此时是真空，所以没有损失，我们用 <span class="math inline">\(I_C\)</span> 指代 C 点的光强</li><li>在从 C 点到 P 点的过程在中，经过 CP 路径衰减，我们用 <span class="math inline">\(I_P\)</span> 指代 P 点的光强</li><li><span class="math inline">\(I_P\)</span> 比 <span class="math inline">\(I_C\)</span> 的值就是 <strong>透射率(Transimittance)</strong> :<span class="math inline">\(T (CP) = \frac{I_P}{I_C}\)</span></li></ul><p>P 点的光强也就是: <span class="math display">\[I_P = I_C * \textcolor{Green}{T(CP)}\]</span></p><p>其中，<strong>T项</strong>是<strong>衰减系数（Transmittance）</strong>，它表示在某段路径上的对光照的衰减程度。该公式也可以被认为是<strong>零级散射（zero scattering）</strong>，即不考虑任何散射事件、直接考虑经过衰减后光强。</p><h3 id="散射函数sλθh">散射函数：S(λ,θ,h)</h3><p>P点在接受光照后，会因为散射偏转一部分，于是我们需要散射函数 <span class="math inline">\(S(\lambda,\theta,h)\)</span> 来表示某一方向上光线的偏转情况。如下图，那些偏转了 <span class="math inline">\(\theta\)</span> 角的光线才能被指向A点的摄像机:</p><div data-align="center"><p><img src="/images/atmosphere_scatter/scattering_06a.png" width="50%" height="50%"></p></div><p>于是我们可以得出从 P 点出发到 A 点的光强：</p><p><span class="math display">\[I_{PA}=\boxed{I_P}\textcolor{DarkRed}{S(\lambda,\theta,h)} \textcolor{Green}{T(PA)} \]</span></p><p>从公式中可以看出，散射跟角度 <span class="math inline">\(\theta\)</span>、光线波长 <span class="math inline">\(\lambda\)</span> 以及 <span class="math inline">\(P\)</span> 点高度 <span class="math inline">\(h\)</span> 有关系。</p><h3 id="散射-1">散射</h3><p>散射系数和粒子的大小和折射率有关，这里就得解释一下大气粒子的分类。我们知道大气中有很多不同种类的大气分子/粒子，一般在大气渲染模型里把它们分成两大类。一种是小分子，例如氮气和氧气分子等，另一种是大粒子，例如各种尘埃粒子。之所以要进行分类是因为它们对光线有着不一样的行为（这里忽略对光的吸收，只考虑散射）：</p><ul><li>小分子：指大小远小于光线波长的粒子。小分子对光的散射在前后方向上分布比较均匀，通常会使用 <strong>Rayleigh散射（Rayleigh Scattering）</strong> 对它们进行建模。由于这些分子大小比波长还要小很多，因此光的<strong>波长</strong>也会影响 Rayleigh 散射的程度。</li><li>大粒子：指大小远大于光线波长的粒子。大粒子在发生散射的时候会把更多的光散射到前向，通常会使用 <strong>Mie散射（Mie Scattering）</strong> 对它们进行建模。由于光的波长相较于这些粒子大小来说是可以忽略的，因此我们认为 Mie 散射跟光线<strong>波长无关</strong>。</li></ul><h4 id="rayleigh-散射">Rayleigh 散射</h4><p>对于足够小的粒子，光线在撞击它后会经历什么？我们通常使用瑞利散射来建模。</p><div data-align="center"><p><img src="/images/atmosphere_scatter/scattering_9.png" width="50%" height="50%"></p></div><p>Rayleigh 散射曲线图如下：</p><div data-align="center"><p><img src="/images/atmosphere_scatter/rayleigh.svg" width="50%" height="50%"></p></div><p>散射函数如下，这个方程并不是真正的Rayleigh散射方程，你去维基百科里面查，会发现另外一个公式，这个公式来自<a target="_blank" rel="noopener" href="http://nishitalab.org/user/nis/cdrom/sig93_nis.pdf">这篇论文</a>：</p><p><span class="math display">\[\textcolor{DarkRed}{S(\lambda,\theta,h)} = \frac{\pi^2(n^2-1)^2}{2}\frac{\textcolor{Gold}{\rho(h)}}{N}\frac{1}{\lambda^4}(1+cos\theta^2)\]</span></p><p>其中，</p><ul><li><strong><span class="math inline">\(\lambda\)</span></strong> 是光的波长</li><li><strong><span class="math inline">\(n=1.00029\)</span></strong> 是粒子折射率</li><li><strong><span class="math inline">\(N=2.504*10^{25}\)</span></strong> 是海平面处的大气密度，单位是 分子数/立方米</li><li><strong><span class="math inline">\(\rho(h)\)</span></strong> 是高度 <strong><span class="math inline">\(h\)</span></strong> 处的相对大气密度（即相对于海平面的密度，可以理解成 <strong><span class="math inline">\(h\)</span></strong> 处真正的大气密度与海平面处大气密度的比值，因此它在海平面处值为 1，随着 <strong><span class="math inline">\(h\)</span></strong> 增加不断减小），我们一般会使用指数函数对它的真实曲线进行数学拟合（是一种近似拟合，不要和后面提到的指数函数弄混）：</li></ul><p><span class="math display">\[\textcolor{Gold}{\rho(h)}=exp(-\frac{h}{H})\]</span></p><p>其中 <strong>H</strong> 为 <strong>“Scale Height”</strong>，相当于是一个基准的高度。</p><ul><li>对于 Rayleigh 来说，<strong>H= 8500米</strong>。</li><li>对于 Mie 来说，<strong>H = 1200米</strong>。</li></ul><p>可以看出Rayleigh散射大致和波长的4次幂的成反比，波长越小（越靠近紫光）的光被散射得越厉害。所以白天的时候天空为蓝色，因为蓝光在大气里不断被散射，黄昏的时候天空会变红，因为相比于白天，阳光此时要穿越更厚得多的大气层，在到达人眼之前，大多数蓝光都被散射到其他方向，所以剩下来的就是红光了。</p><div data-align="center"><p><img src="/images/atmosphere_scatter/rayleigh_rgb.svg" width="80%" height="80%"></p></div><h4 id="rayleigh-散射系数">Rayleigh 散射系数</h4><p>Rayleigh 散射的公式 <span class="math inline">\(S(\lambda,\theta,h)\)</span> 表示在某个特定方向上的光强度，要求总散射系数就需要对散射函数做球面积分：</p><div data-align="center"><p><img src="/images/atmosphere_scatter/rayleigh_co.webp" width="30%" height="30%"></p></div><blockquote><p>球面积分示意图，这里假定 r 等于 1，对球面积分时，因为 <span class="math inline">\(d\theta\)</span> 跟 <span class="math inline">\(d\phi\)</span> 非常小，因此球面可以看成是矩形，因此蓝色框长度为 <span class="math inline">\(w=rsin\theta d\phi\)</span> <strong>（弦长公式：蓝色面片上边缘半径 <span class="math inline">\(rsin\theta\)</span>，角度 <span class="math inline">\(d\phi\)</span>）</strong>，高为 <span class="math inline">\(d\theta\)</span>，则面积 <span class="math inline">\(S=rsin\theta d\phi d\theta\)</span></p></blockquote><p>因此：</p><p><span class="math display">\[\beta(\lambda, h) = \int_{0}^{2\pi}{\int_{0}^{\pi}{S(\lambda,\theta,h)}sin\theta d\theta d\phi}\]</span></p><p>最后得出：</p><p><span class="math display">\[\beta(\lambda, h) = \frac{8\pi^3(n^2-1)^2}{3}\frac{\textcolor{Gold}{\rho(h)}}{N}\frac{1}{\lambda^4}\]</span></p><p>特别地，当 <span class="math inline">\(h=0\)</span> 时，即表示海平面的散射系数：</p><p><span class="math display">\[ \beta(\lambda, 0) = \frac{8\pi^3(n^2-1)^2}{3} \frac{ \textcolor{Gold}{1} }{N} \frac{1}{\lambda^4} \]</span></p><p>举例来说就，对于红绿蓝的波长，在海平面时，可以得出这些结果：</p><p><span class="math display">\[\begin{aligned} \beta(\textcolor{Red}{680nm}) &amp;= 5.2*10^{-6} \\ \beta(\textcolor{Green}{550nm}) &amp;= 12.1*10^{-6} \\ \beta(\textcolor{Blue}{440nm}) &amp;= 29.6*10^{-6} \end{aligned}\]</span></p><blockquote><p>有些博客跟论文里计算结果如下: <span class="math inline">\(\beta_rrgb=(5.8, 13.5, 33.1) \cdot 10^{-6}\)</span>，<span class="math inline">\(n=1.0003，N=2.545\cdot10^{25}\)</span></p></blockquote><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; 8*math.pi**3*(1.00029**2-1)**2/3.0/(2.504e25)/((680e-9)**4)</span><br><span class="line">5.196731735928312e-06</span><br><span class="line">&gt;&gt;&gt; 8*math.pi**3*(1.00029**2-1)**2/3.0/(2.504e25)/((550e-9)**4)</span><br><span class="line">1.2142697926864656e-05</span><br><span class="line">&gt;&gt;&gt; 8*math.pi**3*(1.00029**2-1)**2/3.0/(2.504e25)/((440e-9)**4)</span><br><span class="line">2.964525861050941e-05</span><br></pre></td></tr></table></figure><p>总散射系数公式也可以拆解为：</p><p><span class="math display">\[\beta(\lambda, h) = \frac{8\pi^3(n^2-1)^2}{3}\frac{\textcolor{Gold}{\rho(h)}}{N}\frac{1}{\lambda^4}=\beta(\lambda) \textcolor{Gold}{\rho(h)}\]</span></p><p>其中：</p><p><span class="math display">\[\beta(\lambda) = \frac{8\pi^3(n^2-1)^2}{3}\frac{1}{N}\frac{1}{\lambda^4}\]</span></p><h4 id="rayleigh-相位函数">Rayleigh 相位函数</h4><p>Rayleigh 散射的原方程可以分解成两个分量，一个是上面的有关能量强度的散射系数，另一个分量则和它几何形状有关</p><p><span class="math display">\[S(\lambda,\theta,h)=\beta(\lambda, h)\underbrace{\gamma(\theta)}_{geometry}\]</span></p><p><span class="math inline">\(\gamma(\theta)\)</span> 可以用前两者之比得到。</p><p><span class="math display">\[\begin{aligned} \gamma(\theta) &amp;= \frac{S(\lambda,\theta,h)}{\beta(\lambda, h)}\\ &amp;=\frac{3}{16\pi}(1+cos^2\theta) \end{aligned}\]</span></p><p>该表达式不依赖波长，<span class="math inline">\(\gamma(\theta)\)</span> 的函数图像就是之前两瓣的偶极子形状</p><div data-align="center"><p><img src="/images/atmosphere_scatter/rayleigh.svg" width="50%" height="50%"></p></div><blockquote><p>PS: 整个散射函数可以拆分成 <span class="math inline">\(\textcolor{DarkRed}{S(\lambda,\theta,h)}= \textcolor{DodgerBlue}{ \beta(\lambda)} \textcolor{Gold}{\rho(h)} \textcolor{Purple}{\gamma(\theta)}\)</span></p></blockquote><h4 id="mie-散射">Mie 散射</h4><p>光线的散射是很复杂的，瑞利散射对原子和分子可以有效模拟，但是对光线和大物体（气溶胶）的交互没什么作用。地球大气布满了气溶胶，所以仅是瑞利散射是不足以复现的，为此常用的就是 <strong>米氏散射（Mie scattering）</strong>，这种散射类型倾向于扩散光线，让光源看起来比实际大，但不会改变光的颜色</p><h4 id="mie-散射系数">Mie 散射系数</h4><p>米散射系数很难去推导计算，基于统计数据的结果，米散射系数可以常量进行估计。论文<a href="#ref-anchor-10"><sup>10</sup></a>中给出海平面的米散射系数:</p><p><span class="math display">\[\beta(\textcolor{Red}{680nm},\textcolor{Green}{550nm} , \textcolor{Blue}{440nm} = (2.2*10^{-5}, 2.2*10^{-5}, 2.2*10^{-5})\]</span></p><h4 id="mie-散射相位函数">Mie 散射相位函数</h4><p>真实的 Mie 散射相位函数图像如下：</p><div data-align="center"><p><img src="/images/atmosphere_scatter/mie.png" width="60%" height="60%"></p></div><p>因此 Mie 相位函数也是近似方式得出，我们可以利用Henyey-Greenstein 函数，该函数在1941年提出：</p><p><span class="math display">\[\gamma_{HG}(\theta)=\frac{1}{4\pi}\frac{1-g^2}{(1+g^2-2gcos\theta)^\frac{3}{2}}\]</span></p><p>在 1992 年 Cornette 对其进行了改进：</p><p><span class="math display">\[\gamma_{M}(\theta)=\frac{3}{8\pi}\frac{1-g^2}{(2+g^2)}\frac{1+cos^2\theta}{(1+g^2-2gcos\theta)^\frac{3}{2}}\]</span></p><p>该函数引入了一个参数 <span class="math inline">\(g（-1＜g＜1）\)</span>，决定了前后散射的相对强度，代表散射方向的平均余弦。正的 <span class="math inline">\(g\)</span> 值会增加正向散射的光量，负的 <span class="math inline">\(g\)</span> 值表示向后散射的光量。 <span class="math inline">\(g=0\)</span> 的值导致各向同性散射。</p><div data-align="center"><p><img src="/images/atmosphere_scatter/mie_g.png" width="60%" height="60%"></p></div><p>对于地球大气层，一般可以取 <span class="math inline">\(g=0.758\)</span>。然后由于上述两个函数计算成本比较高，快速应用可以使用 Schlick 相位函数：</p><p><span class="math display">\[\lambda_S(\theta)=\frac{1}{4\pi}\frac{1-g^2}{(1+gcos\theta)^2}\]</span></p><h4 id="衰减系数-textcolorgreent">衰减系数 <span class="math inline">\(\textcolor{Green}{T}\)</span></h4><p><span class="math inline">\(T(a,b)\)</span> 表示 <span class="math inline">\(a,b\)</span> 之间的透射率（transmittance），其定义为<a href="#ref-anchor-9"><sup>9</sup></a>：</p><p><span class="math display">\[T(a,b)=exp(-\int_a^b\sigma_t(p)dl_p\]</span></p><p>其中 <span class="math inline">\(\sigma_t\)</span> 为介质衰减系数，</p><ul><li><p>Rayleigh 在大气中，Rayleigh 散射可以用 Rayleigh theory 近似描述：</p><p><span class="math inline">\(\sigma_RT(h,\lambda)=\beta(\lambda, h)\)</span></p></li></ul><p>即：</p><p><span class="math display">\[\textcolor{Green}{T(PA)}=exp\{-\int_P^A{\textcolor{DodgerBlue}{\beta(\lambda, h)}}ds\}\]</span></p><p>带入之前求解的总散射系数公式： <span class="math inline">\(\beta(\lambda,h)\)</span></p><p><span class="math display">\[\textcolor{Green}{T(PA)}=exp\{-\textcolor{DodgerBlue}{\beta(\lambda)}\int_P^A{\textcolor{Gold}{\rho(h)}}ds\}\]</span></p><p>其中的积分项对应的是路径长度 <span class="math inline">\(x\)</span>，可以理解为在光传播路径上，对大气密度函数 <span class="math inline">\(\textcolor{Gold}{\rho(h)}\)</span> 求积分，这部分被称为 <strong>光学距离——Optical Depth</strong>：</p><p><span class="math display">\[\textcolor{Darkorange}{D(PA)}=\int_P^A{\textcolor{Gold}{\rho(h)}}ds\}\]</span></p><h3 id="总结">总结</h3><p>至此，我们简单推导了 <span class="math inline">\(S\)</span> 跟 <span class="math inline">\(T\)</span>，这样一开始的公式可以写成：</p><p><span class="math display">\[\begin{aligned} I_{PA} &amp;= \boxed{I_P}\textcolor{DarkRed}{S(\lambda,\theta,h)} \underline {\textcolor{Green}{T(PA)} } \\ &amp;=\boxed{I_S\textcolor{Green}{T(CP)}} \textcolor{DarkRed}{S(\lambda,\theta,h)} \underline { \textcolor{Green}{T(PA)} } \\ &amp;= \boxed { I_S \{exp\{-\textcolor{DodgerBlue}{\beta(\lambda)}\textcolor{Darkorange}{D(CP)}\}\} } \textcolor{DarkRed}{ \{ \textcolor{DodgerBlue}{ \beta(\lambda)} \textcolor{Gold}{\rho(h)} \textcolor{Purple}{\gamma(\theta)} \} } \underline { \{exp\{-\textcolor{DodgerBlue}{\beta(\lambda)}\textcolor{Darkorange}{D(PA)}\}\} }\\ &amp;= I_S \textcolor{DarkRed}{ \{ \textcolor{DodgerBlue}{\beta(\lambda)} \textcolor{Gold}{\rho(h)} \textcolor{Purple}{\gamma(\theta)} \} } \{exp\{ -\textcolor{DodgerBlue}{\beta(\lambda)} \{ \textcolor{Darkorange}{D(CP)} + \textcolor{Darkorange}{D(PA)} \} \} \} \end{aligned} \]</span></p><p>其中，一般情况下，太阳光照角度固定，可以看成是平行光，<span class="math inline">\(\textcolor{Purple}{\gamma(\theta)}\)</span> 可以看成常量，<span class="math inline">\(\textcolor{DodgerBlue}{\beta(\lambda)}\)</span> 也是常量，也就是海平面附近的散射系数，在 Shader 中作为输入即可，<span class="math inline">\(\textcolor{Darkorange}{D(PA)}\)</span> 等在 Shader 中计算。</p><div data-align="center"><p><img src="/images/atmosphere_scatter/scattering_06a.png" width="50%" height="50%"></p></div><p>总结起来，公式表示的含义就是，计算观察路径AB上某一点P的光照贡献：</p><ul><li>光线从太阳出发，到达大气边缘的C点</li><li>经过路径CP上的衰减到达P点（0级散射）</li><li>在P点发生一次散射，将一部分光散射到了观察方向上（1级散射）</li><li>这部分光又经过AP路径上的衰减最终到达了我们的眼睛</li></ul><h3 id="数值积分">数值积分</h3><p>P只是AB上的某一点，我们需要对路径AB上的每一点进行积分：</p><div data-align="center"><p><img src="/images/atmosphere_scatter/scattering_08c.png" width="50%" height="50%"></p></div><p><span class="math display">\[\begin{aligned} I_A &amp;= \sum_{i=0}^{n}I_{P_n} \\ &amp;= \int_{A}^{B} I_{PA} ds \\ &amp;= \int_{A}^{B} I_S \textcolor{DarkRed}{ \{ \textcolor{DodgerBlue}{\beta(\lambda)} \textcolor{Gold}{\rho(h)} \textcolor{Purple}{\gamma(\theta)} \} } \{ exp\{ -\textcolor{DodgerBlue}{\beta(\lambda)} \{ \textcolor{Darkorange}{D(CP)} + \textcolor{Darkorange}{D(PA)} \} \} \} ds \\ &amp;= I_S \textcolor{DodgerBlue}{\beta(\lambda)} \textcolor{Purple}{\gamma(\theta)} \int_{A}^{B} {exp\{ -\textcolor{DodgerBlue}{\beta(\lambda)} \{ \textcolor{Darkorange}{D(CP)} + \textcolor{Darkorange}{D(PA)} } \}\} \textcolor{Gold}{\rho(h)} ds \end{aligned} \]</span></p><blockquote><p>在大气shader中，我们将 <span class="math inline">\(AB\)</span> 分割成等长的若干段，然后取这些段的中点记为 <span class="math inline">\(P_i\)</span>，然后分别计算每个点的 <span class="math inline">\(I_{P_i}\)</span>，最后将这些点的光照累加起来。 ## 大气球体shader框架思路</p></blockquote><h3 id="光线与大气相交">光线与大气相交</h3><p>从之前得出的公式中可以得知，我们需要在 <span class="math inline">\(AB\)</span> 路径上求光学距离，我们第一步需要求出 <span class="math inline">\(AB\)</span> 的长度：</p><div data-align="center"><p><img src="/images/atmosphere_scatter/shader_ab.png" width="50%" height="50%"></p></div><p>如下图所示，灰色部分是大气，我们需要求出观察路径 <span class="math inline">\(AB\)</span>，其中已知：</p><ul><li><span class="math inline">\(O\)</span>：相机位置</li><li><span class="math inline">\(C\)</span>：大气球心位置</li><li><span class="math inline">\(L\)</span>：相机到大气球心长度</li><li><span class="math inline">\(R\)</span>：大气球半径</li><li><span class="math inline">\(\vec{OD}\)</span> ：观察方向，单位向量</li></ul><div data-align="center"><p><img src="/images/atmosphere_scatter/shader_ab02.png" width="50%" height="50%"></p></div><p>如图可以依次求出，</p><ul><li><span class="math inline">\(OT = \vec{OC} \cdot \vec{OD}\)</span></li><li><span class="math inline">\(TC = \sqrt{L^2 - OC^2}\)</span></li><li><span class="math inline">\(AT = \sqrt{R^2 - TC^2}\)</span></li><li><span class="math inline">\(OA = OT-AT\)</span></li><li><span class="math inline">\(OB = OT+BT=OT+AT\)</span></li></ul><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">RayIntersect</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="comment">// Ray</span></span></span></span><br><span class="line"><span class="params"><span class="function">    float3 O, <span class="comment">// Origin</span></span></span></span><br><span class="line"><span class="params"><span class="function">    float3 D, <span class="comment">// Direction</span></span></span></span><br><span class="line"><span class="params"><span class="function"></span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="comment">// Sphere</span></span></span></span><br><span class="line"><span class="params"><span class="function">    float3 C, <span class="comment">// Centre</span></span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">float</span> R,    <span class="comment">// Radius</span></span></span></span><br><span class="line"><span class="params"><span class="function">    out <span class="type">float</span> AO, <span class="comment">// First intersection time</span></span></span></span><br><span class="line"><span class="params"><span class="function">    out <span class="type">float</span> BO  <span class="comment">// Second intersection time</span></span></span></span><br><span class="line"><span class="params"><span class="function">)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    float3 L = C - O;</span><br><span class="line">    <span class="type">float</span> DT = <span class="built_in">dot</span> (L, D);</span><br><span class="line">    <span class="type">float</span> R2 = R * R;</span><br><span class="line"></span><br><span class="line">    <span class="type">float</span> CT2 = <span class="built_in">dot</span>(L,L) - DT*DT;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// CT 长度超过了求半径 R，此时视线跟大气不相交</span></span><br><span class="line">    <span class="comment">// Intersection point outside the circle</span></span><br><span class="line">    <span class="keyword">if</span> (CT2 &gt; R2)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="type">float</span> AT = <span class="built_in">sqrt</span>(R2 - CT2);</span><br><span class="line">    <span class="type">float</span> BT = AT;</span><br><span class="line"></span><br><span class="line">    AO = DT - AT;</span><br><span class="line">    BO = DT + BT;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h3 id="光线与行星相交">光线与行星相交</h3><p>视线有可能会被行星阻挡，因此需要做两次相交函数，一次判断大气，一次判断行星。</p><div data-align="center"><p><img src="/images/atmosphere_scatter/shader_ab03.png" width="50%" height="50%"></p></div><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Intersections with the atmospheric sphere</span></span><br><span class="line"><span class="comment">//     D    : 观察方向向量</span></span><br><span class="line"><span class="comment">// worldPos : 相机坐标 </span></span><br><span class="line"><span class="type">float</span> tA;    <span class="comment">// Atmosphere entry point (worldPos + D * tA)</span></span><br><span class="line"><span class="type">float</span> tB;    <span class="comment">// Atmosphere exit point  (worldPos + D * tB)</span></span><br><span class="line"><span class="keyword">if</span> (!<span class="built_in">RayIntersect</span>(O, D, _PlanetCentre, _AtmosphereRadius, tA, tB))</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">fixed4</span>(<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>); <span class="comment">// The view rays is looking into deep space</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Is the ray passing through the planet core?</span></span><br><span class="line"><span class="type">float</span> pA, pB;</span><br><span class="line"><span class="keyword">if</span> (<span class="built_in">RayIntersect</span>(O, D, _PlanetCentre, _PlanetRadius, pA, pB))</span><br><span class="line">    tB = pA;</span><br></pre></td></tr></table></figure><h3 id="采样视线">采样视线</h3><p>之前我们得到了 <span class="math inline">\(AB\)</span> 路径上每个点 <span class="math inline">\(P\)</span> 的光照公式：</p><p><span class="math display">\[\begin{aligned} I_A &amp;= I_S \textcolor{DodgerBlue}{\beta(\lambda)} \textcolor{Purple}{\gamma(\theta)} \int_{A}^{B} {exp\{ -\textcolor{DodgerBlue}{\beta(\lambda)} \{ \textcolor{Darkorange}{D(CP)} + \textcolor{Darkorange}{D(PA)} } \}\} \textcolor{Gold}{\rho(h)} ds \\ &amp;= I_S \textcolor{DodgerBlue}{\beta(\lambda)} \textcolor{Purple}{\gamma(\theta)} \sum_{P \in AB} \textcolor{Green}{T(CP)} \textcolor{Green}{T(PA)} \textcolor{Gold}{\rho(h)} ds \end{aligned}\]</span></p><p>线段上有无数个 <span class="math inline">\(P\)</span> 点，为了近似求解 <span class="math inline">\(I\)</span>，我们需要把线段划分为数个长度为 <span class="math inline">\(ds\)</span> 的小段</p><div data-align="center"><p><img src="/images/atmosphere_scatter/shader_ab.png" width="50%" height="50%"></p></div><p><span class="math inline">\(AB\)</span> 被划分的段数，就是视线采样数（View Samples），在 Shader 可以这么处理：</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Numerical integration to calculate</span></span><br><span class="line"><span class="comment">// the light contribution of each point P in AB</span></span><br><span class="line">float3 totalViewSamples = <span class="number">0</span>;</span><br><span class="line"><span class="type">float</span> time = tA;</span><br><span class="line"><span class="type">float</span> ds = (tB - tA) / (<span class="type">float</span>)(_ViewSamples);</span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; _ViewSamples; i ++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// Point position</span></span><br><span class="line">    <span class="comment">// (sampling in the middle of the view sample segment)</span></span><br><span class="line">    <span class="comment">// O : 相机位置</span></span><br><span class="line">    <span class="comment">// D : 相机方向向量</span></span><br><span class="line">    float3 P = O + D * (time + ds * <span class="number">0.5</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// T(CP) * T(PA) * ρ(h) * ds</span></span><br><span class="line">    totalViewSamples += <span class="built_in">ViewSampling</span>(P, ds);</span><br><span class="line"></span><br><span class="line">    time += ds;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// I = I_S * β(λ) * γ(θ) * totalViewSamples</span></span><br><span class="line">float3 I = _SunIntensity *  _ScatteringCoefficient * phase * totalViewSamples;</span><br></pre></td></tr></table></figure><p>接下来就是求解每个 <span class="math inline">\(P\)</span> 点上的 <span class="math inline">\(\textcolor{Green}{T(CP)} \textcolor{Green}{T(PA)} \textcolor{Gold}{\rho(h)}ds\)</span></p><h3 id="光学深度-pa">光学深度 <span class="math inline">\(PA\)</span></h3><p>回顾一下之前的公式：</p><p><span class="math display">\[ \textcolor{Green}{T(CP)} \textcolor{Green}{T(PA)} = exp\{ -\textcolor{DodgerBlue}{\beta(\lambda)} \{ \textcolor{Darkorange}{D(CP)} + \textcolor{Darkorange}{D(PA)} \} \}\]</span></p><p>其中:</p><p><span class="math display">\[\textcolor{Darkorange}{D(PA)}=\sum_{Q \in PA} exp \{ -\frac{h_Q}{H} \}ds\]</span></p><p><span class="math inline">\(h_Q\)</span> 表示当前点的高度，有一点注意 <span class="math inline">\(\textcolor{Gold}{\rho(h)}=exp(-\frac{h_Q}{H})\)</span>，这里顺便可以求解 <span class="math inline">\(AB\)</span> 上的积分 <span class="math inline">\(\textcolor{Gold}{\rho(h)}ds\)</span>。</p><p>Shader 实现如下:</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// + Accumulator for the optical depth</span></span><br><span class="line"><span class="type">float</span> opticalDepthPA = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">float3 totalViewSamples = <span class="number">0</span>;</span><br><span class="line"><span class="type">float</span> time = tA;</span><br><span class="line"><span class="type">float</span> ds = (tB - tA) / (<span class="type">float</span>)(_ViewSamples);</span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; _ViewSamples; i ++)</span><br><span class="line">&#123;</span><br><span class="line">    float3 P = O + D * (time + ds * <span class="number">0.5</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">///////// Begin ViewSampling()</span></span><br><span class="line">    <span class="comment">// T(CP) * T(PA) * ρ(h) * ds</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 1: ρ(h) * ds</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//            C : 行星球形坐标</span></span><br><span class="line">    <span class="comment">// _ScaleHeight : Rayleigh/Mie 散射里的基准高度</span></span><br><span class="line"></span><br><span class="line">    <span class="type">float</span> height = <span class="built_in">distance</span>(C, P) - _PlanetRadius;</span><br><span class="line">    <span class="type">float</span> opticalDepthSegment = <span class="built_in">exp</span>(-height / _ScaleHeight) * ds;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 2: D(PA)</span></span><br><span class="line">    opticalDepthPA += opticalDepthSegment;</span><br><span class="line"></span><br><span class="line">    <span class="comment">////////    End ViewSampling()</span></span><br><span class="line"></span><br><span class="line">    time += ds;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// I = I_S * β(λ) * γ(θ) * totalViewSamples</span></span><br><span class="line">float3 I = _SunIntensity *  _ScatteringCoefficient * phase * totalViewSamples;</span><br></pre></td></tr></table></figure><h3 id="光学深度-cp">光学深度 <span class="math inline">\(CP\)</span></h3><p>累加符号里 <span class="math inline">\(P\)</span> 点的光量贡献还剩下 <span class="math inline">\(CP\)</span> 的光学深度，我们在求 <span class="math inline">\(CP\)</span> 的光学深度时，建立一个 LightSampling 方法，也就从 <span class="math inline">\(P\)</span> 点出发指向太阳进行采样，把太阳的出射点叫做 <span class="math inline">\(C\)</span> （注意跟之前的球心坐标 <span class="math inline">\(C\)</span> 区分），然后注意下面 <span class="math inline">\(C_0\)</span> 的情况，光线被星球遮挡，此时要忽略 <span class="math inline">\(P_0\)</span> 点的贡献。</p><div data-align="center"><p><img src="/images/atmosphere_scatter/shader_ab04.png" width="50%" height="50%"></p></div><p>Shader 实现如下：</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">LightSampling</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">    float3 P,    <span class="comment">// Current point within the atmospheric sphere</span></span></span></span><br><span class="line"><span class="params"><span class="function">    float3 S,    <span class="comment">// S 是光照方向，从 P 点到 C 点的平行光</span></span></span></span><br><span class="line"><span class="params"><span class="function">    out <span class="type">float</span> opticalDepthCA</span></span></span><br><span class="line"><span class="params"><span class="function">)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">float</span> _; <span class="comment">// don&#x27;t care about this one</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 这里 C 是局部变量，表示光线在大气表面的入射点</span></span><br><span class="line">    <span class="type">float</span> C;</span><br><span class="line">    <span class="built_in">RayInstersect</span>(P, S, _PlanetCentre, _AtmosphereRadius, _, C);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Samples on the segment PC</span></span><br><span class="line">    <span class="comment">// _LightSamples : CP 上的分段次数</span></span><br><span class="line"></span><br><span class="line">    <span class="type">float</span> time = <span class="number">0</span>;</span><br><span class="line">    <span class="type">float</span> ds = <span class="built_in">distance</span>(P, P + S * C) / (<span class="type">float</span>)(_LightSamples);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; _LightSamples; i ++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// Q 点如上图所示</span></span><br><span class="line">        <span class="comment">// S : 光照方向</span></span><br><span class="line">        float3 Q = P + S * (time + lightSampleSize * <span class="number">0.5</span>);</span><br><span class="line">        <span class="type">float</span> height = <span class="built_in">distance</span>(_PlanetCentre, Q) - _PlanetRadius;</span><br><span class="line">        <span class="comment">// Inside the planet</span></span><br><span class="line">        <span class="keyword">if</span> (height &lt; <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Optical depth for the light ray</span></span><br><span class="line">        opticalDepthCA += <span class="built_in">exp</span>(-height / _RayScaleHeight) * ds;</span><br><span class="line"></span><br><span class="line">        time += ds;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>然后之前的代码加入 <span class="math inline">\(CP\)</span> 的计算如下：</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> opticalDepthPA = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">float3 totalViewSamples = <span class="number">0</span>;</span><br><span class="line"><span class="type">float</span> time = tA;</span><br><span class="line"><span class="type">float</span> ds = (tB - tA) / (<span class="type">float</span>)(_ViewSamples);</span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; _ViewSamples; i ++)</span><br><span class="line">&#123;</span><br><span class="line">    float3 P = O + D * (time + ds * <span class="number">0.5</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">///////// Begin ViewSampling()</span></span><br><span class="line">    <span class="comment">// T(CP) * T(PA) * ρ(h) * ds</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// ρ(h) * ds</span></span><br><span class="line">    <span class="type">float</span> height = <span class="built_in">distance</span>(C, P) - _PlanetRadius;</span><br><span class="line">    <span class="type">float</span> opticalDepthSegment = <span class="built_in">exp</span>(-height / _ScaleHeight) * ds;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// D(PA)</span></span><br><span class="line">    opticalDepthPA += opticalDepthSegment;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// D(CP)</span></span><br><span class="line">    <span class="type">float</span> opticalDepthCP = <span class="number">0</span>;</span><br><span class="line">    <span class="type">bool</span> overground = <span class="built_in">LightSampling</span>(P, S, opticalDepthCP);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (overground)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// Combined transmittance</span></span><br><span class="line">        <span class="comment">// T(CP) * T(PA) = T(CPA) = exp&#123; -β(λ) [D(CP) + D(PA)]&#125;</span></span><br><span class="line">        float3 transmittance = <span class="built_in">exp</span>(</span><br><span class="line">            -_ScatteringCoefficient *</span><br><span class="line">            (opticalDepthCP + opticalDepthPA)</span><br><span class="line">        );</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Light contribution</span></span><br><span class="line">        <span class="comment">// T(CPA) * ρ(h) * ds</span></span><br><span class="line">        totalViewSamples += transmittance * opticalDepthSegment;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">////////    End ViewSampling()</span></span><br><span class="line"></span><br><span class="line">    time += ds;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// I = I_S * β(λ) * γ(θ) * totalViewSamples</span></span><br><span class="line">float3 I = _SunIntensity *  _ScatteringCoefficient * phase * totalViewSamples;</span><br></pre></td></tr></table></figure><h3 id="散射系数">散射系数</h3><p>之前我们重点以 Rayleigh 散射来介绍如何计算单次大气散射，接下来加上 Mie 散射，之前的方程：</p><p><span class="math display">\[\begin{aligned} I &amp;= I_S \textcolor{DodgerBlue}{\beta(\lambda)} \textcolor{Purple}{\gamma(\theta)} \sum_{P \in AB} L(P) \\ \end{aligned}\]</span></p><p>加上 Mie 反射后：</p><p><span class="math display">\[\begin{aligned} I &amp;= \overbrace{ I_S \textcolor{DodgerBlue}{\beta_R(\lambda)} \textcolor{Purple}{\gamma_R(\theta)} \sum_{P \in AB} L_R(P) }^{Rayleigh \ Scattering} + \overbrace{ I_S \textcolor{DodgerBlue}{\beta_M(\lambda)} \textcolor{Purple}{\gamma_M(\theta)} \sum_{P \in AB} L_M(P) }^{Mie \ Scattering} \\ &amp;=I_S \left( \overbrace{ \textcolor{DodgerBlue}{\beta_R(\lambda)} \textcolor{Purple}{\gamma_R(\theta)} \sum_{P \in AB} L_R(P) }^{Rayleigh \ Scattering} + \overbrace{ \textcolor{DodgerBlue}{\beta_M(\lambda)} \textcolor{Purple}{\gamma_M(\theta)} \sum_{P \in AB} L_M(P) }^{Mie \ Scattering} \right) \end{aligned}\]</span></p><p>因此代码实现也需要做修改：</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">LightSampling</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">    float3 P,</span></span></span><br><span class="line"><span class="params"><span class="function">    float3 S,</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="comment">// Modify : float -&gt;  float2  </span></span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="comment">// 分别计算光学深度 .xy  -&gt;  Rayleight Mie</span></span></span></span><br><span class="line"><span class="params"><span class="function">    out float2 opticalDepthCA</span></span></span><br><span class="line"><span class="params"><span class="function">)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">float</span> _;</span><br><span class="line">    <span class="type">float</span> C;</span><br><span class="line">    <span class="built_in">RayInstersect</span>(P, S, _PlanetCentre, _AtmosphereRadius, _, C);</span><br><span class="line"></span><br><span class="line">    <span class="type">float</span> time = <span class="number">0</span>;</span><br><span class="line">    <span class="type">float</span> ds = <span class="built_in">distance</span>(P, P + S * C) / (<span class="type">float</span>)(_LightSamples);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; _LightSamples; i ++)</span><br><span class="line">    &#123;</span><br><span class="line">        float3 Q = P + S * (time + lightSampleSize * <span class="number">0.5</span>);</span><br><span class="line">        <span class="type">float</span> height = <span class="built_in">distance</span>(_PlanetCentre, Q) - _PlanetRadius;</span><br><span class="line">        <span class="keyword">if</span> (height &lt; <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 分别计算 Rayleigh、Mie 的光学深度，基准的高度值不一样</span></span><br><span class="line">        opticalDepthCA.x += <span class="built_in">exp</span>(-height / _RayScaleHeight.x) * ds;</span><br><span class="line">        opticalDepthCA.y += <span class="built_in">exp</span>(-height / _RayScaleHeight.y) * ds;</span><br><span class="line"></span><br><span class="line">        time += ds;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Modify : float -&gt; float2</span></span><br><span class="line">float2 opticalDepthPA = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">float3 totalRayViewSamples = <span class="number">0</span>;</span><br><span class="line">float3 totalMieViewSamples = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">float</span> time = tA;</span><br><span class="line"><span class="type">float</span> ds = (tB - tA) / (<span class="type">float</span>)(_ViewSamples);</span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; _ViewSamples; i ++)</span><br><span class="line">&#123;</span><br><span class="line">    float3 P = O + D * (time + ds * <span class="number">0.5</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">///////// Begin ViewSampling()</span></span><br><span class="line">    <span class="comment">// T(CP) * T(PA) * ρ(h) * ds</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// ρ(h) * ds</span></span><br><span class="line">    <span class="type">float</span> height = <span class="built_in">distance</span>(C, P) - _PlanetRadius;</span><br><span class="line">    <span class="comment">// float -&gt; float2</span></span><br><span class="line">    float2 opticalDepthSegment = <span class="number">0</span>;</span><br><span class="line">    opticalDepthSegment.x = <span class="built_in">exp</span>(-height / _ScaleHeight.x) * ds;</span><br><span class="line">    opticalDepthSegment.y = <span class="built_in">exp</span>(-height / _ScaleHeight.y) * ds;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// D(PA)</span></span><br><span class="line">    opticalDepthPA += opticalDepthSegment;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// D(CP)</span></span><br><span class="line">    <span class="comment">// Modify : float -&gt; float2</span></span><br><span class="line">    float2 opticalDepthCP = <span class="number">0</span>;</span><br><span class="line">    <span class="type">bool</span> overground = <span class="built_in">LightSampling</span>(P, S, opticalDepthCP);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (overground)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// Combined transmittance</span></span><br><span class="line">        <span class="comment">// T(CP) * T(PA) = T(CPA) = exp&#123; -β(λ) [D(CP) + D(PA)]&#125;</span></span><br><span class="line">        float3 transmittanceRay = <span class="built_in">exp</span>(</span><br><span class="line">            -_RayScatteringCoefficient  *</span><br><span class="line">            (opticalDepthCP.x + opticalDepthPA.x)</span><br><span class="line">        );</span><br><span class="line"></span><br><span class="line">        float3 transmittranceMie = <span class="built_in">exp</span>(</span><br><span class="line">            -_MieScatteringCoefficient  *</span><br><span class="line">            (opticalDepthCP.x + opticalDepthPA.y)</span><br><span class="line">        );</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Light contribution</span></span><br><span class="line">        <span class="comment">// T(CPA) * ρ(h) * ds</span></span><br><span class="line">        totalRayViewSamples  += transmittanceRay * opticalDepthSegment;</span><br><span class="line">        totalMieViewSamples  += transmittanceMie * opticalDepthSegment;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">////////    End ViewSampling()</span></span><br><span class="line"></span><br><span class="line">    time += ds;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// I = I_S [βr(λ) * γr(θ) * totalRayViewSamples</span></span><br><span class="line"><span class="comment">//     + βm(λ) * γm(θ) * totalMieViewSamples)</span></span><br><span class="line">float3 I = _SunIntensity * (</span><br><span class="line"> _RayScatteringCoefficient * rayPhase * totalRayViewSamples +</span><br><span class="line"> _MieScatteringCoefficient * miePhase * totalMieViewSamples</span><br><span class="line">);</span><br></pre></td></tr></table></figure><blockquote><p><span class="math inline">\(\_RayScatteringCoefficient(\textcolor{Red}{680nm},\textcolor{Green}{550nm},\textcolor{Blue}{440nm}) = (5.8, 13.5, 33.1)*10^{-6}\)</span> <span class="math inline">\(\_MieScatteringCoefficient(\textcolor{Red}{680nm},\textcolor{Green}{550nm},\textcolor{Blue}{440nm}=(2.2, 2.2, 2.2)*10^{-5}\)</span></p></blockquote><blockquote><p><span class="math inline">\(rayPhase\)</span>、<span class="math inline">\(miePhase\)</span> 提前计算好的相位函数值，如果光源会改变方向，可以在 Shader 中增加函数来计算数值。 <span class="math inline">\(\_ScaleHeight=(8500, 1200)\)</span></p></blockquote><h2 id="参考资料">参考资料</h2><p><a target="_blank" rel="noopener" href="https://www.alanzucconi.com/2017/10/10/atmospheric-scattering-1/">1.Volumetric Atmospheric Scattering</a></p><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43803133/article/details/116354462">2.Unity基于体绘制的大气散射shader</a></p><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/237502022">3.【实战】从零实现一套完整单次大气散射</a></p><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/36498679">4.基于物理的大气渲染 -- 冯乐乐</a></p><p><a target="_blank" rel="noopener" href="http://igorsklyar.com/main/development_description/26?locale=en">5.Extended Disney "principled" Shader</a></p><p><a target="_blank" rel="noopener" href="https://github.com/SlightlyMad/AtmosphericScattering">6.Atmospheric Scattering for Unity 5</a></p><p><a target="_blank" rel="noopener" href="https://sebh.github.io/publications/">7.Sébastien Hillaire Website</a></p><p><a target="_blank" rel="noopener" href="https://freehyan.github.io/2020/03/05/sky-rendering-1/">8.基于物理的大气散射</a></p><div id="ref-anchor-9"></div><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/383020796">9.预计算大气散射模型：原理与实现</a></p><div id="ref-anchor-10"></div><p><a target="_blank" rel="noopener" href="https://hal.inria.fr/inria-00288758/file/article.pdf">10.Precomputed Atmospheric Scattering</a></p><script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css"></div><footer class="post-footer"><div class="post-tags"><a href="/tags/Atmosphere/" rel="tag"># Atmosphere</a></div><div class="post-nav"><div class="post-nav-item"><a href="/post/e4cef16/" rel="prev" title="UE4 landscape 使用 Texture Array"><i class="fa fa-chevron-left"></i> UE4 landscape 使用 Texture Array</a></div><div class="post-nav-item"><a href="/post/367fa45b/" rel="next" title="Hexo 博客完美支持数学公式">Hexo 博客完美支持数学公式 <i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div class="comments" id="valine-comments"></div></div></main><footer class="footer"><div class="footer-inner"><div class="copyright">&copy; 2021/03/25/ – <span itemprop="copyrightYear">2022</span> <span class="with-love"><i class="fa fa-heart"></i> </span><span class="author" itemprop="copyrightHolder">小贤</span></div><div class="wordcount"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-chart-line"></i> </span><span title="站点总字数">165k</span> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-coffee"></i> </span><span title="站点阅读时长">2:30</span></span></div><div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动</div></div></footer><script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script><script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script><script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script><script src="/js/third-party/search/local-search.js"></script><script src="/js/third-party/pace.js"></script><script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"dkLUcqHORjRdwQiwRPJMs00N-gzGzoHsz","app_key":"EhWnaex3YyY7bQysJ2SFnukE","server_url":null,"security":false}</script><script src="/js/third-party/statistics/lean-analytics.js"></script><script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script><script src="/js/third-party/math/mathjax.js"></script><script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script><script>var options={bottom:"64px",right:"unset",left:"32px",time:"0.5s",mixColor:"transparent",backgroundColor:"transparent",buttonColorDark:"#100f2c",buttonColorLight:"#fff",saveInCookies:!0,label:"🌓",autoMatchOsTheme:!0};const darkmode=new Darkmode(options);window.darkmode=darkmode,darkmode.showWidget()</script><script class="next-config" data-name="valine" type="application/json">{"enable":true,"appId":"7TO2HV1Xg9swHbSsI2kFt1H7-gzGzoHsz","appKey":"FgrhitpMKU9Ff5RhDKrpPgog","serverURLs":"https://7to2hv1x.lc-cn-n1-shared.com","placeholder":"ヾﾉ≧∀≦)o来啊，快活啊!","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":false,"comment_count":true,"recordIP":true,"enableQQ":false,"requiredFields":[],"el":"#valine-comments","path":"/post/8e5d3b12/"}</script><script>document.addEventListener("page:loaded",()=>{NexT.utils.loadComments(CONFIG.valine.el).then(()=>NexT.utils.getScript("https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js",{condition:window.Valine})).then(()=>{new Valine(CONFIG.valine)})})</script><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false}});</script></body></html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#e7ddc8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#181c27" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 5.4.2">
+
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="null//null" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/./images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/./images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/./images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/./images/safari-pinned-tab-next.svg" color="#e7ddc8">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=LXGW:300,300italic,400,400italic,700,700italic%7CNoto+Serif+SC:300,300italic,400,400italic,700,700italic%7CLong+Cang:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.xianlongok.site","root":"/","images":"/blog/images/","scheme":"Gemini","darkmode":true,"version":"8.11.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="大气散射介绍 当你看到蓝天白云，日落黄昏，或者从太空遥望地球，地球周围一圈蓝色光晕，有没有想过这些现象产生的原因是什么？这些物理现象用一句话解释：太阳光与大气层中的参与介质发生了大气散射现象，从而形成了天空颜色    散射 光源的辐射沿着路径前行时，碰到参与介质时会发生几种不同散射现象的行为:   * 出射散射（Out-Scattering） 出射散射也就是光子碰到空气中的分子后，原本要射向摄像机">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大气散射 ( Atmosphere Scattering)">
+<meta property="og:url" content="https://www.xianlongok.site/post/8e5d3b12/index.html">
+<meta property="og:site_name" content="十三">
+<meta property="og:description" content="大气散射介绍 当你看到蓝天白云，日落黄昏，或者从太空遥望地球，地球周围一圈蓝色光晕，有没有想过这些现象产生的原因是什么？这些物理现象用一句话解释：太阳光与大气层中的参与介质发生了大气散射现象，从而形成了天空颜色    散射 光源的辐射沿着路径前行时，碰到参与介质时会发生几种不同散射现象的行为:   * 出射散射（Out-Scattering） 出射散射也就是光子碰到空气中的分子后，原本要射向摄像机">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/atmosphere_intro.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/disney_1.jpeg">
+<meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/scattering01.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/scattering_02.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/scattering05.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/scattering_06a.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/scattering_08a.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/scattering_07.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/scattering_06a.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/scattering_9.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/rayleigh.svg">
+<meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/rayleigh_rgb.svg">
+<meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/rayleigh_co.webp">
+<meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/rayleigh.svg">
+<meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/mie.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/mie_g.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/scattering_06a.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/scattering_08c.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/shader_ab.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/shader_ab02.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/shader_ab03.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/shader_ab.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/atmosphere_scatter/shader_ab04.png">
+<meta property="article:published_time" content="2022-05-05T12:35:31.000Z">
+<meta property="article:modified_time" content="2022-05-10T12:17:49.681Z">
+<meta property="article:author" content="小贤">
+<meta property="article:tag" content="Atmosphere">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.xianlongok.site/images/atmosphere_scatter/atmosphere_intro.png">
+
+
+<link rel="canonical" href="https://www.xianlongok.site/post/8e5d3b12/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://www.xianlongok.site/post/8e5d3b12/","path":"post/8e5d3b12/","title":"大气散射 ( Atmosphere Scattering)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>大气散射 ( Atmosphere Scattering) | 十三</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-228435313-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-228435313-1","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">十三</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">安心学技术</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fas fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fas fa-splotch fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fas fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fas fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fas fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fas fa-book fa-fw"></i>留言板</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%A7%E6%B0%94%E6%95%A3%E5%B0%84%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">大气散射介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%A3%E5%B0%84"><span class="nav-number">2.</span> <span class="nav-text">散射</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%A7%E6%B0%94%E6%95%A3%E5%B0%84%E6%A8%A1%E5%9E%8B"><span class="nav-number">3.</span> <span class="nav-text">大气散射模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%8F%E5%B0%84%E5%87%BD%E6%95%B0"><span class="nav-number">3.1.</span> <span class="nav-text">透射函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%A3%E5%B0%84%E5%87%BD%E6%95%B0s%CE%BB%CE%B8h"><span class="nav-number">3.2.</span> <span class="nav-text">散射函数：S(λ,θ,h)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%A3%E5%B0%84-1"><span class="nav-number">3.3.</span> <span class="nav-text">散射</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#rayleigh-%E6%95%A3%E5%B0%84"><span class="nav-number">3.3.1.</span> <span class="nav-text">Rayleigh 散射</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rayleigh-%E6%95%A3%E5%B0%84%E7%B3%BB%E6%95%B0"><span class="nav-number">3.3.2.</span> <span class="nav-text">Rayleigh 散射系数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rayleigh-%E7%9B%B8%E4%BD%8D%E5%87%BD%E6%95%B0"><span class="nav-number">3.3.3.</span> <span class="nav-text">Rayleigh 相位函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mie-%E6%95%A3%E5%B0%84"><span class="nav-number">3.3.4.</span> <span class="nav-text">Mie 散射</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mie-%E6%95%A3%E5%B0%84%E7%B3%BB%E6%95%B0"><span class="nav-number">3.3.5.</span> <span class="nav-text">Mie 散射系数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mie-%E6%95%A3%E5%B0%84%E7%9B%B8%E4%BD%8D%E5%87%BD%E6%95%B0"><span class="nav-number">3.3.6.</span> <span class="nav-text">Mie 散射相位函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A1%B0%E5%87%8F%E7%B3%BB%E6%95%B0-textcolorgreent"><span class="nav-number">3.3.7.</span> <span class="nav-text">衰减系数 \(\textcolor{Green}{T}\)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E5%80%BC%E7%A7%AF%E5%88%86"><span class="nav-number">3.5.</span> <span class="nav-text">数值积分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%89%E7%BA%BF%E4%B8%8E%E5%A4%A7%E6%B0%94%E7%9B%B8%E4%BA%A4"><span class="nav-number">3.6.</span> <span class="nav-text">光线与大气相交</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%89%E7%BA%BF%E4%B8%8E%E8%A1%8C%E6%98%9F%E7%9B%B8%E4%BA%A4"><span class="nav-number">3.7.</span> <span class="nav-text">光线与行星相交</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%87%E6%A0%B7%E8%A7%86%E7%BA%BF"><span class="nav-number">3.8.</span> <span class="nav-text">采样视线</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%89%E5%AD%A6%E6%B7%B1%E5%BA%A6-pa"><span class="nav-number">3.9.</span> <span class="nav-text">光学深度 \(PA\)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%89%E5%AD%A6%E6%B7%B1%E5%BA%A6-cp"><span class="nav-number">3.10.</span> <span class="nav-text">光学深度 \(CP\)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%A3%E5%B0%84%E7%B3%BB%E6%95%B0"><span class="nav-number">3.11.</span> <span class="nav-text">散射系数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小贤"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">小贤</p>
+  <div class="site-description" itemprop="description">Watch and learn, your magic is mine!</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/qq317423892" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qq317423892" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:xianlongok@163.com" title="E-Mail → mailto:xianlongok@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://scorpioq.github.io/" title="https:&#x2F;&#x2F;scorpioq.github.io&#x2F;" rel="noopener" target="_blank">ScorpioQ</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.xianlongok.site/post/8e5d3b12/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="小贤">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="十三">
+      <meta itemprop="description" content="Watch and learn, your magic is mine!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="大气散射 ( Atmosphere Scattering) | 十三">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          大气散射 ( Atmosphere Scattering)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-05-05 20:35:31" itemprop="dateCreated datePublished" datetime="2022-05-05T20:35:31+08:00">2022-05-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Graphics/" itemprop="url" rel="index"><span itemprop="name">Graphics</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/8e5d3b12/" class="post-meta-item leancloud_visitors" data-flag-title="大气散射 ( Atmosphere Scattering)" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Valine：</span>
+  
+    <a title="valine" href="/post/8e5d3b12/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/8e5d3b12/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>16k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>15 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="大气散射介绍">大气散射介绍</h2>
+<p>当你看到蓝天白云，日落黄昏，或者从太空遥望地球，地球周围一圈蓝色光晕，有没有想过这些现象产生的原因是什么？这些物理现象用一句话解释：太阳光与大气层中的参与介质发生了大气散射现象，从而形成了天空颜色</p>
+<p><img data-src="/images/atmosphere_scatter/atmosphere_intro.png" width="100%" height="100%" /></p>
+<!-- ## 大气散射物理模型
+
+传统渲染技术都是假定对象是一个空壳（例如球，立方体），不讨论对象内部内容，所有的图形计算都在对象表面进行。如下图迪士尼材质模型：
+
+<img data-src="/images/atmosphere_scatter/disney_1.jpeg" width="70%" height="70%" />
+
+但是大气就很难这么处理，因为天空并不是一个“物体”，我们不能只是渲染表面，还需要模拟光线在大气中到底经历了什么。接下来介绍一种比较合适的方法，被称为：体积单次散射（volumetric single scattering）。 -->
+<h2 id="散射">散射</h2>
+<p>光源的辐射沿着路径前行时，碰到参与介质时会发生几种不同散射现象的行为:</p>
+<ul>
+<li><p>出射散射（Out-Scattering）
+出射散射也就是光子碰到空气中的分子后，原本要射向摄像机的光线发生了偏转，光线的方向改变了</p>
+<div data-align="center">
+<img data-src="/images/atmosphere_scatter/scattering01.png" width="50%" height="50%" />
+</div></li>
+<li><p>入射散射（In-Scattering）
+入射散射与出射散射相反，本来不指向相机的光线也可能被偏转到相机的方向，这就是入射散射。</p>
+<div data-align="center">
+<img data-src="/images/atmosphere_scatter/scattering_02.png" width="50%" height="50%" />
+</div></li>
+</ul>
+<p>根据粒子大小不同可分为<strong>瑞利散射（Rayleigh
+Scattering）</strong> 和 <strong>米氏散射（Mie Scattering）</strong>
+&gt;
+光碰到不同大小粒子后发生散射，不同方向上的光强如下图，箭头长度表示光线强弱，箭头越长，光线越强。</p>
+<div data-align="center">
+<p><img data-src="/images/atmosphere_scatter/scattering05.png" width="80%" height="80%" /></p>
+</div>
+<h2 id="大气散射模型">大气散射模型</h2>
+<p>大气散射模型分为两种：Single Scattering和Multi Scattering。</p>
+<ul>
+<li><p>Single Scattering
+即只考虑太阳光经过一次散射后抵达我们的眼睛。</p></li>
+<li><p>Multi
+Scattering，考虑光线多次散射过程的模型。显然这更符合现实世界的情况，但下一级的散射取决于与上一级散射的结果，也就是说这是一个递归方程，实现起来并不太容易。</p></li>
+</ul>
+<blockquote>
+<p>由于第二次散射以上的能量较少，对最终视觉的影响程度有限，所以目前Single
+Scattering 还是一种相对实现简单效果也不会差很多的模型，这里也主要介绍
+Single Scattering。</p>
+</blockquote>
+<p>因此单次散射大气模型求解问题如下： 我们从路径 AB 观察大气，并且求解 B
+点的大气颜色，光线在大气中只发生一次散射，散射点为 P：</p>
+<div data-align="center">
+<p><img data-src="/images/atmosphere_scatter/scattering_06a.png" width="50%" height="50%" /></p>
+</div>
+<p>实际上在路径 AB 上有无数个 P 点，因此最终求解是对 AB
+路径上每一个点的光照贡献进行累加(求积分)</p>
+<div data-align="center">
+<p><img data-src="/images/atmosphere_scatter/scattering_08a.png" width="50%" height="50%" /></p>
+</div>
+<p>因此整个模型可以分解成如下问题：</p>
+<ul>
+<li>P 点光照 ：光线穿过大气会衰减，到达 P 点后的光照强度。</li>
+<li>光线在 P 散射：进入相机方向的光照，即入射散射部分</li>
+<li>累加所有 P 点光照</li>
+</ul>
+<h3 id="透射函数">透射函数</h3>
+<p>为了计算散射点的光照，我们先考虑如下一段光线：</p>
+<div data-align="center">
+<p><img data-src="/images/atmosphere_scatter/scattering_07.png" width="50%" height="50%" /></p>
+</div>
+<ul>
+<li>光线从太阳传到 C，此时是真空，所以没有损失，我们用 <span
+class="math inline">\(I_C\)</span> 指代 C 点的光强</li>
+<li>在从 C 点到 P 点的过程在中，经过 CP 路径衰减，我们用 <span
+class="math inline">\(I_P\)</span> 指代 P 点的光强</li>
+<li><span class="math inline">\(I_P\)</span> 比 <span
+class="math inline">\(I_C\)</span> 的值就是
+<strong>透射率(Transimittance)</strong> :<span class="math inline">\(T
+(CP) = \frac{I_P}{I_C}\)</span></li>
+</ul>
+<p>P 点的光强也就是: <span class="math display">\[I_P = I_C *
+\textcolor{Green}{T(CP)}\]</span></p>
+<p>其中，<strong>T项</strong>是<strong>衰减系数（Transmittance）</strong>，它表示在某段路径上的对光照的衰减程度。该公式也可以被认为是<strong>零级散射（zero
+scattering）</strong>，即不考虑任何散射事件、直接考虑经过衰减后光强。</p>
+<h3 id="散射函数sλθh">散射函数：S(λ,θ,h)</h3>
+<p>P点在接受光照后，会因为散射偏转一部分，于是我们需要散射函数 <span
+class="math inline">\(S(\lambda,\theta,h)\)</span>
+来表示某一方向上光线的偏转情况。如下图，那些偏转了 <span
+class="math inline">\(\theta\)</span> 角的光线才能被指向A点的摄像机:</p>
+<div data-align="center">
+<p><img data-src="/images/atmosphere_scatter/scattering_06a.png" width="50%" height="50%" /></p>
+</div>
+<p>于是我们可以得出从 P 点出发到 A 点的光强：</p>
+<p><span
+class="math display">\[I_{PA}=\boxed{I_P}\textcolor{DarkRed}{S(\lambda,\theta,h)}
+\textcolor{Green}{T(PA)} \]</span></p>
+<p>从公式中可以看出，散射跟角度 <span
+class="math inline">\(\theta\)</span>、光线波长 <span
+class="math inline">\(\lambda\)</span> 以及 <span
+class="math inline">\(P\)</span> 点高度 <span
+class="math inline">\(h\)</span> 有关系。</p>
+<h3 id="散射-1">散射</h3>
+<p>散射系数和粒子的大小和折射率有关，这里就得解释一下大气粒子的分类。我们知道大气中有很多不同种类的大气分子/粒子，一般在大气渲染模型里把它们分成两大类。一种是小分子，例如氮气和氧气分子等，另一种是大粒子，例如各种尘埃粒子。之所以要进行分类是因为它们对光线有着不一样的行为（这里忽略对光的吸收，只考虑散射）：</p>
+<ul>
+<li>小分子：指大小远小于光线波长的粒子。小分子对光的散射在前后方向上分布比较均匀，通常会使用
+<strong>Rayleigh散射（Rayleigh Scattering）</strong>
+对它们进行建模。由于这些分子大小比波长还要小很多，因此光的<strong>波长</strong>也会影响
+Rayleigh 散射的程度。</li>
+<li>大粒子：指大小远大于光线波长的粒子。大粒子在发生散射的时候会把更多的光散射到前向，通常会使用
+<strong>Mie散射（Mie Scattering）</strong>
+对它们进行建模。由于光的波长相较于这些粒子大小来说是可以忽略的，因此我们认为
+Mie 散射跟光线<strong>波长无关</strong>。</li>
+</ul>
+<h4 id="rayleigh-散射">Rayleigh 散射</h4>
+<p>对于足够小的粒子，光线在撞击它后会经历什么？我们通常使用瑞利散射来建模。</p>
+<div data-align="center">
+<p><img data-src="/images/atmosphere_scatter/scattering_9.png" width="50%" height="50%" /></p>
+</div>
+<p>Rayleigh 散射曲线图如下：</p>
+<div data-align="center">
+<p><img data-src="/images/atmosphere_scatter/rayleigh.svg" width="50%" height="50%" /></p>
+</div>
+<p>散射函数如下，这个方程并不是真正的Rayleigh散射方程，你去维基百科里面查，会发现另外一个公式，这个公式来自<a
+target="_blank" rel="noopener" href="http://nishitalab.org/user/nis/cdrom/sig93_nis.pdf">这篇论文</a>：</p>
+<p><span class="math display">\[\textcolor{DarkRed}{S(\lambda,\theta,h)}
+=
+\frac{\pi^2(n^2-1)^2}{2}\frac{\textcolor{Gold}{\rho(h)}}{N}\frac{1}{\lambda^4}(1+cos\theta^2)\]</span></p>
+<p>其中，</p>
+<ul>
+<li><strong><span class="math inline">\(\lambda\)</span></strong>
+是光的波长</li>
+<li><strong><span class="math inline">\(n=1.00029\)</span></strong>
+是粒子折射率</li>
+<li><strong><span
+class="math inline">\(N=2.504*10^{25}\)</span></strong>
+是海平面处的大气密度，单位是 分子数/立方米</li>
+<li><strong><span class="math inline">\(\rho(h)\)</span></strong> 是高度
+<strong><span class="math inline">\(h\)</span></strong>
+处的相对大气密度（即相对于海平面的密度，可以理解成 <strong><span
+class="math inline">\(h\)</span></strong>
+处真正的大气密度与海平面处大气密度的比值，因此它在海平面处值为 1，随着
+<strong><span class="math inline">\(h\)</span></strong>
+增加不断减小），我们一般会使用指数函数对它的真实曲线进行数学拟合（是一种近似拟合，不要和后面提到的指数函数弄混）：</li>
+</ul>
+<p><span
+class="math display">\[\textcolor{Gold}{\rho(h)}=exp(-\frac{h}{H})\]</span></p>
+<p>其中 <strong>H</strong> 为 <strong>“Scale
+Height”</strong>，相当于是一个基准的高度。</p>
+<ul>
+<li>对于 Rayleigh 来说，<strong>H= 8500米</strong>。</li>
+<li>对于 Mie 来说，<strong>H = 1200米</strong>。</li>
+</ul>
+<p>可以看出Rayleigh散射大致和波长的4次幂的成反比，波长越小（越靠近紫光）的光被散射得越厉害。所以白天的时候天空为蓝色，因为蓝光在大气里不断被散射，黄昏的时候天空会变红，因为相比于白天，阳光此时要穿越更厚得多的大气层，在到达人眼之前，大多数蓝光都被散射到其他方向，所以剩下来的就是红光了。</p>
+<div data-align="center">
+<p><img data-src="/images/atmosphere_scatter/rayleigh_rgb.svg" width="80%" height="80%" /></p>
+</div>
+<h4 id="rayleigh-散射系数">Rayleigh 散射系数</h4>
+<p>Rayleigh 散射的公式 <span
+class="math inline">\(S(\lambda,\theta,h)\)</span>
+表示在某个特定方向上的光强度，要求总散射系数就需要对散射函数做球面积分：</p>
+<div data-align="center">
+<p><img data-src="/images/atmosphere_scatter/rayleigh_co.webp" width="30%" height="30%" /></p>
+</div>
+<blockquote>
+<p>球面积分示意图，这里假定 r 等于 1，对球面积分时，因为 <span
+class="math inline">\(d\theta\)</span> 跟 <span
+class="math inline">\(d\phi\)</span>
+非常小，因此球面可以看成是矩形，因此蓝色框长度为 <span
+class="math inline">\(w=rsin\theta d\phi\)</span>
+<strong>（弦长公式：蓝色面片上边缘半径 <span
+class="math inline">\(rsin\theta\)</span>，角度 <span
+class="math inline">\(d\phi\)</span>）</strong>，高为 <span
+class="math inline">\(d\theta\)</span>，则面积 <span
+class="math inline">\(S=rsin\theta d\phi d\theta\)</span></p>
+</blockquote>
+<p>因此：</p>
+<p><span class="math display">\[\beta(\lambda, h) =
+\int_{0}^{2\pi}{\int_{0}^{\pi}{S(\lambda,\theta,h)}sin\theta d\theta
+d\phi}\]</span></p>
+<p>最后得出：</p>
+<p><span class="math display">\[\beta(\lambda, h) =
+\frac{8\pi^3(n^2-1)^2}{3}\frac{\textcolor{Gold}{\rho(h)}}{N}\frac{1}{\lambda^4}\]</span></p>
+<p>特别地，当 <span class="math inline">\(h=0\)</span>
+时，即表示海平面的散射系数：</p>
+<p><span class="math display">\[ \beta(\lambda, 0) =
+\frac{8\pi^3(n^2-1)^2}{3} \frac{ \textcolor{Gold}{1} }{N}
+\frac{1}{\lambda^4} \]</span></p>
+<p>举例来说就，对于红绿蓝的波长，在海平面时，可以得出这些结果：</p>
+<p><span class="math display">\[\begin{aligned}
+\beta(\textcolor{Red}{680nm}) &amp;= 5.2*10^{-6} \\
+\beta(\textcolor{Green}{550nm}) &amp;= 12.1*10^{-6} \\
+\beta(\textcolor{Blue}{440nm}) &amp;= 29.6*10^{-6}
+\end{aligned}\]</span></p>
+<blockquote>
+<p>有些博客跟论文里计算结果如下: <span
+class="math inline">\(\beta_rrgb=(5.8, 13.5, 33.1) \cdot
+10^{-6}\)</span>，<span
+class="math inline">\(n=1.0003，N=2.545\cdot10^{25}\)</span></p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; 8*math.pi**3*(1.00029**2-1)**2/3.0/(2.504e25)/((680e-9)**4)</span><br><span class="line">5.196731735928312e-06</span><br><span class="line">&gt;&gt;&gt; 8*math.pi**3*(1.00029**2-1)**2/3.0/(2.504e25)/((550e-9)**4)</span><br><span class="line">1.2142697926864656e-05</span><br><span class="line">&gt;&gt;&gt; 8*math.pi**3*(1.00029**2-1)**2/3.0/(2.504e25)/((440e-9)**4)</span><br><span class="line">2.964525861050941e-05</span><br></pre></td></tr></table></figure>
+<p>总散射系数公式也可以拆解为：</p>
+<p><span class="math display">\[\beta(\lambda, h) =
+\frac{8\pi^3(n^2-1)^2}{3}\frac{\textcolor{Gold}{\rho(h)}}{N}\frac{1}{\lambda^4}=\beta(\lambda)
+\textcolor{Gold}{\rho(h)}\]</span></p>
+<p>其中：</p>
+<p><span class="math display">\[\beta(\lambda) =
+\frac{8\pi^3(n^2-1)^2}{3}\frac{1}{N}\frac{1}{\lambda^4}\]</span></p>
+<h4 id="rayleigh-相位函数">Rayleigh 相位函数</h4>
+<p>Rayleigh
+散射的原方程可以分解成两个分量，一个是上面的有关能量强度的散射系数，另一个分量则和它几何形状有关</p>
+<p><span class="math display">\[S(\lambda,\theta,h)=\beta(\lambda,
+h)\underbrace{\gamma(\theta)}_{geometry}\]</span></p>
+<p><span class="math inline">\(\gamma(\theta)\)</span>
+可以用前两者之比得到。</p>
+<p><span class="math display">\[\begin{aligned}
+\gamma(\theta) &amp;= \frac{S(\lambda,\theta,h)}{\beta(\lambda, h)}\\
+&amp;=\frac{3}{16\pi}(1+cos^2\theta)
+\end{aligned}\]</span></p>
+<p>该表达式不依赖波长，<span
+class="math inline">\(\gamma(\theta)\)</span>
+的函数图像就是之前两瓣的偶极子形状</p>
+<div data-align="center">
+<p><img data-src="/images/atmosphere_scatter/rayleigh.svg" width="50%" height="50%" /></p>
+</div>
+<blockquote>
+<p>PS: 整个散射函数可以拆分成 <span
+class="math inline">\(\textcolor{DarkRed}{S(\lambda,\theta,h)}=
+\textcolor{DodgerBlue}{ \beta(\lambda)} \textcolor{Gold}{\rho(h)}
+\textcolor{Purple}{\gamma(\theta)}\)</span></p>
+</blockquote>
+<h4 id="mie-散射">Mie 散射</h4>
+<p>光线的散射是很复杂的，瑞利散射对原子和分子可以有效模拟，但是对光线和大物体（气溶胶）的交互没什么作用。地球大气布满了气溶胶，所以仅是瑞利散射是不足以复现的，为此常用的就是
+<strong>米氏散射（Mie
+scattering）</strong>，这种散射类型倾向于扩散光线，让光源看起来比实际大，但不会改变光的颜色</p>
+<h4 id="mie-散射系数">Mie 散射系数</h4>
+<p>米散射系数很难去推导计算，基于统计数据的结果，米散射系数可以常量进行估计。论文<a
+href="#ref-anchor-10"><sup>10</sup></a>中给出海平面的米散射系数:</p>
+<p><span
+class="math display">\[\beta(\textcolor{Red}{680nm},\textcolor{Green}{550nm}
+,
+\textcolor{Blue}{440nm} = (2.2*10^{-5}, 2.2*10^{-5},
+2.2*10^{-5})\]</span></p>
+<h4 id="mie-散射相位函数">Mie 散射相位函数</h4>
+<p>真实的 Mie 散射相位函数图像如下：</p>
+<div data-align="center">
+<p><img data-src="/images/atmosphere_scatter/mie.png" width="60%" height="60%" /></p>
+</div>
+<p>因此 Mie 相位函数也是近似方式得出，我们可以利用Henyey-Greenstein
+函数，该函数在1941年提出：</p>
+<p><span
+class="math display">\[\gamma_{HG}(\theta)=\frac{1}{4\pi}\frac{1-g^2}{(1+g^2-2gcos\theta)^\frac{3}{2}}\]</span></p>
+<p>在 1992 年 Cornette 对其进行了改进：</p>
+<p><span
+class="math display">\[\gamma_{M}(\theta)=\frac{3}{8\pi}\frac{1-g^2}{(2+g^2)}\frac{1+cos^2\theta}{(1+g^2-2gcos\theta)^\frac{3}{2}}\]</span></p>
+<p>该函数引入了一个参数 <span
+class="math inline">\(g（-1＜g＜1）\)</span>，决定了前后散射的相对强度，代表散射方向的平均余弦。正的
+<span class="math inline">\(g\)</span> 值会增加正向散射的光量，负的
+<span class="math inline">\(g\)</span> 值表示向后散射的光量。 <span
+class="math inline">\(g=0\)</span> 的值导致各向同性散射。</p>
+<div data-align="center">
+<p><img data-src="/images/atmosphere_scatter/mie_g.png" width="60%" height="60%" /></p>
+</div>
+<p>对于地球大气层，一般可以取 <span
+class="math inline">\(g=0.758\)</span>。然后由于上述两个函数计算成本比较高，快速应用可以使用
+Schlick 相位函数：</p>
+<p><span
+class="math display">\[\lambda_S(\theta)=\frac{1}{4\pi}\frac{1-g^2}{(1+gcos\theta)^2}\]</span></p>
+<h4 id="衰减系数-textcolorgreent">衰减系数 <span
+class="math inline">\(\textcolor{Green}{T}\)</span></h4>
+<p><span class="math inline">\(T(a,b)\)</span> 表示 <span
+class="math inline">\(a,b\)</span>
+之间的透射率（transmittance），其定义为<a
+href="#ref-anchor-9"><sup>9</sup></a>：</p>
+<p><span
+class="math display">\[T(a,b)=exp(-\int_a^b\sigma_t(p)dl_p\]</span></p>
+<p>其中 <span class="math inline">\(\sigma_t\)</span>
+为介质衰减系数，</p>
+<ul>
+<li><p>Rayleigh 在大气中，Rayleigh 散射可以用 Rayleigh theory
+近似描述：</p>
+<p><span class="math inline">\(\sigma_RT(h,\lambda)=\beta(\lambda,
+h)\)</span></p></li>
+</ul>
+<p>即：</p>
+<p><span
+class="math display">\[\textcolor{Green}{T(PA)}=exp\{-\int_P^A{\textcolor{DodgerBlue}{\beta(\lambda,
+h)}}ds\}\]</span></p>
+<p>带入之前求解的总散射系数公式： <span
+class="math inline">\(\beta(\lambda,h)\)</span></p>
+<p><span
+class="math display">\[\textcolor{Green}{T(PA)}=exp\{-\textcolor{DodgerBlue}{\beta(\lambda)}\int_P^A{\textcolor{Gold}{\rho(h)}}ds\}\]</span></p>
+<p>其中的积分项对应的是路径长度 <span
+class="math inline">\(x\)</span>，可以理解为在光传播路径上，对大气密度函数
+<span class="math inline">\(\textcolor{Gold}{\rho(h)}\)</span>
+求积分，这部分被称为 <strong>光学距离——Optical Depth</strong>：</p>
+<p><span
+class="math display">\[\textcolor{Darkorange}{D(PA)}=\int_P^A{\textcolor{Gold}{\rho(h)}}ds\}\]</span></p>
+<h3 id="总结">总结</h3>
+<p>至此，我们简单推导了 <span class="math inline">\(S\)</span> 跟 <span
+class="math inline">\(T\)</span>，这样一开始的公式可以写成：</p>
+<p><span class="math display">\[\begin{aligned}
+I_{PA} &amp;= \boxed{I_P}\textcolor{DarkRed}{S(\lambda,\theta,h)}
+\underline {\textcolor{Green}{T(PA)} } \\
+&amp;=\boxed{I_S\textcolor{Green}{T(CP)}}  \textcolor{DarkRed}{S(\lambda,\theta,h)}
+\underline { \textcolor{Green}{T(PA)} } \\
+&amp;= \boxed { I_S
+\{exp\{-\textcolor{DodgerBlue}{\beta(\lambda)}\textcolor{Darkorange}{D(CP)}\}\}
+}  \textcolor{DarkRed}{ \{ \textcolor{DodgerBlue}{
+\beta(\lambda)}  \textcolor{Gold}{\rho(h)}  \textcolor{Purple}{\gamma(\theta)}
+\} }  \underline {
+\{exp\{-\textcolor{DodgerBlue}{\beta(\lambda)}\textcolor{Darkorange}{D(PA)}\}\}
+}\\
+&amp;= I_S \textcolor{DarkRed}{ \{
+\textcolor{DodgerBlue}{\beta(\lambda)}
+\textcolor{Gold}{\rho(h)}  \textcolor{Purple}{\gamma(\theta)}  \} }
+\{exp\{  -\textcolor{DodgerBlue}{\beta(\lambda)}
+\{  \textcolor{Darkorange}{D(CP)} + \textcolor{Darkorange}{D(PA)}   \}
+\} \}
+\end{aligned} \]</span></p>
+<p>其中，一般情况下，太阳光照角度固定，可以看成是平行光，<span
+class="math inline">\(\textcolor{Purple}{\gamma(\theta)}\)</span>
+可以看成常量，<span
+class="math inline">\(\textcolor{DodgerBlue}{\beta(\lambda)}\)</span>
+也是常量，也就是海平面附近的散射系数，在 Shader 中作为输入即可，<span
+class="math inline">\(\textcolor{Darkorange}{D(PA)}\)</span> 等在 Shader
+中计算。</p>
+<div data-align="center">
+<p><img data-src="/images/atmosphere_scatter/scattering_06a.png" width="50%" height="50%" /></p>
+</div>
+<p>总结起来，公式表示的含义就是，计算观察路径AB上某一点P的光照贡献：</p>
+<ul>
+<li>光线从太阳出发，到达大气边缘的C点</li>
+<li>经过路径CP上的衰减到达P点（0级散射）</li>
+<li>在P点发生一次散射，将一部分光散射到了观察方向上（1级散射）</li>
+<li>这部分光又经过AP路径上的衰减最终到达了我们的眼睛</li>
+</ul>
+<h3 id="数值积分">数值积分</h3>
+<p>P只是AB上的某一点，我们需要对路径AB上的每一点进行积分：</p>
+<div data-align="center">
+<p><img data-src="/images/atmosphere_scatter/scattering_08c.png" width="50%" height="50%" /></p>
+</div>
+<p><span class="math display">\[\begin{aligned}
+I_A &amp;= \sum_{i=0}^{n}I_{P_n} \\
+&amp;= \int_{A}^{B} I_{PA} ds \\
+&amp;= \int_{A}^{B} I_S \textcolor{DarkRed}{ \{
+\textcolor{DodgerBlue}{\beta(\lambda)} \textcolor{Gold}{\rho(h)}
+\textcolor{Purple}{\gamma(\theta)}  \} } \{
+exp\{  -\textcolor{DodgerBlue}{\beta(\lambda)}
+\{  \textcolor{Darkorange}{D(CP)} +
+\textcolor{Darkorange}{D(PA)}   \}  \} \}  ds \\
+&amp;= I_S \textcolor{DodgerBlue}{\beta(\lambda)}
+\textcolor{Purple}{\gamma(\theta)}
+\int_{A}^{B}  {exp\{  -\textcolor{DodgerBlue}{\beta(\lambda)}
+\{  \textcolor{Darkorange}{D(CP)} + \textcolor{Darkorange}{D(PA)} } \}\}
+\textcolor{Gold}{\rho(h)}  ds
+\end{aligned} \]</span></p>
+<blockquote>
+<p>在大气shader中，我们将 <span class="math inline">\(AB\)</span>
+分割成等长的若干段，然后取这些段的中点记为 <span
+class="math inline">\(P_i\)</span>，然后分别计算每个点的 <span
+class="math inline">\(I_{P_i}\)</span>，最后将这些点的光照累加起来。 ##
+大气球体shader框架思路</p>
+</blockquote>
+<h3 id="光线与大气相交">光线与大气相交</h3>
+<p>从之前得出的公式中可以得知，我们需要在 <span
+class="math inline">\(AB\)</span> 路径上求光学距离，我们第一步需要求出
+<span class="math inline">\(AB\)</span> 的长度：</p>
+<div data-align="center">
+<p><img data-src="/images/atmosphere_scatter/shader_ab.png" width="50%" height="50%" /></p>
+</div>
+<p>如下图所示，灰色部分是大气，我们需要求出观察路径 <span
+class="math inline">\(AB\)</span>，其中已知：</p>
+<ul>
+<li><span class="math inline">\(O\)</span>：相机位置</li>
+<li><span class="math inline">\(C\)</span>：大气球心位置</li>
+<li><span class="math inline">\(L\)</span>：相机到大气球心长度</li>
+<li><span class="math inline">\(R\)</span>：大气球半径</li>
+<li><span class="math inline">\(\vec{OD}\)</span>
+：观察方向，单位向量</li>
+</ul>
+<div data-align="center">
+<p><img data-src="/images/atmosphere_scatter/shader_ab02.png" width="50%" height="50%" /></p>
+</div>
+<p>如图可以依次求出，</p>
+<ul>
+<li><span class="math inline">\(OT = \vec{OC} \cdot
+\vec{OD}\)</span></li>
+<li><span class="math inline">\(TC = \sqrt{L^2 - OC^2}\)</span></li>
+<li><span class="math inline">\(AT = \sqrt{R^2 - TC^2}\)</span></li>
+<li><span class="math inline">\(OA = OT-AT\)</span></li>
+<li><span class="math inline">\(OB = OT+BT=OT+AT\)</span></li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">RayIntersect</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="comment">// Ray</span></span></span></span><br><span class="line"><span class="params"><span class="function">    float3 O, <span class="comment">// Origin</span></span></span></span><br><span class="line"><span class="params"><span class="function">    float3 D, <span class="comment">// Direction</span></span></span></span><br><span class="line"><span class="params"><span class="function"></span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="comment">// Sphere</span></span></span></span><br><span class="line"><span class="params"><span class="function">    float3 C, <span class="comment">// Centre</span></span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">float</span> R,    <span class="comment">// Radius</span></span></span></span><br><span class="line"><span class="params"><span class="function">    out <span class="type">float</span> AO, <span class="comment">// First intersection time</span></span></span></span><br><span class="line"><span class="params"><span class="function">    out <span class="type">float</span> BO  <span class="comment">// Second intersection time</span></span></span></span><br><span class="line"><span class="params"><span class="function">)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    float3 L = C - O;</span><br><span class="line">    <span class="type">float</span> DT = <span class="built_in">dot</span> (L, D);</span><br><span class="line">    <span class="type">float</span> R2 = R * R;</span><br><span class="line"></span><br><span class="line">    <span class="type">float</span> CT2 = <span class="built_in">dot</span>(L,L) - DT*DT;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// CT 长度超过了求半径 R，此时视线跟大气不相交</span></span><br><span class="line">    <span class="comment">// Intersection point outside the circle</span></span><br><span class="line">    <span class="keyword">if</span> (CT2 &gt; R2)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="type">float</span> AT = <span class="built_in">sqrt</span>(R2 - CT2);</span><br><span class="line">    <span class="type">float</span> BT = AT;</span><br><span class="line"></span><br><span class="line">    AO = DT - AT;</span><br><span class="line">    BO = DT + BT;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="光线与行星相交">光线与行星相交</h3>
+<p>视线有可能会被行星阻挡，因此需要做两次相交函数，一次判断大气，一次判断行星。</p>
+<div data-align="center">
+<p><img data-src="/images/atmosphere_scatter/shader_ab03.png" width="50%" height="50%" /></p>
+</div>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Intersections with the atmospheric sphere</span></span><br><span class="line"><span class="comment">//     D    : 观察方向向量</span></span><br><span class="line"><span class="comment">// worldPos : 相机坐标 </span></span><br><span class="line"><span class="type">float</span> tA;    <span class="comment">// Atmosphere entry point (worldPos + D * tA)</span></span><br><span class="line"><span class="type">float</span> tB;    <span class="comment">// Atmosphere exit point  (worldPos + D * tB)</span></span><br><span class="line"><span class="keyword">if</span> (!<span class="built_in">RayIntersect</span>(O, D, _PlanetCentre, _AtmosphereRadius, tA, tB))</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">fixed4</span>(<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>); <span class="comment">// The view rays is looking into deep space</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Is the ray passing through the planet core?</span></span><br><span class="line"><span class="type">float</span> pA, pB;</span><br><span class="line"><span class="keyword">if</span> (<span class="built_in">RayIntersect</span>(O, D, _PlanetCentre, _PlanetRadius, pA, pB))</span><br><span class="line">    tB = pA;</span><br></pre></td></tr></table></figure>
+<h3 id="采样视线">采样视线</h3>
+<p>之前我们得到了 <span class="math inline">\(AB\)</span> 路径上每个点
+<span class="math inline">\(P\)</span> 的光照公式：</p>
+<p><span class="math display">\[\begin{aligned}
+I_A &amp;= I_S \textcolor{DodgerBlue}{\beta(\lambda)}
+\textcolor{Purple}{\gamma(\theta)}
+\int_{A}^{B}  {exp\{  -\textcolor{DodgerBlue}{\beta(\lambda)}
+\{  \textcolor{Darkorange}{D(CP)} + \textcolor{Darkorange}{D(PA)} } \}\}
+\textcolor{Gold}{\rho(h)}  ds \\
+&amp;= I_S \textcolor{DodgerBlue}{\beta(\lambda)}
+\textcolor{Purple}{\gamma(\theta)} \sum_{P \in AB}
+\textcolor{Green}{T(CP)} \textcolor{Green}{T(PA)}
+\textcolor{Gold}{\rho(h)}  ds
+\end{aligned}\]</span></p>
+<p>线段上有无数个 <span class="math inline">\(P\)</span>
+点，为了近似求解 <span
+class="math inline">\(I\)</span>，我们需要把线段划分为数个长度为 <span
+class="math inline">\(ds\)</span> 的小段</p>
+<div data-align="center">
+<p><img data-src="/images/atmosphere_scatter/shader_ab.png" width="50%" height="50%" /></p>
+</div>
+<p><span class="math inline">\(AB\)</span>
+被划分的段数，就是视线采样数（View Samples），在 Shader
+可以这么处理：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Numerical integration to calculate</span></span><br><span class="line"><span class="comment">// the light contribution of each point P in AB</span></span><br><span class="line">float3 totalViewSamples = <span class="number">0</span>;</span><br><span class="line"><span class="type">float</span> time = tA;</span><br><span class="line"><span class="type">float</span> ds = (tB - tA) / (<span class="type">float</span>)(_ViewSamples);</span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; _ViewSamples; i ++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// Point position</span></span><br><span class="line">    <span class="comment">// (sampling in the middle of the view sample segment)</span></span><br><span class="line">    <span class="comment">// O : 相机位置</span></span><br><span class="line">    <span class="comment">// D : 相机方向向量</span></span><br><span class="line">    float3 P = O + D * (time + ds * <span class="number">0.5</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// T(CP) * T(PA) * ρ(h) * ds</span></span><br><span class="line">    totalViewSamples += <span class="built_in">ViewSampling</span>(P, ds);</span><br><span class="line"></span><br><span class="line">    time += ds;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// I = I_S * β(λ) * γ(θ) * totalViewSamples</span></span><br><span class="line">float3 I = _SunIntensity *  _ScatteringCoefficient * phase * totalViewSamples;</span><br></pre></td></tr></table></figure>
+<p>接下来就是求解每个 <span class="math inline">\(P\)</span> 点上的
+<span class="math inline">\(\textcolor{Green}{T(CP)}
+\textcolor{Green}{T(PA)} \textcolor{Gold}{\rho(h)}ds\)</span></p>
+<h3 id="光学深度-pa">光学深度 <span
+class="math inline">\(PA\)</span></h3>
+<p>回顾一下之前的公式：</p>
+<p><span class="math display">\[ \textcolor{Green}{T(CP)}
+\textcolor{Green}{T(PA)} =
+exp\{  -\textcolor{DodgerBlue}{\beta(\lambda)}
+\{  \textcolor{Darkorange}{D(CP)} + \textcolor{Darkorange}{D(PA)}  \}
+\}\]</span></p>
+<p>其中:</p>
+<p><span class="math display">\[\textcolor{Darkorange}{D(PA)}=\sum_{Q
+\in PA} exp \{ -\frac{h_Q}{H} \}ds\]</span></p>
+<p><span class="math inline">\(h_Q\)</span> 表示当前点的高度，有一点注意
+<span
+class="math inline">\(\textcolor{Gold}{\rho(h)}=exp(-\frac{h_Q}{H})\)</span>，这里顺便可以求解
+<span class="math inline">\(AB\)</span> 上的积分 <span
+class="math inline">\(\textcolor{Gold}{\rho(h)}ds\)</span>。</p>
+<p>Shader 实现如下:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// + Accumulator for the optical depth</span></span><br><span class="line"><span class="type">float</span> opticalDepthPA = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">float3 totalViewSamples = <span class="number">0</span>;</span><br><span class="line"><span class="type">float</span> time = tA;</span><br><span class="line"><span class="type">float</span> ds = (tB - tA) / (<span class="type">float</span>)(_ViewSamples);</span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; _ViewSamples; i ++)</span><br><span class="line">&#123;</span><br><span class="line">    float3 P = O + D * (time + ds * <span class="number">0.5</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">///////// Begin ViewSampling()</span></span><br><span class="line">    <span class="comment">// T(CP) * T(PA) * ρ(h) * ds</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 1: ρ(h) * ds</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//            C : 行星球形坐标</span></span><br><span class="line">    <span class="comment">// _ScaleHeight : Rayleigh/Mie 散射里的基准高度</span></span><br><span class="line"></span><br><span class="line">    <span class="type">float</span> height = <span class="built_in">distance</span>(C, P) - _PlanetRadius;</span><br><span class="line">    <span class="type">float</span> opticalDepthSegment = <span class="built_in">exp</span>(-height / _ScaleHeight) * ds;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 2: D(PA)</span></span><br><span class="line">    opticalDepthPA += opticalDepthSegment;</span><br><span class="line"></span><br><span class="line">    <span class="comment">////////    End ViewSampling()</span></span><br><span class="line"></span><br><span class="line">    time += ds;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// I = I_S * β(λ) * γ(θ) * totalViewSamples</span></span><br><span class="line">float3 I = _SunIntensity *  _ScatteringCoefficient * phase * totalViewSamples;</span><br></pre></td></tr></table></figure>
+<h3 id="光学深度-cp">光学深度 <span
+class="math inline">\(CP\)</span></h3>
+<p>累加符号里 <span class="math inline">\(P\)</span> 点的光量贡献还剩下
+<span class="math inline">\(CP\)</span> 的光学深度，我们在求 <span
+class="math inline">\(CP\)</span> 的光学深度时，建立一个 LightSampling
+方法，也就从 <span class="math inline">\(P\)</span>
+点出发指向太阳进行采样，把太阳的出射点叫做 <span
+class="math inline">\(C\)</span> （注意跟之前的球心坐标 <span
+class="math inline">\(C\)</span> 区分），然后注意下面 <span
+class="math inline">\(C_0\)</span> 的情况，光线被星球遮挡，此时要忽略
+<span class="math inline">\(P_0\)</span> 点的贡献。</p>
+<div data-align="center">
+<p><img data-src="/images/atmosphere_scatter/shader_ab04.png" width="50%" height="50%" /></p>
+</div>
+<p>Shader 实现如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">LightSampling</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">    float3 P,    <span class="comment">// Current point within the atmospheric sphere</span></span></span></span><br><span class="line"><span class="params"><span class="function">    float3 S,    <span class="comment">// S 是光照方向，从 P 点到 C 点的平行光</span></span></span></span><br><span class="line"><span class="params"><span class="function">    out <span class="type">float</span> opticalDepthCA</span></span></span><br><span class="line"><span class="params"><span class="function">)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">float</span> _; <span class="comment">// don&#x27;t care about this one</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 这里 C 是局部变量，表示光线在大气表面的入射点</span></span><br><span class="line">    <span class="type">float</span> C;</span><br><span class="line">    <span class="built_in">RayInstersect</span>(P, S, _PlanetCentre, _AtmosphereRadius, _, C);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Samples on the segment PC</span></span><br><span class="line">    <span class="comment">// _LightSamples : CP 上的分段次数</span></span><br><span class="line"></span><br><span class="line">    <span class="type">float</span> time = <span class="number">0</span>;</span><br><span class="line">    <span class="type">float</span> ds = <span class="built_in">distance</span>(P, P + S * C) / (<span class="type">float</span>)(_LightSamples);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; _LightSamples; i ++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// Q 点如上图所示</span></span><br><span class="line">        <span class="comment">// S : 光照方向</span></span><br><span class="line">        float3 Q = P + S * (time + lightSampleSize * <span class="number">0.5</span>);</span><br><span class="line">        <span class="type">float</span> height = <span class="built_in">distance</span>(_PlanetCentre, Q) - _PlanetRadius;</span><br><span class="line">        <span class="comment">// Inside the planet</span></span><br><span class="line">        <span class="keyword">if</span> (height &lt; <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Optical depth for the light ray</span></span><br><span class="line">        opticalDepthCA += <span class="built_in">exp</span>(-height / _RayScaleHeight) * ds;</span><br><span class="line"></span><br><span class="line">        time += ds;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后之前的代码加入 <span class="math inline">\(CP\)</span>
+的计算如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> opticalDepthPA = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">float3 totalViewSamples = <span class="number">0</span>;</span><br><span class="line"><span class="type">float</span> time = tA;</span><br><span class="line"><span class="type">float</span> ds = (tB - tA) / (<span class="type">float</span>)(_ViewSamples);</span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; _ViewSamples; i ++)</span><br><span class="line">&#123;</span><br><span class="line">    float3 P = O + D * (time + ds * <span class="number">0.5</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">///////// Begin ViewSampling()</span></span><br><span class="line">    <span class="comment">// T(CP) * T(PA) * ρ(h) * ds</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// ρ(h) * ds</span></span><br><span class="line">    <span class="type">float</span> height = <span class="built_in">distance</span>(C, P) - _PlanetRadius;</span><br><span class="line">    <span class="type">float</span> opticalDepthSegment = <span class="built_in">exp</span>(-height / _ScaleHeight) * ds;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// D(PA)</span></span><br><span class="line">    opticalDepthPA += opticalDepthSegment;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// D(CP)</span></span><br><span class="line">    <span class="type">float</span> opticalDepthCP = <span class="number">0</span>;</span><br><span class="line">    <span class="type">bool</span> overground = <span class="built_in">LightSampling</span>(P, S, opticalDepthCP);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (overground)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// Combined transmittance</span></span><br><span class="line">        <span class="comment">// T(CP) * T(PA) = T(CPA) = exp&#123; -β(λ) [D(CP) + D(PA)]&#125;</span></span><br><span class="line">        float3 transmittance = <span class="built_in">exp</span>(</span><br><span class="line">            -_ScatteringCoefficient *</span><br><span class="line">            (opticalDepthCP + opticalDepthPA)</span><br><span class="line">        );</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Light contribution</span></span><br><span class="line">        <span class="comment">// T(CPA) * ρ(h) * ds</span></span><br><span class="line">        totalViewSamples += transmittance * opticalDepthSegment;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">////////    End ViewSampling()</span></span><br><span class="line"></span><br><span class="line">    time += ds;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// I = I_S * β(λ) * γ(θ) * totalViewSamples</span></span><br><span class="line">float3 I = _SunIntensity *  _ScatteringCoefficient * phase * totalViewSamples;</span><br></pre></td></tr></table></figure>
+<h3 id="散射系数">散射系数</h3>
+<p>之前我们重点以 Rayleigh 散射来介绍如何计算单次大气散射，接下来加上
+Mie 散射，之前的方程：</p>
+<p><span class="math display">\[\begin{aligned}
+I &amp;= I_S \textcolor{DodgerBlue}{\beta(\lambda)}
+\textcolor{Purple}{\gamma(\theta)} \sum_{P \in AB} L(P) \\
+\end{aligned}\]</span></p>
+<p>加上 Mie 反射后：</p>
+<p><span class="math display">\[\begin{aligned}
+I &amp;= \overbrace{ I_S \textcolor{DodgerBlue}{\beta_R(\lambda)}
+\textcolor{Purple}{\gamma_R(\theta)} \sum_{P \in AB} L_R(P) }^{Rayleigh
+\  Scattering} + \overbrace{ I_S
+\textcolor{DodgerBlue}{\beta_M(\lambda)}
+\textcolor{Purple}{\gamma_M(\theta)} \sum_{P \in AB} L_M(P) }^{Mie \
+Scattering} \\
+&amp;=I_S \left( \overbrace{ \textcolor{DodgerBlue}{\beta_R(\lambda)}
+\textcolor{Purple}{\gamma_R(\theta)} \sum_{P \in AB} L_R(P) }^{Rayleigh
+\  Scattering} + \overbrace{ \textcolor{DodgerBlue}{\beta_M(\lambda)}
+\textcolor{Purple}{\gamma_M(\theta)} \sum_{P \in AB} L_M(P) }^{Mie \
+Scattering} \right)
+\end{aligned}\]</span></p>
+<p>因此代码实现也需要做修改：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">LightSampling</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">    float3 P,</span></span></span><br><span class="line"><span class="params"><span class="function">    float3 S,</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="comment">// Modify : float -&gt;  float2  </span></span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="comment">// 分别计算光学深度 .xy  -&gt;  Rayleight Mie</span></span></span></span><br><span class="line"><span class="params"><span class="function">    out float2 opticalDepthCA</span></span></span><br><span class="line"><span class="params"><span class="function">)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">float</span> _;</span><br><span class="line">    <span class="type">float</span> C;</span><br><span class="line">    <span class="built_in">RayInstersect</span>(P, S, _PlanetCentre, _AtmosphereRadius, _, C);</span><br><span class="line"></span><br><span class="line">    <span class="type">float</span> time = <span class="number">0</span>;</span><br><span class="line">    <span class="type">float</span> ds = <span class="built_in">distance</span>(P, P + S * C) / (<span class="type">float</span>)(_LightSamples);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; _LightSamples; i ++)</span><br><span class="line">    &#123;</span><br><span class="line">        float3 Q = P + S * (time + lightSampleSize * <span class="number">0.5</span>);</span><br><span class="line">        <span class="type">float</span> height = <span class="built_in">distance</span>(_PlanetCentre, Q) - _PlanetRadius;</span><br><span class="line">        <span class="keyword">if</span> (height &lt; <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 分别计算 Rayleigh、Mie 的光学深度，基准的高度值不一样</span></span><br><span class="line">        opticalDepthCA.x += <span class="built_in">exp</span>(-height / _RayScaleHeight.x) * ds;</span><br><span class="line">        opticalDepthCA.y += <span class="built_in">exp</span>(-height / _RayScaleHeight.y) * ds;</span><br><span class="line"></span><br><span class="line">        time += ds;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Modify : float -&gt; float2</span></span><br><span class="line">float2 opticalDepthPA = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">float3 totalRayViewSamples = <span class="number">0</span>;</span><br><span class="line">float3 totalMieViewSamples = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">float</span> time = tA;</span><br><span class="line"><span class="type">float</span> ds = (tB - tA) / (<span class="type">float</span>)(_ViewSamples);</span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; _ViewSamples; i ++)</span><br><span class="line">&#123;</span><br><span class="line">    float3 P = O + D * (time + ds * <span class="number">0.5</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">///////// Begin ViewSampling()</span></span><br><span class="line">    <span class="comment">// T(CP) * T(PA) * ρ(h) * ds</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// ρ(h) * ds</span></span><br><span class="line">    <span class="type">float</span> height = <span class="built_in">distance</span>(C, P) - _PlanetRadius;</span><br><span class="line">    <span class="comment">// float -&gt; float2</span></span><br><span class="line">    float2 opticalDepthSegment = <span class="number">0</span>;</span><br><span class="line">    opticalDepthSegment.x = <span class="built_in">exp</span>(-height / _ScaleHeight.x) * ds;</span><br><span class="line">    opticalDepthSegment.y = <span class="built_in">exp</span>(-height / _ScaleHeight.y) * ds;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// D(PA)</span></span><br><span class="line">    opticalDepthPA += opticalDepthSegment;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// D(CP)</span></span><br><span class="line">    <span class="comment">// Modify : float -&gt; float2</span></span><br><span class="line">    float2 opticalDepthCP = <span class="number">0</span>;</span><br><span class="line">    <span class="type">bool</span> overground = <span class="built_in">LightSampling</span>(P, S, opticalDepthCP);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (overground)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// Combined transmittance</span></span><br><span class="line">        <span class="comment">// T(CP) * T(PA) = T(CPA) = exp&#123; -β(λ) [D(CP) + D(PA)]&#125;</span></span><br><span class="line">        float3 transmittanceRay = <span class="built_in">exp</span>(</span><br><span class="line">            -_RayScatteringCoefficient  *</span><br><span class="line">            (opticalDepthCP.x + opticalDepthPA.x)</span><br><span class="line">        );</span><br><span class="line"></span><br><span class="line">        float3 transmittranceMie = <span class="built_in">exp</span>(</span><br><span class="line">            -_MieScatteringCoefficient  *</span><br><span class="line">            (opticalDepthCP.x + opticalDepthPA.y)</span><br><span class="line">        );</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Light contribution</span></span><br><span class="line">        <span class="comment">// T(CPA) * ρ(h) * ds</span></span><br><span class="line">        totalRayViewSamples  += transmittanceRay * opticalDepthSegment;</span><br><span class="line">        totalMieViewSamples  += transmittanceMie * opticalDepthSegment;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">////////    End ViewSampling()</span></span><br><span class="line"></span><br><span class="line">    time += ds;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// I = I_S [βr(λ) * γr(θ) * totalRayViewSamples</span></span><br><span class="line"><span class="comment">//     + βm(λ) * γm(θ) * totalMieViewSamples)</span></span><br><span class="line">float3 I = _SunIntensity * (</span><br><span class="line"> _RayScatteringCoefficient * rayPhase * totalRayViewSamples +</span><br><span class="line"> _MieScatteringCoefficient * miePhase * totalMieViewSamples</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><span
+class="math inline">\(\_RayScatteringCoefficient(\textcolor{Red}{680nm},\textcolor{Green}{550nm},\textcolor{Blue}{440nm})
+= (5.8, 13.5, 33.1)*10^{-6}\)</span> <span
+class="math inline">\(\_MieScatteringCoefficient(\textcolor{Red}{680nm},\textcolor{Green}{550nm},\textcolor{Blue}{440nm}=(2.2,
+2.2, 2.2)*10^{-5}\)</span></p>
+</blockquote>
+<blockquote>
+<p><span class="math inline">\(rayPhase\)</span>、<span
+class="math inline">\(miePhase\)</span>
+提前计算好的相位函数值，如果光源会改变方向，可以在 Shader
+中增加函数来计算数值。 <span class="math inline">\(\_ScaleHeight=(8500,
+1200)\)</span></p>
+</blockquote>
+<!-- ## 简化版本实现 -->
+<h2 id="参考资料">参考资料</h2>
+<p><a
+target="_blank" rel="noopener" href="https://www.alanzucconi.com/2017/10/10/atmospheric-scattering-1/">1.Volumetric
+Atmospheric Scattering</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43803133/article/details/116354462">2.Unity基于体绘制的大气散射shader</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/237502022">3.【实战】从零实现一套完整单次大气散射</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/36498679">4.基于物理的大气渲染
+-- 冯乐乐</a></p>
+<p><a
+target="_blank" rel="noopener" href="http://igorsklyar.com/main/development_description/26?locale=en">5.Extended
+Disney "principled" Shader</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://github.com/SlightlyMad/AtmosphericScattering">6.Atmospheric
+Scattering for Unity 5</a></p>
+<p><a target="_blank" rel="noopener" href="https://sebh.github.io/publications/">7.Sébastien Hillaire
+Website</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://freehyan.github.io/2020/03/05/sky-rendering-1/">8.基于物理的大气散射</a></p>
+<div id="ref-anchor-9">
+
+</div>
+<p><a
+target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/383020796">9.预计算大气散射模型：原理与实现</a></p>
+<div id="ref-anchor-10">
+
+</div>
+<p><a
+target="_blank" rel="noopener" href="https://hal.inria.fr/inria-00288758/file/article.pdf">10.Precomputed
+Atmospheric Scattering</a></p>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+<div class="license">
+  <div class="license-title">大气散射 ( Atmosphere Scattering)</div>
+  <div class="license-link">
+    <a href="https://www.xianlongok.site/post/8e5d3b12/">https://www.xianlongok.site/post/8e5d3b12/</a>
+  </div>
+  <div class="license-meta">
+    <div class="license-meta-item">
+      <div class="license-meta-title">本文作者</div>
+      <div class="license-meta-text">
+          小贤
+      </div>
+    </div>
+      <div class="license-meta-item">
+        <div class="license-meta-title">发布于</div>
+        <div class="license-meta-text">
+          2022-05-05
+        </div>
+      </div>
+      <div class="license-meta-item">
+        <div class="license-meta-title">更新于</div>
+        <div class="license-meta-text">
+          2022-05-10
+        </div>
+      </div>
+    <div class="license-meta-item">
+      <div class="license-meta-title">许可协议</div>
+      <div class="license-meta-text">
+          禁止转载引用
+      </div>
+    </div>
+  </div>
+  <div class="license-statement">
+      转载或引用本文前，请先联系作者获得授权！
+  </div>
+</div>
+
+
+
+          <div class="post-tags">
+              <a href="/tags/Atmosphere/" rel="tag"><i class="fa fa-tag"></i> Atmosphere</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/367fa45b/" rel="prev" title="Hexo 博客完美支持数学公式">
+                  <i class="fa fa-chevron-left"></i> Hexo 博客完美支持数学公式
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/e4cef16/" rel="next" title="UE4 landscape 使用 Texture Array">
+                  UE4 landscape 使用 Texture Array <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="valine-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2021/03/25/ – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fas fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小贤</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">165k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">2:30</span>
+  </span>
+</div><div class="powered">  
+    <a href="https://dlzhang.com" rel="noopener" target="_blank">小贤</a>使用 <a href="https://hexo.io" rel="noopener" target="_blank">Hexo</a> <a href="https://theme-next.js.org" rel="noopener" target="_blank">NexT</a> 设计搭建
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"dkLUcqHORjRdwQiwRPJMs00N-gzGzoHsz","app_key":"EhWnaex3YyY7bQysJ2SFnukE","server_url":null,"security":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+
+<script class="next-config" data-name="valine" type="application/json">{"enable":true,"appId":"7TO2HV1Xg9swHbSsI2kFt1H7-gzGzoHsz","appKey":"FgrhitpMKU9Ff5RhDKrpPgog","serverURLs":"https://7to2hv1x.lc-cn-n1-shared.com","placeholder":"ヾﾉ≧∀≦)o来啊，快活啊!","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":false,"comment_count":true,"recordIP":true,"enableQQ":false,"requiredFields":[],"el":"#valine-comments","path":"/post/8e5d3b12/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.valine.el)
+    .then(() => NexT.utils.getScript(
+      'https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js',
+      { condition: window.Valine }
+    ))
+    .then(() => {
+      new Valine(CONFIG.valine);
+    });
+});
+</script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false}});</script></body>
+</html>
