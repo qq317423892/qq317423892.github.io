@@ -1,15 +1,382 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><meta name="theme-color" content="#e7ddc8" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#181c27" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 5.4.2"><link rel="preconnect" href="https://fonts.googleapis.com" crossorigin><link rel="preconnect" href="null//null" crossorigin><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="apple-touch-icon" sizes="180x180" href="/./images/apple-touch-icon-next.png"><link rel="icon" type="image/png" sizes="32x32" href="/./images/favicon-32x32-next.png"><link rel="icon" type="image/png" sizes="16x16" href="/./images/favicon-16x16-next.png"><link rel="mask-icon" href="/./images/safari-pinned-tab-next.svg" color="#e7ddc8"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=LXGW:300,300italic,400,400italic,700,700italic%7CNoto+Serif+SC:300,300italic,400,400italic,700,700italic%7CLong+Cang:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous"><script class="next-config" data-name="main" type="application/json">{"hostname":"www.xianlongok.site","root":"/","images":"/blog/images/","scheme":"Gemini","darkmode":true,"version":"8.11.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":null,"post_body":null,"coll_header":null,"sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script><meta name="description" content="Landscape 使用 TextureArray UE4 中 Landscape 一般会用到多张贴图来丰富地形地貌，例如下面是一个地形的例子：    这个地形包含 7 个 Layer，每个 Layer 由三张贴图组成：    然后再加上权重图，在打安卓包时，就会出现如下错误：  UATHelper: Packaging (Android (ASTC)):   LogShaderCompilers"><meta property="og:type" content="article"><meta property="og:title" content="UE4 landscape 使用 Texture Array"><meta property="og:url" content="https://www.xianlongok.site/post/e4cef16/index.html"><meta property="og:site_name" content="十三"><meta property="og:description" content="Landscape 使用 TextureArray UE4 中 Landscape 一般会用到多张贴图来丰富地形地貌，例如下面是一个地形的例子：    这个地形包含 7 个 Layer，每个 Layer 由三张贴图组成：    然后再加上权重图，在打安卓包时，就会出现如下错误：  UATHelper: Packaging (Android (ASTC)):   LogShaderCompilers"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/landscape_layer.png"><meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/landscape_texture.png"><meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/create_texture_array.png"><meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/create_texture_array_batch.png"><meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/add_texture.png"><meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/mipmaps.png"><meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/compression.png"><meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/mat_normal.png"><meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/mat_texture_array.png"><meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/normal_sample.png"><meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/texture_array_sample.png"><meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/lit_sample.png"><meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/shader_before.png"><meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/shader_after.png"><meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/texture_type.png"><meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/sample_type.png"><meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/android_pic.jpg"><meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/android_near.jpg"><meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/android_far.jpg"><meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/shader.png"><meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/render_debug.png"><meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/fs_index_detail.png"><meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/fs_uniform.png"><meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/fs_uniform_primitive.png"><meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/uniform_primitive.png"><meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/fs_uniform_landscape.png"><meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/fs_out.png"><meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/fs_out_texcoord0.png"><meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/compare.png"><meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/block_bug.png"><meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/hp_diff.png"><meta property="article:published_time" content="2022-03-14T09:18:28.000Z"><meta property="article:modified_time" content="2022-05-14T03:20:32.321Z"><meta property="article:author" content="小贤"><meta property="article:tag" content="C++"><meta property="article:tag" content="UE4"><meta property="article:tag" content="Landscape"><meta property="article:tag" content="TextureArray"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.xianlongok.site/images/landscape_texture_array/landscape_layer.png"><link rel="canonical" href="https://www.xianlongok.site/post/e4cef16/"><script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://www.xianlongok.site/post/e4cef16/","path":"post/e4cef16/","title":"UE4 landscape 使用 Texture Array"}</script><script class="next-config" data-name="calendar" type="application/json">""</script><title>UE4 landscape 使用 Texture Array | 十三</title><script async src="https://www.googletagmanager.com/gtag/js?id=UA-228435313-1"></script><script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-228435313-1","only_pageview":false}</script><script src="/js/third-party/analytics/google-analytics.js"></script><noscript><link rel="stylesheet" href="/css/noscript.css"></noscript></head><body itemscope itemtype="http://schema.org/WebPage" class="use-motion"><div class="headband"></div><main class="main"><header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-container"><div class="site-nav-toggle"><div class="toggle" aria-label="切换导航栏" role="button"><span class="toggle-line"></span> <span class="toggle-line"></span> <span class="toggle-line"></span></div></div><div class="site-meta"><a href="/" class="brand" rel="start"><i class="logo-line"></i><p class="site-title">十三</p><i class="logo-line"></i></a><p class="site-subtitle" itemprop="description">安心学技术</p></div><div class="site-nav-right"><div class="toggle popup-trigger"><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class="site-nav"><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fas fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fas fa-splotch fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fas fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fas fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fas fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fas fa-book fa-fw"></i>留言板</a></li><li class="menu-item menu-item-search"><a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索</a></li></ul></nav><div class="search-pop-overlay"><div class="popup search-popup"><div class="search-header"><span class="search-icon"><i class="fa fa-search"></i></span><div class="search-input-container"><input autocomplete="off" autocapitalize="off" maxlength="80" placeholder="搜索..." spellcheck="false" type="search" class="search-input"></div><span class="popup-btn-close" role="button"><i class="fa fa-times-circle"></i></span></div><div class="search-result-container no-result"><div class="search-result-icon"><i class="fa fa-spinner fa-pulse fa-5x"></i></div></div></div></div></div><div class="toggle sidebar-toggle" role="button"><span class="toggle-line"></span> <span class="toggle-line"></span> <span class="toggle-line"></span></div><aside class="sidebar"><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class="sidebar-nav"><li class="sidebar-nav-toc">文章目录</li><li class="sidebar-nav-overview">站点概览</li></ul><div class="sidebar-panel-container"><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#landscape-%E4%BD%BF%E7%94%A8-texturearray"><span class="nav-number">1.</span> <span class="nav-text">Landscape 使用 TextureArray</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#texturearray"><span class="nav-number">1.1.</span> <span class="nav-text">1 TextureArray</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA-texturearray"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 创建 TextureArray</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-texturearray"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 使用 TextureArray</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sample-%E5%AF%B9%E6%AF%94"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 sample 对比</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#texture2darray-%E6%BA%90%E7%A0%81"><span class="nav-number">1.1.4.</span> <span class="nav-text">1.4 Texture2DArray 源码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E5%9C%B0%E5%BD%A2%E6%9D%90%E8%B4%A8"><span class="nav-number">1.1.5.</span> <span class="nav-text">1.5 修改地形材质</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E5%9D%97%E9%97%AE%E9%A2%98"><span class="nav-number">1.1.6.</span> <span class="nav-text">1.6 解决方块问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#landscape-%E6%9D%90%E8%B4%A8"><span class="nav-number">1.2.</span> <span class="nav-text">2 Landscape 材质</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#pixel-shader"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 Pixel Shader</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A1%B6%E7%82%B9-shader-%E9%80%BB%E8%BE%91"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 顶点 Shader 逻辑</span></a></li></ol></li></ol></li></ol></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person"><img class="site-author-image" itemprop="image" alt="小贤" src="/images/avatar.jpg"><p class="site-author-name" itemprop="name">小贤</p><div class="site-description" itemprop="description">Watch and learn, your magic is mine!</div></div><div class="links-of-author site-overview-item animated"><span class="links-of-author-item"><a href="https://github.com/qq317423892" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qq317423892" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a> </span><span class="links-of-author-item"><a href="mailto:xianlongok@163.com" title="E-Mail → mailto:xianlongok@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i></a></span></div><div class="links-of-blogroll site-overview-item animated"><div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i> Links</div><ul class="links-of-blogroll-list"><li class="links-of-blogroll-item"><a href="https://scorpioq.github.io/" title="https:&#x2F;&#x2F;scorpioq.github.io&#x2F;" rel="noopener" target="_blank">ScorpioQ</a></li></ul></div></div></div><div class="back-to-top animated" role="button" aria-label="返回顶部"><i class="fa fa-arrow-up"></i> <span>0%</span></div></div></aside><div class="sidebar-dimmer"></div></header><div class="reading-progress-bar"></div><a role="button" class="book-mark-link book-mark-link-fixed"></a><noscript><div class="noscript-warning">Theme NexT works best with JavaScript enabled</div></noscript><div class="main-inner post posts-expand"><div class="post-block"><article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN"><link itemprop="mainEntityOfPage" href="https://www.xianlongok.site/post/e4cef16/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="/images/avatar.jpg"><meta itemprop="name" content="小贤"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="十三"><meta itemprop="description" content="Watch and learn, your magic is mine!"></span><span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork"><meta itemprop="name" content="UE4 landscape 使用 Texture Array | 十三"><meta itemprop="description" content=""></span><header class="post-header"><h1 class="post-title" itemprop="name headline">UE4 landscape 使用 Texture Array</h1><div class="post-meta-container"><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-calendar"></i> </span><span class="post-meta-item-text">发表于</span> <time title="创建时间：2022-03-14 17:18:28" itemprop="dateCreated datePublished" datetime="2022-03-14T17:18:28+08:00">2022-03-14</time> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-folder"></i> </span><span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/UE4/" itemprop="url" rel="index"><span itemprop="name">UE4</span></a> </span></span><span id="/post/e4cef16/" class="post-meta-item leancloud_visitors" data-flag-title="UE4 landscape 使用 Texture Array" title="阅读次数"><span class="post-meta-item-icon"><i class="far fa-eye"></i> </span><span class="post-meta-item-text">阅读次数：</span> <span class="leancloud-visitors-count"></span> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-comment"></i> </span><span class="post-meta-item-text">Valine：</span> <a title="valine" href="/post/e4cef16/#valine-comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/post/e4cef16/" itemprop="commentCount"></span> </a></span><span class="post-meta-break"></span> <span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="far fa-file-word"></i> </span><span class="post-meta-item-text">本文字数：</span> <span>11k</span> </span><span class="post-meta-item" title="阅读时长"><span class="post-meta-item-icon"><i class="far fa-clock"></i> </span><span class="post-meta-item-text">阅读时长 &asymp;</span> <span>10 分钟</span></span></div></div></header><div class="post-body" itemprop="articleBody"><h1 id="landscape-使用-texturearray">Landscape 使用 TextureArray</h1><p>UE4 中 Landscape 一般会用到多张贴图来丰富地形地貌，例如下面是一个地形的例子：</p><p><img data-src="/images/landscape_texture_array/landscape_layer.png" width="50%" height="50%"></p><p>这个地形包含 7 个 Layer，每个 Layer 由三张贴图组成：</p><p><img data-src="/images/landscape_texture_array/landscape_texture.png" width="100%" height="100%"></p><p>然后再加上权重图，在打安卓包时，就会出现如下错误：</p><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">UATHelper: Packaging <span class="token punctuation">(</span>Android <span class="token punctuation">(</span>ASTC<span class="token punctuation">))</span>:   LogShaderCompilers: Display: shader uses <span class="token number">19</span> samplers exceeding the limit of <span class="token number">16</span>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#e7ddc8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#181c27" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 5.4.2">
+
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="null//null" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/./images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/./images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/./images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/./images/safari-pinned-tab-next.svg" color="#e7ddc8">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=LXGW:300,300italic,400,400italic,700,700italic%7CNoto+Serif+SC:300,300italic,400,400italic,700,700italic%7CLong+Cang:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.xianlongok.site","root":"/","images":"/blog/images/","scheme":"Pisces","darkmode":true,"version":"8.11.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":null,"post_body":null,"coll_header":null,"sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Landscape 使用 TextureArray UE4 中 Landscape 一般会用到多张贴图来丰富地形地貌，例如下面是一个地形的例子：    这个地形包含 7 个 Layer，每个 Layer 由三张贴图组成：    然后再加上权重图，在打安卓包时，就会出现如下错误：  UATHelper: Packaging (Android (ASTC)):   LogShaderCompilers">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UE4 landscape 使用 Texture Array">
+<meta property="og:url" content="https://www.xianlongok.site/post/e4cef16/index.html">
+<meta property="og:site_name" content="十三">
+<meta property="og:description" content="Landscape 使用 TextureArray UE4 中 Landscape 一般会用到多张贴图来丰富地形地貌，例如下面是一个地形的例子：    这个地形包含 7 个 Layer，每个 Layer 由三张贴图组成：    然后再加上权重图，在打安卓包时，就会出现如下错误：  UATHelper: Packaging (Android (ASTC)):   LogShaderCompilers">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/landscape_layer.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/landscape_texture.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/create_texture_array.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/create_texture_array_batch.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/add_texture.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/mipmaps.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/compression.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/mat_normal.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/mat_texture_array.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/normal_sample.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/texture_array_sample.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/lit_sample.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/shader_before.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/shader_after.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/texture_type.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/sample_type.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/android_pic.jpg">
+<meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/android_near.jpg">
+<meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/android_far.jpg">
+<meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/shader.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/render_debug.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/fs_index_detail.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/fs_uniform.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/fs_uniform_primitive.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/uniform_primitive.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/fs_uniform_landscape.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/fs_out.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/fs_out_texcoord0.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/compare.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/block_bug.png">
+<meta property="og:image" content="https://www.xianlongok.site/images/landscape_texture_array/hp_diff.png">
+<meta property="article:published_time" content="2022-03-14T09:18:28.000Z">
+<meta property="article:modified_time" content="2022-05-14T03:20:32.321Z">
+<meta property="article:author" content="小贤">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="UE4">
+<meta property="article:tag" content="Landscape">
+<meta property="article:tag" content="TextureArray">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.xianlongok.site/images/landscape_texture_array/landscape_layer.png">
+
+
+<link rel="canonical" href="https://www.xianlongok.site/post/e4cef16/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://www.xianlongok.site/post/e4cef16/","path":"post/e4cef16/","title":"UE4 landscape 使用 Texture Array"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>UE4 landscape 使用 Texture Array | 十三</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-228435313-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-228435313-1","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">十三</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">安心学技术</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fas fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fas fa-splotch fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fas fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fas fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fas fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fas fa-book fa-fw"></i>留言板</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#landscape-%E4%BD%BF%E7%94%A8-texturearray"><span class="nav-number">1.</span> <span class="nav-text">Landscape 使用 TextureArray</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#texturearray"><span class="nav-number">1.1.</span> <span class="nav-text">1 TextureArray</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA-texturearray"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 创建 TextureArray</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-texturearray"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 使用 TextureArray</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sample-%E5%AF%B9%E6%AF%94"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 sample 对比</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#texture2darray-%E6%BA%90%E7%A0%81"><span class="nav-number">1.1.4.</span> <span class="nav-text">1.4 Texture2DArray 源码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E5%9C%B0%E5%BD%A2%E6%9D%90%E8%B4%A8"><span class="nav-number">1.1.5.</span> <span class="nav-text">1.5 修改地形材质</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E5%9D%97%E9%97%AE%E9%A2%98"><span class="nav-number">1.1.6.</span> <span class="nav-text">1.6 解决方块问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#landscape-%E6%9D%90%E8%B4%A8"><span class="nav-number">1.2.</span> <span class="nav-text">2 Landscape 材质</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#pixel-shader"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 Pixel Shader</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A1%B6%E7%82%B9-shader-%E9%80%BB%E8%BE%91"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 顶点 Shader 逻辑</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小贤"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">小贤</p>
+  <div class="site-description" itemprop="description">Watch and learn, your magic is mine!</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/qq317423892" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qq317423892" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:xianlongok@163.com" title="E-Mail → mailto:xianlongok@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://scorpioq.github.io/" title="https:&#x2F;&#x2F;scorpioq.github.io&#x2F;" rel="noopener" target="_blank">ScorpioQ</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.xianlongok.site/post/e4cef16/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="小贤">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="十三">
+      <meta itemprop="description" content="Watch and learn, your magic is mine!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="UE4 landscape 使用 Texture Array | 十三">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          UE4 landscape 使用 Texture Array
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-03-14 17:18:28" itemprop="dateCreated datePublished" datetime="2022-03-14T17:18:28+08:00">2022-03-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/UE4/" itemprop="url" rel="index"><span itemprop="name">UE4</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/e4cef16/" class="post-meta-item leancloud_visitors" data-flag-title="UE4 landscape 使用 Texture Array" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>11k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>10 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="landscape-使用-texturearray">Landscape 使用 TextureArray</h1>
+<p>UE4 中 Landscape
+一般会用到多张贴图来丰富地形地貌，例如下面是一个地形的例子：</p>
+<p><img data-src="/images/landscape_texture_array/landscape_layer.png" width="50%" height="50%" /></p>
+<p>这个地形包含 7 个 Layer，每个 Layer 由三张贴图组成：</p>
+<p><img data-src="/images/landscape_texture_array/landscape_texture.png" width="100%" height="100%" /></p>
+<p>然后再加上权重图，在打安卓包时，就会出现如下错误：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">UATHelper: Packaging <span class="token punctuation">(</span>Android <span class="token punctuation">(</span>ASTC<span class="token punctuation">))</span>:   LogShaderCompilers: Display: shader uses <span class="token number">19</span> samplers exceeding the limit of <span class="token number">16</span>
 UATHelper: Packaging <span class="token punctuation">(</span>Android <span class="token punctuation">(</span>ASTC<span class="token punctuation">))</span>:   LogShaderCompilers: Display: shader uses <span class="token number">21</span> samplers exceeding the limit of <span class="token number">16</span>
 UATHelper: Packaging <span class="token punctuation">(</span>Android <span class="token punctuation">(</span>ASTC<span class="token punctuation">))</span>:   LogShaderCompilers: Display: shader uses <span class="token number">20</span> samplers exceeding the limit of <span class="token number">16</span>
 UATHelper: Packaging <span class="token punctuation">(</span>Android <span class="token punctuation">(</span>ASTC<span class="token punctuation">))</span>:   LogShaderCompilers: Warning: Failed to compile Material /Game/STF/Pack03-Lands
 capePro/Environment/Landscape/Landscape/M_landscapeGround_ajustabel.M_landscapeGround_ajustabel <span class="token punctuation">(</span>MI:/Game/STF/Pack03-La
 ndscapePro/Maps/TestMap.testmap:PersistentLevel.Landscape_1.LandscapeMaterialInstanceConstant_290<span class="token punctuation">)</span> <span class="token keyword">for</span> platform GLSL_ES3_1
-_ANDROID, Default Material will be used <span class="token keyword">in</span> game.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>然后真机上测试，地形会使用默认的材质，这显然不是我们想要的效果，要解决这个问题一个是减少贴图数量，另外一个办法就是使用 TextureArray。</p><h2 id="texturearray">1 TextureArray</h2><p>在 UE4 4.26 版本，TextureArray 功能是默认开启的：</p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">static</span> TAutoConsoleVariable<span class="token operator">&lt;</span>int32<span class="token operator">></span> <span class="token function">CVarAllowTexture2DArrayAssetCreation</span><span class="token punctuation">(</span>
+_ANDROID, Default Material will be used <span class="token keyword">in</span> game.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>然后真机上测试，地形会使用默认的材质，这显然不是我们想要的效果，要解决这个问题一个是减少贴图数量，另外一个办法就是使用
+TextureArray。</p>
+<h2 id="texturearray">1 TextureArray</h2>
+<p>在 UE4 4.26 版本，TextureArray 功能是默认开启的：</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">static</span> TAutoConsoleVariable<span class="token operator">&lt;</span>int32<span class="token operator">></span> <span class="token function">CVarAllowTexture2DArrayAssetCreation</span><span class="token punctuation">(</span>
     <span class="token function">TEXT</span><span class="token punctuation">(</span><span class="token string">"r.AllowTexture2DArrayCreation"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
     <span class="token number">1</span><span class="token punctuation">,</span>
     <span class="token function">TEXT</span><span class="token punctuation">(</span><span class="token string">"Enable UTexture2DArray assets"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
     ECVF_Default
-<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><h3 id="创建-texturearray">1.1 创建 TextureArray</h3><p>创建 TextureArray 的方法有两种，一种是直接创建，通过右键菜单，直接创建资源：</p><p><img data-src="/images/landscape_texture_array/create_texture_array.png" width="80%" height="80%"></p><p>然后打开 TextureArray 资源，既可设置 TextureArray 中的贴图列表，注意：只有大小、格式一致的贴图才可以放到通一个 TextureArray 里，如果新增加的贴图不匹配，TextureArray 会自动删除最后一个新增的贴图。</p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">bool</span> <span class="token class-name">UTexture2DArray</span><span class="token double-colon punctuation">::</span><span class="token function">CheckArrayTexturesCompatibility</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="创建-texturearray">1.1 创建 TextureArray</h3>
+<p>创建 TextureArray
+的方法有两种，一种是直接创建，通过右键菜单，直接创建资源：</p>
+<p><img data-src="/images/landscape_texture_array/create_texture_array.png" width="80%" height="80%" /></p>
+<p>然后打开 TextureArray 资源，既可设置 TextureArray
+中的贴图列表，注意：只有大小、格式一致的贴图才可以放到通一个
+TextureArray 里，如果新增加的贴图不匹配，TextureArray
+会自动删除最后一个新增的贴图。</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">bool</span> <span class="token class-name">UTexture2DArray</span><span class="token double-colon punctuation">::</span><span class="token function">CheckArrayTexturesCompatibility</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
     <span class="token keyword">bool</span> bError <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
 
@@ -28,7 +395,41 @@ _ANDROID, Default Material will be used <span class="token keyword">in</span> ga
     <span class="token punctuation">&#125;</span>
 
     <span class="token keyword">return</span> <span class="token punctuation">(</span><span class="token operator">!</span>bError<span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>当然我们也可以选中一堆贴图，然后将选中的贴图直接生成一个 TextureArray 资源。</p><p><img data-src="/images/landscape_texture_array/create_texture_array_batch.png" width="100%" height="100%"></p><p>往 TextureArray 中增加贴图</p><p><img data-src="/images/landscape_texture_array/add_texture.png" width="100%" height="100%"></p><p>然后可以在编辑界面，修改 TextureArray 的一些属性：</p><ul><li>开启 Mipmaps</li></ul><p><img data-src="/images/landscape_texture_array/mipmaps.png" width="50%" height="50%"></p><ul><li>修改压缩格式</li></ul><p><img data-src="/images/landscape_texture_array/compression.png" width="50%" height="50%"></p><h3 id="使用-texturearray">1.2 使用 TextureArray</h3><p>创建好 TextureArray 后，在材质中使用的方法如下，正常我们采样贴图做法如下：</p><p><img data-src="/images/landscape_texture_array/mat_normal.png" width="100%" height="100%"></p><p>使用 TextureArray 后，UVs 坐标不再是“二维”的了，而是“三维”，第三个分量需要指定采样 TextureArray 中第几张贴图的索引值（0 ~ num - 1）：</p><p><img data-src="/images/landscape_texture_array/mat_texture_array.png" width="100%" height="100%"></p><h3 id="sample-对比">1.3 sample 对比</h3><p>使用 unlit 模式下查看，不使用 TextureArray 的 Sample 数目为 3：</p><p><img data-src="/images/landscape_texture_array/normal_sample.png" width="100%" height="100%"></p><p>同样模式下查看，使用 TextureArray 的 Sample 数目为 3：</p><p><img data-src="/images/landscape_texture_array/texture_array_sample.png" width="100%" height="100%"></p><blockquote><p>Lit 模式下，会有额外的 sample 次数，因此在 lit 模式下对应的 sample 不一样。</p></blockquote><p><img data-src="/images/landscape_texture_array/lit_sample.png" width="100%" height="100%"></p><h3 id="texture2darray-源码">1.4 Texture2DArray 源码</h3><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp">FTextureResource<span class="token operator">*</span> <span class="token class-name">UTexture2DArray</span><span class="token double-colon punctuation">::</span><span class="token function">CreateResource</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>当然我们也可以选中一堆贴图，然后将选中的贴图直接生成一个 TextureArray
+资源。</p>
+<p><img data-src="/images/landscape_texture_array/create_texture_array_batch.png" width="100%" height="100%" /></p>
+<p>往 TextureArray 中增加贴图</p>
+<p><img data-src="/images/landscape_texture_array/add_texture.png" width="100%" height="100%" /></p>
+<p>然后可以在编辑界面，修改 TextureArray 的一些属性：</p>
+<ul>
+<li>开启 Mipmaps</li>
+</ul>
+<p><img data-src="/images/landscape_texture_array/mipmaps.png" width="50%" height="50%" /></p>
+<ul>
+<li>修改压缩格式</li>
+</ul>
+<p><img data-src="/images/landscape_texture_array/compression.png" width="50%" height="50%" /></p>
+<h3 id="使用-texturearray">1.2 使用 TextureArray</h3>
+<p>创建好 TextureArray
+后，在材质中使用的方法如下，正常我们采样贴图做法如下：</p>
+<p><img data-src="/images/landscape_texture_array/mat_normal.png" width="100%" height="100%" /></p>
+<p>使用 TextureArray 后，UVs
+坐标不再是“二维”的了，而是“三维”，第三个分量需要指定采样 TextureArray
+中第几张贴图的索引值（0 ~ num - 1）：</p>
+<p><img data-src="/images/landscape_texture_array/mat_texture_array.png" width="100%" height="100%" /></p>
+<h3 id="sample-对比">1.3 sample 对比</h3>
+<p>使用 unlit 模式下查看，不使用 TextureArray 的 Sample 数目为 3：</p>
+<p><img data-src="/images/landscape_texture_array/normal_sample.png" width="100%" height="100%" /></p>
+<p>同样模式下查看，使用 TextureArray 的 Sample 数目为 3：</p>
+<p><img data-src="/images/landscape_texture_array/texture_array_sample.png" width="100%" height="100%" /></p>
+<blockquote>
+<p>Lit 模式下，会有额外的 sample 次数，因此在 lit 模式下对应的 sample
+不一样。</p>
+</blockquote>
+<p><img data-src="/images/landscape_texture_array/lit_sample.png" width="100%" height="100%" /></p>
+<h3 id="texture2darray-源码">1.4 Texture2DArray 源码</h3>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp">FTextureResource<span class="token operator">*</span> <span class="token class-name">UTexture2DArray</span><span class="token double-colon punctuation">::</span><span class="token function">CreateResource</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
     <span class="token keyword">const</span> FPixelFormatInfo<span class="token operator">&amp;</span> FormatInfo <span class="token operator">=</span> GPixelFormats<span class="token punctuation">[</span><span class="token function">GetPixelFormat</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
     <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">GetNumMips</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">></span> <span class="token number">0</span> <span class="token operator">&amp;&amp;</span> FormatInfo<span class="token punctuation">.</span>Supported<span class="token punctuation">)</span>
@@ -60,8 +461,43 @@ _ANDROID, Default Material will be used <span class="token keyword">in</span> ga
 
 <span class="token comment">// 最终调用，然后转成平台相关接口</span>
 GDynamicRHI<span class="token operator">-></span><span class="token function">RHICreateTexture2DArray</span><span class="token punctuation">(</span>SizeX<span class="token punctuation">,</span> SizeY<span class="token punctuation">,</span> 
-    SizeZ<span class="token punctuation">,</span> Format<span class="token punctuation">,</span> NumMips<span class="token punctuation">,</span> NumSamples<span class="token punctuation">,</span> Flags<span class="token punctuation">,</span> InResourceState<span class="token punctuation">,</span> CreateInfo<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><h3 id="修改地形材质">1.5 修改地形材质</h3><p>演示 Demo 的材质原先如下，将单独的贴图采样，修改成 TextureArray：</p><p><img data-src="/images/landscape_texture_array/shader_before.png" width="100%" height="100%"></p><p><img data-src="/images/landscape_texture_array/shader_after.png" width="100%" height="100%"></p><p>这里注意下贴图格式跟采样格式要匹配</p><p>贴图格式:</p><p><img data-src="/images/landscape_texture_array/texture_type.png" width="50%" height="50%"></p><p>采样类型：</p><p><img data-src="/images/landscape_texture_array/sample_type.png" width="40%" height="40%"></p><blockquote><p>这里 Diffuse 采样需要使用 Color Normal 采样使用 Normal Roughness 这里给的是 Grayscale，因此采样类型需要改成 Grayscale</p></blockquote><p>使用 TextureArray 修改之前的地形材质，打包然后在真机运行：</p><p><img data-src="/images/landscape_texture_array/android_pic.jpg" width="100%" height="100%"></p><p>地形有部分区域出现了明显的方格，以及死黑区域。</p><h3 id="解决方块问题">1.6 解决方块问题</h3><p>经过尝试，发现当靠近地形时，会有明显方块，但是远距离查看地形时，采样正确，猜测是顶点采样的 UV 出问题了</p><p>这是近处的效果：</p><p><img data-src="/images/landscape_texture_array/android_near.jpg" width="100%" height="100%"></p><p>这是远处的效果：</p><p><img data-src="/images/landscape_texture_array/android_far.jpg" width="100%" height="100%"></p><p>然后经过尝试发现，使用普通的 TextureCord 能正常显示贴图，然后使用了 LandscapeCorrd 然后配合 Divide，且当除数不为 1 时，就会出现方块：</p><p>于是查看 Landscape shader 源码，来尝试解决问题。</p><h2 id="landscape-材质">2 Landscape 材质</h2><p>新建一个简单的地形材质，节点如下：</p><p><img data-src="/images/landscape_texture_array/shader.png" width="80%" height="80%"></p><p>使用 RenderDoc 抓帧，可以看到在手机上，地形的 Shader 主要有两个：</p><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">MobileBasePassVertexShader.usf
-MobileBasePassPixelShader.usf<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre><h3 id="pixel-shader">2.1 Pixel Shader</h3><p>通过 RenderDoc 截取到地形渲染的 PS shadner 代码如下，采样贴图的 UV 数据来源 TexCorrds</p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">// Engine\Shaders\Private\MobileBasePassPixelShader.usf</span>
+    SizeZ<span class="token punctuation">,</span> Format<span class="token punctuation">,</span> NumMips<span class="token punctuation">,</span> NumSamples<span class="token punctuation">,</span> Flags<span class="token punctuation">,</span> InResourceState<span class="token punctuation">,</span> CreateInfo<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="修改地形材质">1.5 修改地形材质</h3>
+<p>演示 Demo 的材质原先如下，将单独的贴图采样，修改成 TextureArray：</p>
+<p><img data-src="/images/landscape_texture_array/shader_before.png" width="100%" height="100%" /></p>
+<p><img data-src="/images/landscape_texture_array/shader_after.png" width="100%" height="100%" /></p>
+<p>这里注意下贴图格式跟采样格式要匹配</p>
+<p>贴图格式:</p>
+<p><img data-src="/images/landscape_texture_array/texture_type.png" width="50%" height="50%" /></p>
+<p>采样类型：</p>
+<p><img data-src="/images/landscape_texture_array/sample_type.png" width="40%" height="40%" /></p>
+<blockquote>
+<p>这里 Diffuse 采样需要使用 Color Normal 采样使用 Normal Roughness
+这里给的是 Grayscale，因此采样类型需要改成 Grayscale</p>
+</blockquote>
+<p>使用 TextureArray 修改之前的地形材质，打包然后在真机运行：</p>
+<p><img data-src="/images/landscape_texture_array/android_pic.jpg" width="100%" height="100%" /></p>
+<p>地形有部分区域出现了明显的方格，以及死黑区域。</p>
+<h3 id="解决方块问题">1.6 解决方块问题</h3>
+<p>经过尝试，发现当靠近地形时，会有明显方块，但是远距离查看地形时，采样正确，猜测是顶点采样的
+UV 出问题了</p>
+<p>这是近处的效果：</p>
+<p><img data-src="/images/landscape_texture_array/android_near.jpg" width="100%" height="100%" /></p>
+<p>这是远处的效果：</p>
+<p><img data-src="/images/landscape_texture_array/android_far.jpg" width="100%" height="100%" /></p>
+<p>然后经过尝试发现，使用普通的 TextureCord 能正常显示贴图，然后使用了
+LandscapeCorrd 然后配合 Divide，且当除数不为 1 时，就会出现方块：</p>
+<p>于是查看 Landscape shader 源码，来尝试解决问题。</p>
+<h2 id="landscape-材质">2 Landscape 材质</h2>
+<p>新建一个简单的地形材质，节点如下：</p>
+<p><img data-src="/images/landscape_texture_array/shader.png" width="80%" height="80%" /></p>
+<p>使用 RenderDoc 抓帧，可以看到在手机上，地形的 Shader 主要有两个：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">MobileBasePassVertexShader.usf
+MobileBasePassPixelShader.usf<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<h3 id="pixel-shader">2.1 Pixel Shader</h3>
+<p>通过 RenderDoc 截取到地形渲染的 PS shadner 代码如下，采样贴图的 UV
+数据来源 TexCorrds</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">// Engine\Shaders\Private\MobileBasePassPixelShader.usf</span>
 <span class="token keyword">void</span> <span class="token function">Main</span><span class="token punctuation">(</span>
     FVertexFactoryInterpolantsVSToPS Interpolants<span class="token punctuation">,</span> 
     FMobileBasePassInterpolantsVSToPS BasePassInterpolants<span class="token punctuation">,</span>
@@ -90,7 +526,10 @@ MobileBasePassPixelShader.usf<span aria-hidden="true" class="line-numbers-rows">
                 Material_Texture2D_1Sampler<span class="token punctuation">,</span> Local11<span class="token punctuation">,</span> View_MaterialTextureMipBias<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
         <span class="token punctuation">&#125;</span>
     <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p><img data-src="/images/landscape_texture_array/render_debug.png" width="80%" height="80%"></p><p>TexCorrd 来源这个函数：</p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp">FMaterialPixelParameters <span class="token function">GetMaterialPixelParameters</span><span class="token punctuation">(</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><img data-src="/images/landscape_texture_array/render_debug.png" width="80%" height="80%" /></p>
+<p>TexCorrd 来源这个函数：</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp">FMaterialPixelParameters <span class="token function">GetMaterialPixelParameters</span><span class="token punctuation">(</span>
     FVertexFactoryInterpolantsVSToPS Interpolants<span class="token punctuation">,</span> 
     float4 SvPosition<span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
@@ -120,7 +559,21 @@ MobileBasePassPixelShader.usf<span aria-hidden="true" class="line-numbers-rows">
 
 
     float4 Position <span class="token operator">:</span> SV_POSITION<span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>其中，FMobileShadingBasePassVSToPS 就是 VS 中的输出结果对象类型，接下来就看下 FactoryInterpolants 这个变量的生成过程。</p><h3 id="顶点-shader-逻辑">2.2 顶点 Shader 逻辑</h3><p>PS 里的输入就是从 C++ 中传入的 Index Buff</p><p><img data-src="/images/landscape_texture_array/fs_index_detail.png" width="100%" height="100%"></p><p>Uniform 主要包含两个</p><p><img data-src="/images/landscape_texture_array/fs_uniform.png" width="50%" height="50%"></p><p>Primitive Uniform</p><p><img data-src="/images/landscape_texture_array/fs_uniform_primitive.png" width="100%" height="100%"></p><p><img data-src="/images/landscape_texture_array/uniform_primitive.png" width="50%" height="50%"></p><p>Landscape Uniform</p><p><img data-src="/images/landscape_texture_array/fs_uniform_landscape.png" width="100%" height="100%"></p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">// Engine\Shaders\Private\MobileBasePassVertexShader.usf</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>其中，FMobileShadingBasePassVSToPS 就是 VS
+中的输出结果对象类型，接下来就看下 FactoryInterpolants
+这个变量的生成过程。</p>
+<h3 id="顶点-shader-逻辑">2.2 顶点 Shader 逻辑</h3>
+<p>PS 里的输入就是从 C++ 中传入的 Index Buff</p>
+<p><img data-src="/images/landscape_texture_array/fs_index_detail.png" width="100%" height="100%" /></p>
+<p>Uniform 主要包含两个</p>
+<p><img data-src="/images/landscape_texture_array/fs_uniform.png" width="50%" height="50%" /></p>
+<p>Primitive Uniform</p>
+<p><img data-src="/images/landscape_texture_array/fs_uniform_primitive.png" width="100%" height="100%" /></p>
+<p><img data-src="/images/landscape_texture_array/uniform_primitive.png" width="50%" height="50%" /></p>
+<p>Landscape Uniform</p>
+<p><img data-src="/images/landscape_texture_array/fs_uniform_landscape.png" width="100%" height="100%" /></p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">// Engine\Shaders\Private\MobileBasePassVertexShader.usf</span>
 <span class="token keyword">void</span> <span class="token function">Main</span><span class="token punctuation">(</span>
     FVertexFactoryInput Input<span class="token punctuation">,</span> 
     out FMobileShadingBasePassVSOutput Output
@@ -131,7 +584,9 @@ MobileBasePassPixelShader.usf<span aria-hidden="true" class="line-numbers-rows">
 
     float4 WorldPositionExcludingWPO <span class="token operator">=</span> <span class="token function">VertexFactoryGetWorldPosition</span><span class="token punctuation">(</span>Input<span class="token punctuation">,</span> VFIntermediates<span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">&#125;</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p><img data-src="/images/landscape_texture_array/fs_out.png" width="100%" height="100%"></p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp">float3 <span class="token function">GetLocalPosition</span><span class="token punctuation">(</span>FVertexFactoryIntermediates Intermediates<span class="token punctuation">)</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><img data-src="/images/landscape_texture_array/fs_out.png" width="100%" height="100%" /></p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp">float3 <span class="token function">GetLocalPosition</span><span class="token punctuation">(</span>FVertexFactoryIntermediates Intermediates<span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
     <span class="token comment">// LocalPosition 可以看做是每个顶点在各自 Section 中的 x y</span>
     <span class="token comment">// ZW 是对应 Section  (0, 0) (0, 1) (1, 0) (1, 1)</span>
@@ -157,7 +612,11 @@ float4 <span class="token function">TransformLocalToTranslatedWorld</span><span 
         <span class="token operator">+</span> Primitive<span class="token punctuation">.</span>LocalToWorld<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">.</span>xyz <span class="token operator">*</span> LocalPosition<span class="token punctuation">.</span>zzz<span class="token punctuation">;</span>
     
     <span class="token keyword">return</span> <span class="token function">float4</span><span class="token punctuation">(</span>RotatedPosition <span class="token operator">+</span> <span class="token punctuation">(</span>Primitive<span class="token punctuation">.</span>LocalToWorld<span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span><span class="token punctuation">.</span>xyz <span class="token operator">+</span> ResolvedView<span class="token punctuation">.</span>PreViewTranslation<span class="token punctuation">.</span>xyz<span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>然后就能计算出每个顶点的坐标了，我们主要关注的是 PS 中采样用到的 TexCoord_0，因此继续查看这个变量的计算过程。</p><p>VS 向 PS 传参的类型是 FMobileShadingBasePassVSOutput</p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token macro-name">FMobileShadingBasePassVSOutput</span> <span class="token expression">FMobileShadingBasePassVSToPS</span></span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>然后就能计算出每个顶点的坐标了，我们主要关注的是 PS 中采样用到的
+TexCoord_0，因此继续查看这个变量的计算过程。</p>
+<p>VS 向 PS 传参的类型是 FMobileShadingBasePassVSOutput</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token macro-name">FMobileShadingBasePassVSOutput</span> <span class="token expression">FMobileShadingBasePassVSToPS</span></span>
 <span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token macro-name">VertexFactoryGetInterpolants</span> <span class="token expression">VertexFactoryGetInterpolantsVSToPS</span></span>
 
 <span class="token comment">// Engine\Shaders\Private\MobileBasePassVertexShader.usf</span>
@@ -209,7 +668,21 @@ FLandscapeTexCoords <span class="token function">GetLandscapeTexCoords</span><sp
         Intermediates<span class="token punctuation">.</span>InputPosition<span class="token punctuation">.</span>zw <span class="token operator">*</span> LandscapeParameters<span class="token punctuation">.</span>SubsectionOffsetParams<span class="token punctuation">.</span>ww<span class="token punctuation">;</span>
     
     <span class="token keyword">return</span> Result<span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>可以得出计算得出的 LayerTexCoord 其实就是 Landscape 中每个顶点对应在 Component 中的位置。最终计算出来的 TextCorrd_0 结果如下图，可以看到计算得出的 UV 其实大部分都会大于 1，采样的时候贴图设置的是 Wrap，因此最终地形上的纹理会平铺。</p><p><img data-src="/images/landscape_texture_array/fs_out_texcoord0.png" width="100%" height="100%"></p><p>下面是不同方式采样贴图，跟是否使用高精度的对照图，左边列的是使用 TextureCoord 采样贴图的（Corrd），右边列是使用 LandScapeCorrd 方式（LandScape），上面一排是未勾选高精度（normal），下面一排是勾选了高精度的（hp）。 <img data-src="/images/landscape_texture_array/compare.png" width="100%" height="100%"></p><p>而且离地形远点越远，偏差越大</p><p><img data-src="/images/landscape_texture_array/block_bug.png" width="100%" height="100%"></p><p>RenderDoc 抓帧，FS 输出的 TextureCorrd0 数据完全一致。顶点 Shader 没问题，只能继续分析 Pixel Shader，通过 RenderDoc 抓取 PS 代码发现：</p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">//  LandscapeCorrd</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>可以得出计算得出的 LayerTexCoord 其实就是 Landscape 中每个顶点对应在
+Component 中的位置。最终计算出来的 TextCorrd_0
+结果如下图，可以看到计算得出的 UV 其实大部分都会大于
+1，采样的时候贴图设置的是 Wrap，因此最终地形上的纹理会平铺。</p>
+<p><img data-src="/images/landscape_texture_array/fs_out_texcoord0.png" width="100%" height="100%" /></p>
+<p>下面是不同方式采样贴图，跟是否使用高精度的对照图，左边列的是使用
+TextureCoord 采样贴图的（Corrd），右边列是使用 LandScapeCorrd
+方式（LandScape），上面一排是未勾选高精度（normal），下面一排是勾选了高精度的（hp）。
+<img data-src="/images/landscape_texture_array/compare.png" width="100%" height="100%" /></p>
+<p>而且离地形远点越远，偏差越大</p>
+<p><img data-src="/images/landscape_texture_array/block_bug.png" width="100%" height="100%" /></p>
+<p>RenderDoc 抓帧，FS 输出的 TextureCorrd0 数据完全一致。顶点 Shader
+没问题，只能继续分析 Pixel Shader，通过 RenderDoc 抓取 PS 代码发现：</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">//  LandscapeCorrd</span>
 highp vec2 v31 <span class="token operator">=</span> <span class="token function">vec2</span><span class="token punctuation">(</span><span class="token number">1.0</span><span class="token punctuation">,</span> <span class="token number">0.0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token keyword">float</span> h32 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>in_TEXCOORD0<span class="token punctuation">,</span> v31<span class="token punctuation">)</span><span class="token punctuation">;</span>
 vec2 v30<span class="token punctuation">;</span>
@@ -244,7 +717,9 @@ highp vec2 v38 <span class="token operator">=</span> v30<span class="token punct
 highp vec4 v39 <span class="token operator">=</span> _30<span class="token punctuation">.</span>pu_m<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
 <span class="token keyword">float</span> h40 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>v7<span class="token punctuation">,</span> v39<span class="token punctuation">)</span><span class="token punctuation">;</span>
 vec3 v34 <span class="token operator">=</span> <span class="token function">clamp</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token function">texture</span><span class="token punctuation">(</span>Material_Texture2D_0<span class="token punctuation">,</span> v35<span class="token punctuation">)</span><span class="token punctuation">.</span>xyz <span class="token operator">*</span> <span class="token function">vec3</span><span class="token punctuation">(</span>h37<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">+</span> 
-    <span class="token punctuation">(</span><span class="token function">texture</span><span class="token punctuation">(</span>Material_Texture2D_1<span class="token punctuation">,</span> v38<span class="token punctuation">)</span><span class="token punctuation">.</span>xyz <span class="token operator">*</span> <span class="token function">vec3</span><span class="token punctuation">(</span>h40<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">vec3</span><span class="token punctuation">(</span><span class="token number">0.0</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">vec3</span><span class="token punctuation">(</span><span class="token number">1.0</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>精简后得到的 Diff 如下：</p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">//  LandscapeCorrd</span>
+    <span class="token punctuation">(</span><span class="token function">texture</span><span class="token punctuation">(</span>Material_Texture2D_1<span class="token punctuation">,</span> v38<span class="token punctuation">)</span><span class="token punctuation">.</span>xyz <span class="token operator">*</span> <span class="token function">vec3</span><span class="token punctuation">(</span>h40<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">vec3</span><span class="token punctuation">(</span><span class="token number">0.0</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">vec3</span><span class="token punctuation">(</span><span class="token number">1.0</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>精简后得到的 Diff 如下：</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">//  LandscapeCorrd</span>
 highp vec2 v31 <span class="token operator">=</span> <span class="token function">vec2</span><span class="token punctuation">(</span><span class="token number">1.0</span><span class="token punctuation">,</span> <span class="token number">0.0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token keyword">float</span> h32 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>in_TEXCOORD0<span class="token punctuation">,</span> v31<span class="token punctuation">)</span><span class="token punctuation">;</span>
 vec2 v30<span class="token punctuation">;</span>
@@ -257,7 +732,10 @@ vec2 v35 <span class="token operator">=</span> v30 <span class="token operator">
 <span class="token comment">// TextureCord</span>
 highp <span class="token keyword">float</span> f31 <span class="token operator">=</span> _30<span class="token punctuation">.</span>pu_m<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">.</span>x<span class="token punctuation">;</span>
 vec2 v32 <span class="token operator">=</span> in_TEXCOORD0 <span class="token operator">*</span> <span class="token function">vec2</span><span class="token punctuation">(</span>f31<span class="token punctuation">)</span><span class="token punctuation">;</span>
-vec2 v30 <span class="token operator">=</span> v32<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>两种方式只是最终获取 UV 的计算方式不同，尝试修改 Shader 代码，将出现偏差的代码改成：</p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">//  LandscapeCorrd</span>
+vec2 v30 <span class="token operator">=</span> v32<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>两种方式只是最终获取 UV 的计算方式不同，尝试修改 Shader
+代码，将出现偏差的代码改成：</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">//  LandscapeCorrd</span>
 highp vec2 v31 <span class="token operator">=</span> <span class="token function">vec2</span><span class="token punctuation">(</span><span class="token number">1.0</span><span class="token punctuation">,</span> <span class="token number">0.0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token keyword">float</span> h32 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>in_TEXCOORD0<span class="token punctuation">,</span> v31<span class="token punctuation">)</span><span class="token punctuation">;</span>
 vec2 v30<span class="token punctuation">;</span>
@@ -266,9 +744,18 @@ highp vec2 v33 <span class="token operator">=</span> <span class="token function
 <span class="token keyword">float</span> h34 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>in_TEXCOORD0<span class="token punctuation">,</span> v33<span class="token punctuation">)</span><span class="token punctuation">;</span>
 v30<span class="token punctuation">.</span>y <span class="token operator">=</span> h34<span class="token punctuation">;</span>
 <span class="token operator">-</span> vec2 v35 <span class="token operator">=</span> v30 <span class="token operator">*</span> _30<span class="token punctuation">.</span>pu_m<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">.</span>xx<span class="token punctuation">;</span>
-<span class="token operator">+</span> vec2 v35 <span class="token operator">=</span> in_TEXCOORD0 <span class="token operator">*</span> _30<span class="token punctuation">.</span>pu_m<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">.</span>xx<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>应用修改后，采样完全正确，因此定位到问题是计算 UV 坐标阶段，然后分别使用 Debug 功能，获取最终反编译后的代码，对比后发现如下差异：</p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">// 修改后                           // 修改前</span>
+<span class="token operator">+</span> vec2 v35 <span class="token operator">=</span> in_TEXCOORD0 <span class="token operator">*</span> _30<span class="token punctuation">.</span>pu_m<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">.</span>xx<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>应用修改后，采样完全正确，因此定位到问题是计算 UV
+坐标阶段，然后分别使用 Debug
+功能，获取最终反编译后的代码，对比后发现如下差异：</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">// 修改后                           // 修改前</span>
 <span class="token operator">*</span>_277 <span class="token operator">=</span> _276<span class="token punctuation">;</span>                      <span class="token operator">*</span>_277 <span class="token operator">=</span> _276<span class="token punctuation">;</span>
-float2 _279 <span class="token operator">=</span> <span class="token operator">*</span>in_TEXCOORD0<span class="token punctuation">;</span>       float2 _279 <span class="token operator">=</span> <span class="token operator">*</span>v30 <span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">[</span>RelaxedPrecision<span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre><p>发现修改前后差异是变量 V30 后有个： RelaxedPrecision，不强制驱动使用fp16计算，具体解析在<a target="_blank" rel="noopener" href="https://www.zhihu.com/pin/1176097684682895360">此链接</a></p><p>然后尝试回退代码，将其中用到的变量都改成高精度：</p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp">highp vec2 v31 <span class="token operator">=</span> <span class="token function">vec2</span><span class="token punctuation">(</span><span class="token number">1.0</span><span class="token punctuation">,</span> <span class="token number">0.0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+float2 _279 <span class="token operator">=</span> <span class="token operator">*</span>in_TEXCOORD0<span class="token punctuation">;</span>       float2 _279 <span class="token operator">=</span> <span class="token operator">*</span>v30 <span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">[</span>RelaxedPrecision<span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>发现修改前后差异是变量 V30 后有个：
+RelaxedPrecision，不强制驱动使用fp16计算，具体解析在<a
+target="_blank" rel="noopener" href="https://www.zhihu.com/pin/1176097684682895360">此链接</a></p>
+<p>然后尝试回退代码，将其中用到的变量都改成高精度：</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp">highp vec2 v31 <span class="token operator">=</span> <span class="token function">vec2</span><span class="token punctuation">(</span><span class="token number">1.0</span><span class="token punctuation">,</span> <span class="token number">0.0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token operator">-</span> <span class="token keyword">float</span> h32 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>in_TEXCOORD0<span class="token punctuation">,</span> v31<span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token operator">+</span> highp <span class="token keyword">float</span> h32 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>in_TEXCOORD0<span class="token punctuation">,</span> v31<span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token operator">-</span> vec2 v30<span class="token punctuation">;</span>
@@ -278,11 +765,166 @@ highp vec2 v33 <span class="token operator">=</span> <span class="token function
 <span class="token operator">-</span> <span class="token keyword">float</span> h34 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>in_TEXCOORD0<span class="token punctuation">,</span> v33<span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token operator">+</span> highp <span class="token keyword">float</span> h34 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>in_TEXCOORD0<span class="token punctuation">,</span> v33<span class="token punctuation">)</span><span class="token punctuation">;</span>
 v30<span class="token punctuation">.</span>y <span class="token operator">=</span> h34<span class="token punctuation">;</span>
-vec2 v35 <span class="token operator">=</span> v30 <span class="token operator">*</span> _30<span class="token punctuation">.</span>pu_m<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">.</span>xx<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>反编译后的代码 diff 如下：</p><p><img data-src="/images/landscape_texture_array/hp_diff.png" width="80%" height="80%"></p><p>应用修改后，效果也完全正确，因此，当使用 LandscapeCord 节点获取 UV 坐标时，UE4 编译生成的代码，会对变量做优化，增加 RelaxedPrecision，这就导致在不同的设备上，运行计算的精度是不确定的，因此在使用该节点时需要注意。</p><p>最后抓帧查看 Landscape 开启高精度后的 ps 代码，来验证一下之前的问题：</p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">// 开启高精度后，v13 被定义成了 highp，对比未开启高精度的 v30</span>
+vec2 v35 <span class="token operator">=</span> v30 <span class="token operator">*</span> _30<span class="token punctuation">.</span>pu_m<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">.</span>xx<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>反编译后的代码 diff 如下：</p>
+<p><img data-src="/images/landscape_texture_array/hp_diff.png" width="80%" height="80%" /></p>
+<p>应用修改后，效果也完全正确，因此，当使用 LandscapeCord 节点获取 UV
+坐标时，UE4 编译生成的代码，会对变量做优化，增加
+RelaxedPrecision，这就导致在不同的设备上，运行计算的精度是不确定的，因此在使用该节点时需要注意。</p>
+<p>最后抓帧查看 Landscape 开启高精度后的 ps
+代码，来验证一下之前的问题：</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">// 开启高精度后，v13 被定义成了 highp，对比未开启高精度的 v30</span>
 highp vec2 v13<span class="token punctuation">;</span>
 v13<span class="token punctuation">.</span>x <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>in_TEXCOORD0<span class="token punctuation">,</span> <span class="token function">vec2</span><span class="token punctuation">(</span><span class="token number">1.0</span><span class="token punctuation">,</span> <span class="token number">0.0</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 v13<span class="token punctuation">.</span>y <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>in_TEXCOORD0<span class="token punctuation">,</span> <span class="token function">vec2</span><span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">0.0</span><span class="token punctuation">,</span> <span class="token number">1.0</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 highp vec2 v14 <span class="token operator">=</span> v13 <span class="token operator">*</span> _16<span class="token punctuation">.</span>pu_h<span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">]</span><span class="token punctuation">.</span>xx<span class="token punctuation">;</span>
 highp vec3 v15 <span class="token operator">=</span> <span class="token function">clamp</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token function">texture</span><span class="token punctuation">(</span>Material_Texture2D_0<span class="token punctuation">,</span> v14<span class="token punctuation">)</span><span class="token punctuation">.</span>xyz <span class="token operator">*</span> <span class="token function">vec3</span><span class="token punctuation">(</span><span class="token function">dot</span><span class="token punctuation">(</span>v5<span class="token punctuation">,</span> _16<span class="token punctuation">.</span>pu_h<span class="token punctuation">[</span><span class="token number">5</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">+</span> 
     <span class="token punctuation">(</span><span class="token function">texture</span><span class="token punctuation">(</span>Material_Texture2D_1<span class="token punctuation">,</span> v14<span class="token punctuation">)</span><span class="token punctuation">.</span>xyz <span class="token operator">*</span> <span class="token function">vec3</span><span class="token punctuation">(</span><span class="token function">dot</span><span class="token punctuation">(</span>v5<span class="token punctuation">,</span> _16<span class="token punctuation">.</span>pu_h<span class="token punctuation">[</span><span class="token number">6</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">vec3</span><span class="token punctuation">(</span><span class="token number">0.0</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">vec3</span><span class="token punctuation">(</span><span class="token number">1.0</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css"></div><footer class="post-footer"><div class="license"><div class="license-title">UE4 landscape 使用 Texture Array</div><div class="license-link"><a href="https://www.xianlongok.site/post/e4cef16/">https://www.xianlongok.site/post/e4cef16/</a></div><div class="license-meta"><div class="license-meta-item"><div class="license-meta-title">本文作者</div><div class="license-meta-text">小贤</div></div><div class="license-meta-item"><div class="license-meta-title">发布于</div><div class="license-meta-text">2022-03-14</div></div><div class="license-meta-item"><div class="license-meta-title">更新于</div><div class="license-meta-text">2022-05-14</div></div><div class="license-meta-item"><div class="license-meta-title">许可协议</div><div class="license-meta-text"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank">CC BY-NC-SA 4.0</a></div></div></div><div class="license-statement">转载或引用本文时，请遵守上述许可协议，注明出处、不得用于商业用途！</div></div><div class="post-tags"><a href="/tags/C/" rel="tag"><i class="fa fa-tag"></i> C++</a> <a href="/tags/UE4/" rel="tag"><i class="fa fa-tag"></i> UE4</a> <a href="/tags/Landscape/" rel="tag"><i class="fa fa-tag"></i> Landscape</a> <a href="/tags/TextureArray/" rel="tag"><i class="fa fa-tag"></i> TextureArray</a></div><div class="post-nav"><div class="post-nav-item"><a href="/post/8e5d3b12/" rel="prev" title="大气散射 ( Atmosphere Scattering)"><i class="fa fa-chevron-left"></i> 大气散射 ( Atmosphere Scattering)</a></div><div class="post-nav-item"><a href="/post/310fc368/" rel="next" title="UE4 地形 landscape">UE4 地形 landscape <i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div class="comments" id="valine-comments"></div></div></main><footer class="footer"><div class="footer-inner"><div class="copyright">&copy; 2021/03/25/ – <span itemprop="copyrightYear">2022</span> <span class="with-love"><i class="fas fa-heart"></i> </span><span class="author" itemprop="copyrightHolder">小贤</span></div><div class="wordcount"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-chart-line"></i> </span><span title="站点总字数">155k</span> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-coffee"></i> </span><span title="站点阅读时长">2:21</span></span></div><div class="powered"><a href="https://dlzhang.com" rel="noopener" target="_blank">小贤</a>使用 <a href="https://hexo.io" rel="noopener" target="_blank">Hexo</a> <a href="https://theme-next.js.org" rel="noopener" target="_blank">NexT</a> 设计搭建</div></div></footer><script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script><script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script><script src="/js/pjax.js"></script><script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script><script src="/js/third-party/search/local-search.js"></script><script src="/js/third-party/fancybox.js"></script><script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"dkLUcqHORjRdwQiwRPJMs00N-gzGzoHsz","app_key":"EhWnaex3YyY7bQysJ2SFnukE","server_url":null,"security":false}</script><script src="/js/third-party/statistics/lean-analytics.js"></script><script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script><script src="/js/third-party/math/mathjax.js"></script><script class="next-config" data-name="valine" type="application/json">{"enable":true,"appId":"7TO2HV1Xg9swHbSsI2kFt1H7-gzGzoHsz","appKey":"FgrhitpMKU9Ff5RhDKrpPgog","serverURLs":"https://7to2hv1x.lc-cn-n1-shared.com","placeholder":"ヾﾉ≧∀≦)o来啊，快活啊!","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":false,"comment_count":true,"recordIP":true,"enableQQ":false,"requiredFields":[],"el":"#valine-comments","path":"/post/e4cef16/"}</script><script>document.addEventListener("page:loaded",()=>{NexT.utils.loadComments(CONFIG.valine.el).then(()=>NexT.utils.getScript("https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js",{condition:window.Valine})).then(()=>{new Valine(CONFIG.valine)})})</script><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false}});</script></body></html>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+<div class="license">
+  <div class="license-title">UE4 landscape 使用 Texture Array</div>
+  <div class="license-link">
+    <a href="https://www.xianlongok.site/post/e4cef16/">https://www.xianlongok.site/post/e4cef16/</a>
+  </div>
+  <div class="license-meta">
+    <div class="license-meta-item">
+      <div class="license-meta-title">本文作者</div>
+      <div class="license-meta-text">
+          小贤
+      </div>
+    </div>
+      <div class="license-meta-item">
+        <div class="license-meta-title">发布于</div>
+        <div class="license-meta-text">
+          2022-03-14
+        </div>
+      </div>
+      <div class="license-meta-item">
+        <div class="license-meta-title">更新于</div>
+        <div class="license-meta-text">
+          2022-05-14
+        </div>
+      </div>
+    <div class="license-meta-item">
+      <div class="license-meta-title">许可协议</div>
+      <div class="license-meta-text">
+          <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank">CC BY-NC-SA 4.0</a>
+        
+      </div>
+    </div>
+  </div>
+  <div class="license-statement">
+      转载或引用本文时，请遵守上述许可协议，注明出处、不得用于商业用途！
+    
+  </div>
+</div>
+
+
+
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"><i class="fa fa-tag"></i> C++</a>
+              <a href="/tags/UE4/" rel="tag"><i class="fa fa-tag"></i> UE4</a>
+              <a href="/tags/Landscape/" rel="tag"><i class="fa fa-tag"></i> Landscape</a>
+              <a href="/tags/TextureArray/" rel="tag"><i class="fa fa-tag"></i> TextureArray</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/8e5d3b12/" rel="prev" title="大气散射 ( Atmosphere Scattering)">
+                  <i class="fa fa-chevron-left"></i> 大气散射 ( Atmosphere Scattering)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/310fc368/" rel="next" title="UE4 地形 landscape">
+                  UE4 地形 landscape <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fas fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小贤</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">154k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">2:20</span>
+  </span>
+</div><div class="powered">  
+    <a href="https://dlzhang.com" rel="noopener" target="_blank">小贤</a>使用 <a href="https://hexo.io" rel="noopener" target="_blank">Hexo</a> <a href="https://theme-next.js.org" rel="noopener" target="_blank">NexT</a> 设计搭建
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script><script src="/js/pjax.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"dkLUcqHORjRdwQiwRPJMs00N-gzGzoHsz","app_key":"EhWnaex3YyY7bQysJ2SFnukE","server_url":null,"security":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false}});</script></body>
+</html>
