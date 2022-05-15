@@ -798,111 +798,6 @@ Atmospheric Scattering</a></p>
       </tags>
   </entry>
   <entry>
-    <title>Hexo 使用 Zeit 托管网页实现百度抓取</title>
-    <url>/post/5bf5a952/</url>
-    <content><![CDATA[<p>接上篇<a href="/post/fe9b04dd/" title="Hexo + Github 网站添加谷歌跟百度收录">Hexo + Github 网站添加谷歌跟百度收录</a>，说到将博客使用 Github 托管的静态网页，因为
-Github 屏蔽了百度的爬虫，因此收录有问题，最近看到一篇博客，可以使用 Zeit
-免费托管网页，对于免费用户，每个月流量限额是20G，这点对我来说已经远够用了
-<a
-href="#ref-anchor-1"><sup>1</sup></a>，便尝试了下，结果成功了，现在记录一下。</p>
-<h2 id="注册-zeit">注册 Zeit</h2>
-<p>首先打开 <a href="https://vercel.com/">zeit.co</a>
-网站，现在好像改名叫 Vercel，注册账号，这里可以直接使用 Github
-账号登陆，然后选择你博客的仓库导入：</p>
-<div data-align="center">
-<p><img data-src="/images/hexo_zeit/link_github.png" width="50%" height="50%" /></p>
-</div>
-<p>选择你的 Github.io 仓库</p>
-<div data-align="center">
-<p><img data-src="/images/hexo_zeit/link_account.png" width="70%" height="70%" /></p>
-</div>
-<div data-align="center">
-<p><img data-src="/images/hexo_zeit/select_repo.png" width="70%" height="70%" /></p>
-</div>
-<p>最后你选择仓库点击 Import 导入：</p>
-<div data-align="center">
-<p><img data-src="/images/hexo_zeit/import_github.png" width="50%" height="50%" /></p>
-</div>
-<p>等待几分钟导入成功后，点击可以访问你的博客主页，这时候静态资源已经部署到
-zeit 的边缘 CDN 节点上了，下次你 GitHub 项目的任何更新会触发 zeit
-项目更新。</p>
-<div data-align="center">
-<p><img data-src="/images/hexo_zeit/import_ok.png" width="90%" height="90%" /></p>
-</div>
-<h2 id="重定向域名">重定向域名</h2>
-<p>接下来的就是切换域名，通过智能 DNS 将国内流量切过去。通过 <a
-href="https://vercel.com/">zeit</a> 提供的 DNS
-解析服务配置自己的域名，然后在百度站长里配置信息。</p>
-<p>在 Domains 下为项目添加你的个人域名。</p>
-<div data-align="center">
-<p><img data-src="/images/hexo_zeit/domain.png" width="70%" height="70%" /></p>
-</div>
-<p>在输入框输入你的域名，然后在弹出的框中，选择推荐项，也就是第一个：</p>
-<div data-align="center">
-<p><img data-src="/images/hexo_zeit/add_domain.png" width="50%" height="50%" /></p>
-</div>
-<p>zeit
-会自动创建两个域名解析，但是这个时候因为还没设置域名解析信息，此时解析是失败的。</p>
-<div data-align="center">
-<p><img data-src="/images/hexo_zeit/domain_err.png" width="80%" height="80%" /></p>
-</div>
-<h3 id="使用-a-record">使用 A Record</h3>
-<p>这个方法其实就是使用 zeit 提供的域名，替换掉之前 Github
-给的域名信息，打开你的域名解析服务，将之前设置好的 Github
-的域名停用，然后增加两条 zeit 给的域名信息：</p>
-<div data-align="center">
-<p><img data-src="/images/hexo_zeit/github_domain.png" width="80%" height="80%" /></p>
-</div>
-<p>替换为:</p>
-<div data-align="center">
-<p><img data-src="/images/hexo_zeit/zeit_domain.png" width="80%" height="80%" /></p>
-</div>
-<p>回到 zeit 等待一会后，就会发现域名定向成功，而且自动给你生成 https
-证书，完美，重新打开你的网站地址也能正常访问。</p>
-<h3 id="nameserver-方式">nameserver 方式</h3>
-<p>使用第一种方式需要替换掉之前的 Github 域名，相当于博客不在使用
-Github了，对此 zeit 还提供了另外一种方式，就是通过修改
-nameserver，我是使用腾讯云来设置域名解析的，因此打开<a
-href="https://console.cloud.tencent.com/domain">腾讯云</a>，找到你的域名，点击右侧的
-<font color=Red><strong>管理</strong></font>按钮。</p>
-<div data-align="center">
-<p><img data-src="/images/hexo_zeit/tencent_domain.png" width="100%" height="100%" /></p>
-</div>
-<p>找到 DNS 服务器：</p>
-<div data-align="center">
-<p><img data-src="/images/hexo_zeit/tencent_domain_modify.png" width="50%" height="50%" /></p>
-</div>
-<p>改成 zeit 给你的 DNS 服务器，也就是左边的 DNS 服务器：</p>
-<div data-align="center">
-<p><img data-src="/images/hexo_zeit/zeit_dns.png" width="70%" height="70%" /></p>
-</div>
-<p>等待一些时间，就OK了</p>
-<h2 id="最后测试抓取">最后测试抓取</h2>
-<p>回到<a href="https://ziyuan.baidu.com/">百度站长管理网站</a>，找到
-<font color=Red>抓取诊断</font>，手动提交一下你的
-Sitemap，重新试一下就能成功啦。</p>
-<div data-align="center">
-<p><img data-src="/images/hexo_zeit/baidu_sitemap.png" width="90%" height="90%" /></p>
-</div>
-<h2 id="参考">参考</h2>
-<div id="ref-anchor-1">
-
-</div>
-<p><a
-href="https://zpjiang.me/2020/01/15/let-baidu-index-github-page/">1.解决百度爬虫无法爬取
-Github Pages 个人博客的问题</a></p>
-<p><a href="https://zhuanlan.zhihu.com/p/111773896">2.如何让百度收录
-GitHub Pages 个人博客</a></p>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">]]></content>
-      <categories>
-        <category>Blog</category>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>others</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>第一次使用Github + Hexo搭建博客</title>
     <url>/post/568ad23c/</url>
     <content><![CDATA[<p>偶然看到一个大神的文章，讲到怎么使用GitHub跟Hexo搭建博客，便依照大神给的方法尝试了一遍，便有了今天这个博客。大神的<a
@@ -1138,6 +1033,111 @@ themes_partials，找到footer.swig文件，打开编辑，在底下添加代码
       </tags>
   </entry>
   <entry>
+    <title>Hexo 使用 Zeit 托管网页实现百度抓取</title>
+    <url>/post/5bf5a952/</url>
+    <content><![CDATA[<p>接上篇<a href="/post/fe9b04dd/" title="Hexo + Github 网站添加谷歌跟百度收录">Hexo + Github 网站添加谷歌跟百度收录</a>，说到将博客使用 Github 托管的静态网页，因为
+Github 屏蔽了百度的爬虫，因此收录有问题，最近看到一篇博客，可以使用 Zeit
+免费托管网页，对于免费用户，每个月流量限额是20G，这点对我来说已经远够用了
+<a
+href="#ref-anchor-1"><sup>1</sup></a>，便尝试了下，结果成功了，现在记录一下。</p>
+<h2 id="注册-zeit">注册 Zeit</h2>
+<p>首先打开 <a href="https://vercel.com/">zeit.co</a>
+网站，现在好像改名叫 Vercel，注册账号，这里可以直接使用 Github
+账号登陆，然后选择你博客的仓库导入：</p>
+<div data-align="center">
+<p><img data-src="/images/hexo_zeit/link_github.png" width="50%" height="50%" /></p>
+</div>
+<p>选择你的 Github.io 仓库</p>
+<div data-align="center">
+<p><img data-src="/images/hexo_zeit/link_account.png" width="70%" height="70%" /></p>
+</div>
+<div data-align="center">
+<p><img data-src="/images/hexo_zeit/select_repo.png" width="70%" height="70%" /></p>
+</div>
+<p>最后你选择仓库点击 Import 导入：</p>
+<div data-align="center">
+<p><img data-src="/images/hexo_zeit/import_github.png" width="50%" height="50%" /></p>
+</div>
+<p>等待几分钟导入成功后，点击可以访问你的博客主页，这时候静态资源已经部署到
+zeit 的边缘 CDN 节点上了，下次你 GitHub 项目的任何更新会触发 zeit
+项目更新。</p>
+<div data-align="center">
+<p><img data-src="/images/hexo_zeit/import_ok.png" width="90%" height="90%" /></p>
+</div>
+<h2 id="重定向域名">重定向域名</h2>
+<p>接下来的就是切换域名，通过智能 DNS 将国内流量切过去。通过 <a
+href="https://vercel.com/">zeit</a> 提供的 DNS
+解析服务配置自己的域名，然后在百度站长里配置信息。</p>
+<p>在 Domains 下为项目添加你的个人域名。</p>
+<div data-align="center">
+<p><img data-src="/images/hexo_zeit/domain.png" width="70%" height="70%" /></p>
+</div>
+<p>在输入框输入你的域名，然后在弹出的框中，选择推荐项，也就是第一个：</p>
+<div data-align="center">
+<p><img data-src="/images/hexo_zeit/add_domain.png" width="50%" height="50%" /></p>
+</div>
+<p>zeit
+会自动创建两个域名解析，但是这个时候因为还没设置域名解析信息，此时解析是失败的。</p>
+<div data-align="center">
+<p><img data-src="/images/hexo_zeit/domain_err.png" width="80%" height="80%" /></p>
+</div>
+<h3 id="使用-a-record">使用 A Record</h3>
+<p>这个方法其实就是使用 zeit 提供的域名，替换掉之前 Github
+给的域名信息，打开你的域名解析服务，将之前设置好的 Github
+的域名停用，然后增加两条 zeit 给的域名信息：</p>
+<div data-align="center">
+<p><img data-src="/images/hexo_zeit/github_domain.png" width="80%" height="80%" /></p>
+</div>
+<p>替换为:</p>
+<div data-align="center">
+<p><img data-src="/images/hexo_zeit/zeit_domain.png" width="80%" height="80%" /></p>
+</div>
+<p>回到 zeit 等待一会后，就会发现域名定向成功，而且自动给你生成 https
+证书，完美，重新打开你的网站地址也能正常访问。</p>
+<h3 id="nameserver-方式">nameserver 方式</h3>
+<p>使用第一种方式需要替换掉之前的 Github 域名，相当于博客不在使用
+Github了，对此 zeit 还提供了另外一种方式，就是通过修改
+nameserver，我是使用腾讯云来设置域名解析的，因此打开<a
+href="https://console.cloud.tencent.com/domain">腾讯云</a>，找到你的域名，点击右侧的
+<font color=Red><strong>管理</strong></font>按钮。</p>
+<div data-align="center">
+<p><img data-src="/images/hexo_zeit/tencent_domain.png" width="100%" height="100%" /></p>
+</div>
+<p>找到 DNS 服务器：</p>
+<div data-align="center">
+<p><img data-src="/images/hexo_zeit/tencent_domain_modify.png" width="50%" height="50%" /></p>
+</div>
+<p>改成 zeit 给你的 DNS 服务器，也就是左边的 DNS 服务器：</p>
+<div data-align="center">
+<p><img data-src="/images/hexo_zeit/zeit_dns.png" width="70%" height="70%" /></p>
+</div>
+<p>等待一些时间，就OK了</p>
+<h2 id="最后测试抓取">最后测试抓取</h2>
+<p>回到<a href="https://ziyuan.baidu.com/">百度站长管理网站</a>，找到
+<font color=Red>抓取诊断</font>，手动提交一下你的
+Sitemap，重新试一下就能成功啦。</p>
+<div data-align="center">
+<p><img data-src="/images/hexo_zeit/baidu_sitemap.png" width="90%" height="90%" /></p>
+</div>
+<h2 id="参考">参考</h2>
+<div id="ref-anchor-1">
+
+</div>
+<p><a
+href="https://zpjiang.me/2020/01/15/let-baidu-index-github-page/">1.解决百度爬虫无法爬取
+Github Pages 个人博客的问题</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/111773896">2.如何让百度收录
+GitHub Pages 个人博客</a></p>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">]]></content>
+      <categories>
+        <category>Blog</category>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>others</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Hexo 博客完美支持数学公式</title>
     <url>/post/367fa45b/</url>
     <content><![CDATA[<p>我的博客现在使用的是 NexT
@@ -1188,6 +1188,372 @@ hexo s<span aria-hidden="true" class="line-numbers-rows"><span></span><span></sp
       </categories>
       <tags>
         <tag>others</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>InjectFix学习笔记</title>
+    <url>/post/5a3da985/</url>
+    <content><![CDATA[<h2 id="injectfix-工作流程">1.InjectFix 工作流程</h2>
+<ul>
+<li>打新包
+<ul>
+<li>其他预处理</li>
+<li>预先配置好需要Patch的类跟函数，提交配置Configure代码</li>
+<li>打包机打包时，自动reload被Inject的dll，保证当前的dll没有被注入过</li>
+<li>调用InjectFix提供的注入函数，注入WrappersManagerImpl，ILFixInterfaceBridge，ILFixDynamicMethodWrapper，IDMAP-1跟插桩代码dll</li>
+<li>执行il2cpp处理</li>
+<li>执行其他预处理</li>
+</ul></li>
+<li>Patch阶段
+<ul>
+<li>修复代码
+<ul>
+<li>修复函数：使用标签[IFix.Patch]</li>
+<li>新增类、属性、方法：使用标签[IFix.Interpret]</li>
+</ul></li>
+<li>调用InjectFix提供的打Patch函数，生成Patch文件</li>
+<li>生成Patch文件的AssetsBuddle包</li>
+<li>上传更新过后的AssetsBuddle包</li>
+</ul></li>
+</ul>
+<blockquote>
+<p>ps：在patch过程中，如果没有重新打出新的包体，不要删除Patch标签</p>
+</blockquote>
+<span id="more"></span>
+<h2 id="injectfix-工作原理">2.InjectFix 工作原理</h2>
+<h3 id="inject阶段">2.1 Inject阶段</h3>
+<h3 id="ifix跟ifix.filter标签">2.1.1 [IFix]跟[IFix.Filter]标签</h3>
+<p>在Inject阶段，预先对有可能需要修复的类跟函数提交配置类，调用Inject处理函数时，会对这些写上标签的函数注入插桩代码，例如有如下代码，其中Add跟Sub目前逻辑是错误的，是需要修复的函数：
+<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">namespace IFix.Test
+&#123;
+    public class Calculator
+    &#123;
+        public int Add(int a, int b)
+        &#123;
+            return a * b;
+        &#125;
+		
+        public int Sub(int a, int b)
+        &#123;
+            return a &#x2F; b;
+        &#125;
+		
+        public int Mult(int a, int b)
+        &#123;
+            return a * b;
+        &#125;
+		
+        public int Div(int a, int b)
+        &#123;
+            return a &#x2F; b;
+        &#125;
+    &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+打包时需要配置对应的配置类，具体配置<strong>Configure</strong>类如下，其中
+<strong>[Configure]</strong>
+标签是配置类的标签，用来配置注入阶段需要注入或者过滤的内容，配置类必须放在<strong>Editor</strong>目录下。
+* <strong>[IFix]</strong> 标签 ：用来配置需要注入的类型 *
+<strong>[IFix.Filter]</strong> 标签 ：用来过滤不需要的字段</p>
+<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">[Configure]
+public class HelloworldCfg
+&#123;
+    [IFix]
+    static IEnumerable&lt;Type&gt; hotfix
+    &#123;
+        get
+        &#123;
+            return new List&lt;Type&gt;()
+            &#123;
+                typeof(IFix.Test.Calculator),
+            &#125;;
+        &#125;
+    &#125;
+
+    [IFix.Filter]
+    static bool Filter(System.Reflection.MethodInfo methodInfo)
+    &#123;
+        return methodInfo.DeclaringType.FullName &#x3D;&#x3D; &quot;IFix.Test.Calculator&quot; 
+            &amp;&amp; (methodInfo.Name &#x3D;&#x3D; &quot;Div&quot; || methodInfo.Name &#x3D;&#x3D; &quot;Mult&quot;);
+    &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>使用<strong>ILSpy工具</strong>查看注入后dll，看到生成如下代码，其中<strong>Add</strong>跟<strong>Sub</strong>方法增加了注入代码，<strong>Mult</strong>跟<strong>Div</strong>函数因为在配置类中被过滤了，没有注入代码。
+<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">public class Calculator
+&#123;
+    public int Add(int a, int b)
+    &#123;
+        if (IFix.WrappersManagerImpl.IsPatched(6))
+        &#123;
+            return IFix.WrappersManagerImpl.GetPatch(6).__Gen_Wrap_1(this, a, b);
+        &#125;
+        return a * b;
+    &#125;
+
+    public int Sub(int a, int b)
+    &#123;
+        if (IFix.WrappersManagerImpl.IsPatched(7))
+        &#123;
+            return IFix.WrappersManagerImpl.GetPatch(7).__Gen_Wrap_1(this, a, b);
+        &#125;
+        return a &#x2F; b;
+    &#125;
+
+    public int Mult(int a, int b)
+    &#123;
+        return a * b;
+    &#125;
+
+    public int Div(int a, int b)
+    &#123;
+        return a &#x2F; b;
+    &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+除了插桩代码，注入阶段还会注入几个相关的代码，其中<strong>IDMAP0</strong>是修复函数的索引ID，当索引值超过32760时，会生成下一个<strong>IDMAP1</strong>，依次类推。
+<pre class="line-numbers language-none"><code class="language-none">public enum IDMAP0
+&#123;
+    IFix-Test-Calculator-Add0 &#x3D; 6,
+    IFix-Test-Calculator-Sub0,
+    Helloworld-test0 &#x3D; 5,
+    Helloworld-Start0 &#x3D; 0
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+其中的GetPatch(<strong>6</strong>)中的参数<strong>6</strong>对应到注入代码中IDMAP0中<strong>IFix-Test-Calculator-Add0</strong></p>
+<p>注入WrappersManagerImpl类代码 <pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">public class WrappersManagerImpl : WrappersManager
+&#123;
+    private VirtualMachine virtualMachine;
+
+    public WrappersManagerImpl(VirtualMachine virtualMachine)
+    &#123;
+        this.virtualMachine &#x3D; virtualMachine;
+    &#125;
+
+    public static ILFixDynamicMethodWrapper GetPatch(int id)
+    &#123;
+        return ILFixDynamicMethodWrapper.wrapperArray[id];
+    &#125;
+
+    public static bool IsPatched(int id)
+    &#123;
+        return id &lt; ILFixDynamicMethodWrapper.wrapperArray.Length &amp;&amp; ILFixDynamicMethodWrapper.wrapperArray[id] !&#x3D; null;
+    &#125;
+
+    public System.Delegate CreateDelegate(System.Type type, int id, object anon)
+    &#123;
+        ILFixDynamicMethodWrapper iLFixDynamicMethodWrapper &#x3D; new ILFixDynamicMethodWrapper(this.virtualMachine, id, anon);
+        return Utils.TryAdapterToDelegate(iLFixDynamicMethodWrapper, type, &quot;__Gen_Wrap_&quot;);
+    &#125;
+
+    public object CreateWrapper(int id)
+    &#123;
+        return new ILFixDynamicMethodWrapper(this.virtualMachine, id, null);
+    &#125;
+
+    public object InitWrapperArray(int len)
+    &#123;
+        ILFixDynamicMethodWrapper.wrapperArray &#x3D; new ILFixDynamicMethodWrapper[len];
+        return ILFixDynamicMethodWrapper.wrapperArray;
+    &#125;
+
+    public AnonymousStorey CreateBridge(int fieldNum, int[] fieldTypes, int typeIndex, int[] vTable, int[] slots, VirtualMachine virtualMachine)
+    &#123;
+        return new ILFixInterfaceBridge(fieldNum, fieldTypes, typeIndex, vTable, slots, virtualMachine);
+    &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+其中使用到的iLFixDynamicMethodWrapper的代码如下，其中 **__Gen_Wrap_X**
+函数会根据注入时函数的参数个数，类型来生成，相同的参数只生成一个对应的
+**__Gen_Wrap_X** 方法，例子中的Add，Sub方法共用了 **__Gen_Wrap_1** 方法
+<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">public class ILFixDynamicMethodWrapper
+&#123;
+    private VirtualMachine virtualMachine;
+
+    private int methodId;
+
+    private object anonObj;
+
+    public static ILFixDynamicMethodWrapper[] wrapperArray;
+
+    public ILFixDynamicMethodWrapper(VirtualMachine virtualMachine, int methodId, object anonObj)
+    &#123;
+        this.virtualMachine &#x3D; virtualMachine;
+        this.methodId &#x3D; methodId;
+        this.anonObj &#x3D; anonObj;
+    &#125;
+
+    public void __Gen_Wrap_0(string P0)
+    &#123;
+        Call call &#x3D; Call.Begin();
+        if (this.anonObj !&#x3D; null)
+        &#123;
+            call.PushObject(this.anonObj);
+        &#125;
+        call.PushObject(P0);
+        this.virtualMachine.Execute(this.methodId, ref call, (this.anonObj !&#x3D; null) ? 2 : 1, 0);
+    &#125;
+
+    public int __Gen_Wrap_1(object P0, int P1, int P2)
+    &#123;
+        Call call &#x3D; Call.Begin();
+        if (this.anonObj !&#x3D; null)
+        &#123;
+            call.PushObject(this.anonObj);
+        &#125;
+        call.PushObject(P0);
+        call.PushInt32(P1);
+        call.PushInt32(P2);
+        this.virtualMachine.Execute(this.methodId, ref call, (this.anonObj !&#x3D; null) ? 4 : 3, 0);
+        return call.GetInt32(0);
+    &#125;
+
+    public int __Gen_Wrap_2(int P0)
+    &#123;
+        Call call &#x3D; Call.Begin();
+        if (this.anonObj !&#x3D; null)
+        &#123;
+            call.PushObject(this.anonObj);
+        &#125;
+        call.PushInt32(P0);
+        this.virtualMachine.Execute(this.methodId, ref call, (this.anonObj !&#x3D; null) ? 2 : 1, 0);
+        return call.GetInt32(0);
+    &#125;
+
+    public void __Gen_Wrap_3(object P0)
+    &#123;
+        Call call &#x3D; Call.Begin();
+        if (this.anonObj !&#x3D; null)
+        &#123;
+            call.PushObject(this.anonObj);
+        &#125;
+        call.PushObject(P0);
+        this.virtualMachine.Execute(this.methodId, ref call, (this.anonObj !&#x3D; null) ? 2 : 1, 0);
+    &#125;
+
+    static ILFixDynamicMethodWrapper()
+    &#123;
+        ILFixDynamicMethodWrapper.wrapperArray &#x3D; new ILFixDynamicMethodWrapper[0];
+    &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p>如果Patch阶段，有对Add方法进行修复，生成Patch，则执行逻辑会通过IFix.WrappersManagerImpl.GetPatch(6).__Gen_Wrap_1(this,
+a, b)调用<strong>ILFixDynamicMethodWrapper
+</strong>中的**__Gen_Wrap_1<strong>函数，最终调用</strong>virtualMachine<strong>的函数，通过IFix内部实现的虚拟机，解析执行Patch中的IL指令，执行修复后的代码逻辑，最后然后通过
+</strong>call.GetInt32(0)** 获取计算返回的结果，将正确的值返回。</p>
+<h3 id="ifix.custombridge-interface和delegate桥接">2.1.2
+<strong>[IFix.CustomBridge]</strong> ：interface和delegate桥接</h3>
+<p>在注入阶段使用，用来把一个在虚拟机上的类适配到原生interface或者把一个虚拟机的函数适配到原生delegate。
+- 修复代码赋值一个闭包到一个delegate变量； -
+修复代码的Unity协程用了yield return； -
+新增一个函数，赋值到一个delegate变量； -
+新增一个类，赋值到一个原生interface变量； - 新增函数，用了yield
+return；</p>
+<p>例如，原生类代码如下：</p>
+<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">public interface ISubSystem
+&#123;
+    bool running &#123; get; &#125;
+    void Print();
+&#125;
+
+public class Test 
+&#123;
+    public delegate int MyDelegate(int a, int b);
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>配置类代码如下：</p>
+<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">[IFix.CustomBridge]
+public static class AdditionalBridge
+&#123;
+    static List&lt;Type&gt; bridge &#x3D; new List&lt;Type&gt;()
+    &#123;
+        typeof(ISubSystem),
+        typeof(IEnumerator),
+        typeof(Test.MyDelegate)
+    &#125;;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>新增函数（或者修复代码[IFix.Patch]的Unity协程），用到了 yield
+return</p>
+<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">[IFix.Interpret]
+public IEnumerator TestInterface()
+&#123;
+    yield return new WaitForSeconds(1);
+    UnityEngine.Debug.Log(&quot;wait one second&quot;);
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>新增函数（或者修复代码[IFix.Patch]），赋值到一个delegate变量</p>
+<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">public class Test 
+&#123;
+    public delegate int MyDelegate(int a, int b);
+    
+    [IFix.Interpret]
+    public MyDelegate TestDelegate()
+    &#123;
+        return (a,b) &#x3D;&gt; a + b;
+    &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>新增一个类，该类实现了一个接口</p>
+<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">[IFix.Interpret]
+public class SubSystem : ISubSystem
+&#123;
+    public bool running &#123; get &#123; return true; &#125; &#125;
+    public void Print()
+    &#123;
+        UnityEngine.Debug.Log(&quot;SubSystem1.Print&quot;);
+    &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>注入dll后，使用<strong>ILSpy</strong>能看到dll中有注入的类<strong>ILFixInterfaceBridge</strong></p>
+<h3 id="patch阶段">2.2 Patch阶段</h3>
+<p>Patch阶段针对修复内容使用对应的Tag * 修复方法 ：[IFix.Patch] *
+新增方法、类型 ：[IFix.Interpret]</p>
+<h4 id="修复方法">2.2.1 修复方法</h4>
+<p>需要修复的方法，再Patch阶段加上[Patch]标签，在执行生成Patch时，被修复的方法就会被写到生成的Patch里，例如，将Add方法从原先的
+<strong>a * b</strong> 改成正确的逻辑 <strong>a + b</strong>：</p>
+<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">[Patch]
+public int Add(int a, int b)
+&#123;
+    return a + b;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<blockquote>
+<p>不支持修复泛型函数，不支持修复构造函数</p>
+</blockquote>
+<h3 id="新增函数类型">2.2.2 新增函数、类型</h3>
+<ul>
+<li>新增一个函数</li>
+</ul>
+<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">[IFix.Interpret]
+public bool Greater(int a,int b)
+&#123;
+    return a &gt; b;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<ul>
+<li>新增一个类</li>
+</ul>
+<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">[IFix.Interpret]
+public class NewClass
+&#123;
+    ...
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<ul>
+<li>新增一个属性</li>
+</ul>
+<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">private string name;&#x2F;&#x2F;这个name字段是原生的
+
+public string Name
+&#123;
+    [IFix.Interpret]
+    set
+    &#123;
+    	name &#x3D; value;    
+    &#125;
+    [IFix.Interpret]
+    get
+    &#123;
+        return name;
+    &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<blockquote>
+<p>不支持继承原生类，泛型类，不支持在原生类中新增字段</p>
+</blockquote>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">]]></content>
+      <categories>
+        <category>Unity开发</category>
+      </categories>
+      <tags>
+        <tag>Unity</tag>
+        <tag>C#</tag>
+        <tag>InjectFix</tag>
       </tags>
   </entry>
   <entry>
@@ -2028,372 +2394,6 @@ href="https://zwcloud.net/#blog/109">2.UE4移动端地形理解 -
         <tag>C++</tag>
         <tag>UE4</tag>
         <tag>Landscape</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>InjectFix学习笔记</title>
-    <url>/post/5a3da985/</url>
-    <content><![CDATA[<h2 id="injectfix-工作流程">1.InjectFix 工作流程</h2>
-<ul>
-<li>打新包
-<ul>
-<li>其他预处理</li>
-<li>预先配置好需要Patch的类跟函数，提交配置Configure代码</li>
-<li>打包机打包时，自动reload被Inject的dll，保证当前的dll没有被注入过</li>
-<li>调用InjectFix提供的注入函数，注入WrappersManagerImpl，ILFixInterfaceBridge，ILFixDynamicMethodWrapper，IDMAP-1跟插桩代码dll</li>
-<li>执行il2cpp处理</li>
-<li>执行其他预处理</li>
-</ul></li>
-<li>Patch阶段
-<ul>
-<li>修复代码
-<ul>
-<li>修复函数：使用标签[IFix.Patch]</li>
-<li>新增类、属性、方法：使用标签[IFix.Interpret]</li>
-</ul></li>
-<li>调用InjectFix提供的打Patch函数，生成Patch文件</li>
-<li>生成Patch文件的AssetsBuddle包</li>
-<li>上传更新过后的AssetsBuddle包</li>
-</ul></li>
-</ul>
-<blockquote>
-<p>ps：在patch过程中，如果没有重新打出新的包体，不要删除Patch标签</p>
-</blockquote>
-<span id="more"></span>
-<h2 id="injectfix-工作原理">2.InjectFix 工作原理</h2>
-<h3 id="inject阶段">2.1 Inject阶段</h3>
-<h3 id="ifix跟ifix.filter标签">2.1.1 [IFix]跟[IFix.Filter]标签</h3>
-<p>在Inject阶段，预先对有可能需要修复的类跟函数提交配置类，调用Inject处理函数时，会对这些写上标签的函数注入插桩代码，例如有如下代码，其中Add跟Sub目前逻辑是错误的，是需要修复的函数：
-<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">namespace IFix.Test
-&#123;
-    public class Calculator
-    &#123;
-        public int Add(int a, int b)
-        &#123;
-            return a * b;
-        &#125;
-		
-        public int Sub(int a, int b)
-        &#123;
-            return a &#x2F; b;
-        &#125;
-		
-        public int Mult(int a, int b)
-        &#123;
-            return a * b;
-        &#125;
-		
-        public int Div(int a, int b)
-        &#123;
-            return a &#x2F; b;
-        &#125;
-    &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-打包时需要配置对应的配置类，具体配置<strong>Configure</strong>类如下，其中
-<strong>[Configure]</strong>
-标签是配置类的标签，用来配置注入阶段需要注入或者过滤的内容，配置类必须放在<strong>Editor</strong>目录下。
-* <strong>[IFix]</strong> 标签 ：用来配置需要注入的类型 *
-<strong>[IFix.Filter]</strong> 标签 ：用来过滤不需要的字段</p>
-<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">[Configure]
-public class HelloworldCfg
-&#123;
-    [IFix]
-    static IEnumerable&lt;Type&gt; hotfix
-    &#123;
-        get
-        &#123;
-            return new List&lt;Type&gt;()
-            &#123;
-                typeof(IFix.Test.Calculator),
-            &#125;;
-        &#125;
-    &#125;
-
-    [IFix.Filter]
-    static bool Filter(System.Reflection.MethodInfo methodInfo)
-    &#123;
-        return methodInfo.DeclaringType.FullName &#x3D;&#x3D; &quot;IFix.Test.Calculator&quot; 
-            &amp;&amp; (methodInfo.Name &#x3D;&#x3D; &quot;Div&quot; || methodInfo.Name &#x3D;&#x3D; &quot;Mult&quot;);
-    &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>使用<strong>ILSpy工具</strong>查看注入后dll，看到生成如下代码，其中<strong>Add</strong>跟<strong>Sub</strong>方法增加了注入代码，<strong>Mult</strong>跟<strong>Div</strong>函数因为在配置类中被过滤了，没有注入代码。
-<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">public class Calculator
-&#123;
-    public int Add(int a, int b)
-    &#123;
-        if (IFix.WrappersManagerImpl.IsPatched(6))
-        &#123;
-            return IFix.WrappersManagerImpl.GetPatch(6).__Gen_Wrap_1(this, a, b);
-        &#125;
-        return a * b;
-    &#125;
-
-    public int Sub(int a, int b)
-    &#123;
-        if (IFix.WrappersManagerImpl.IsPatched(7))
-        &#123;
-            return IFix.WrappersManagerImpl.GetPatch(7).__Gen_Wrap_1(this, a, b);
-        &#125;
-        return a &#x2F; b;
-    &#125;
-
-    public int Mult(int a, int b)
-    &#123;
-        return a * b;
-    &#125;
-
-    public int Div(int a, int b)
-    &#123;
-        return a &#x2F; b;
-    &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-除了插桩代码，注入阶段还会注入几个相关的代码，其中<strong>IDMAP0</strong>是修复函数的索引ID，当索引值超过32760时，会生成下一个<strong>IDMAP1</strong>，依次类推。
-<pre class="line-numbers language-none"><code class="language-none">public enum IDMAP0
-&#123;
-    IFix-Test-Calculator-Add0 &#x3D; 6,
-    IFix-Test-Calculator-Sub0,
-    Helloworld-test0 &#x3D; 5,
-    Helloworld-Start0 &#x3D; 0
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-其中的GetPatch(<strong>6</strong>)中的参数<strong>6</strong>对应到注入代码中IDMAP0中<strong>IFix-Test-Calculator-Add0</strong></p>
-<p>注入WrappersManagerImpl类代码 <pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">public class WrappersManagerImpl : WrappersManager
-&#123;
-    private VirtualMachine virtualMachine;
-
-    public WrappersManagerImpl(VirtualMachine virtualMachine)
-    &#123;
-        this.virtualMachine &#x3D; virtualMachine;
-    &#125;
-
-    public static ILFixDynamicMethodWrapper GetPatch(int id)
-    &#123;
-        return ILFixDynamicMethodWrapper.wrapperArray[id];
-    &#125;
-
-    public static bool IsPatched(int id)
-    &#123;
-        return id &lt; ILFixDynamicMethodWrapper.wrapperArray.Length &amp;&amp; ILFixDynamicMethodWrapper.wrapperArray[id] !&#x3D; null;
-    &#125;
-
-    public System.Delegate CreateDelegate(System.Type type, int id, object anon)
-    &#123;
-        ILFixDynamicMethodWrapper iLFixDynamicMethodWrapper &#x3D; new ILFixDynamicMethodWrapper(this.virtualMachine, id, anon);
-        return Utils.TryAdapterToDelegate(iLFixDynamicMethodWrapper, type, &quot;__Gen_Wrap_&quot;);
-    &#125;
-
-    public object CreateWrapper(int id)
-    &#123;
-        return new ILFixDynamicMethodWrapper(this.virtualMachine, id, null);
-    &#125;
-
-    public object InitWrapperArray(int len)
-    &#123;
-        ILFixDynamicMethodWrapper.wrapperArray &#x3D; new ILFixDynamicMethodWrapper[len];
-        return ILFixDynamicMethodWrapper.wrapperArray;
-    &#125;
-
-    public AnonymousStorey CreateBridge(int fieldNum, int[] fieldTypes, int typeIndex, int[] vTable, int[] slots, VirtualMachine virtualMachine)
-    &#123;
-        return new ILFixInterfaceBridge(fieldNum, fieldTypes, typeIndex, vTable, slots, virtualMachine);
-    &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-其中使用到的iLFixDynamicMethodWrapper的代码如下，其中 **__Gen_Wrap_X**
-函数会根据注入时函数的参数个数，类型来生成，相同的参数只生成一个对应的
-**__Gen_Wrap_X** 方法，例子中的Add，Sub方法共用了 **__Gen_Wrap_1** 方法
-<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">public class ILFixDynamicMethodWrapper
-&#123;
-    private VirtualMachine virtualMachine;
-
-    private int methodId;
-
-    private object anonObj;
-
-    public static ILFixDynamicMethodWrapper[] wrapperArray;
-
-    public ILFixDynamicMethodWrapper(VirtualMachine virtualMachine, int methodId, object anonObj)
-    &#123;
-        this.virtualMachine &#x3D; virtualMachine;
-        this.methodId &#x3D; methodId;
-        this.anonObj &#x3D; anonObj;
-    &#125;
-
-    public void __Gen_Wrap_0(string P0)
-    &#123;
-        Call call &#x3D; Call.Begin();
-        if (this.anonObj !&#x3D; null)
-        &#123;
-            call.PushObject(this.anonObj);
-        &#125;
-        call.PushObject(P0);
-        this.virtualMachine.Execute(this.methodId, ref call, (this.anonObj !&#x3D; null) ? 2 : 1, 0);
-    &#125;
-
-    public int __Gen_Wrap_1(object P0, int P1, int P2)
-    &#123;
-        Call call &#x3D; Call.Begin();
-        if (this.anonObj !&#x3D; null)
-        &#123;
-            call.PushObject(this.anonObj);
-        &#125;
-        call.PushObject(P0);
-        call.PushInt32(P1);
-        call.PushInt32(P2);
-        this.virtualMachine.Execute(this.methodId, ref call, (this.anonObj !&#x3D; null) ? 4 : 3, 0);
-        return call.GetInt32(0);
-    &#125;
-
-    public int __Gen_Wrap_2(int P0)
-    &#123;
-        Call call &#x3D; Call.Begin();
-        if (this.anonObj !&#x3D; null)
-        &#123;
-            call.PushObject(this.anonObj);
-        &#125;
-        call.PushInt32(P0);
-        this.virtualMachine.Execute(this.methodId, ref call, (this.anonObj !&#x3D; null) ? 2 : 1, 0);
-        return call.GetInt32(0);
-    &#125;
-
-    public void __Gen_Wrap_3(object P0)
-    &#123;
-        Call call &#x3D; Call.Begin();
-        if (this.anonObj !&#x3D; null)
-        &#123;
-            call.PushObject(this.anonObj);
-        &#125;
-        call.PushObject(P0);
-        this.virtualMachine.Execute(this.methodId, ref call, (this.anonObj !&#x3D; null) ? 2 : 1, 0);
-    &#125;
-
-    static ILFixDynamicMethodWrapper()
-    &#123;
-        ILFixDynamicMethodWrapper.wrapperArray &#x3D; new ILFixDynamicMethodWrapper[0];
-    &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
-<p>如果Patch阶段，有对Add方法进行修复，生成Patch，则执行逻辑会通过IFix.WrappersManagerImpl.GetPatch(6).__Gen_Wrap_1(this,
-a, b)调用<strong>ILFixDynamicMethodWrapper
-</strong>中的**__Gen_Wrap_1<strong>函数，最终调用</strong>virtualMachine<strong>的函数，通过IFix内部实现的虚拟机，解析执行Patch中的IL指令，执行修复后的代码逻辑，最后然后通过
-</strong>call.GetInt32(0)** 获取计算返回的结果，将正确的值返回。</p>
-<h3 id="ifix.custombridge-interface和delegate桥接">2.1.2
-<strong>[IFix.CustomBridge]</strong> ：interface和delegate桥接</h3>
-<p>在注入阶段使用，用来把一个在虚拟机上的类适配到原生interface或者把一个虚拟机的函数适配到原生delegate。
-- 修复代码赋值一个闭包到一个delegate变量； -
-修复代码的Unity协程用了yield return； -
-新增一个函数，赋值到一个delegate变量； -
-新增一个类，赋值到一个原生interface变量； - 新增函数，用了yield
-return；</p>
-<p>例如，原生类代码如下：</p>
-<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">public interface ISubSystem
-&#123;
-    bool running &#123; get; &#125;
-    void Print();
-&#125;
-
-public class Test 
-&#123;
-    public delegate int MyDelegate(int a, int b);
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>配置类代码如下：</p>
-<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">[IFix.CustomBridge]
-public static class AdditionalBridge
-&#123;
-    static List&lt;Type&gt; bridge &#x3D; new List&lt;Type&gt;()
-    &#123;
-        typeof(ISubSystem),
-        typeof(IEnumerator),
-        typeof(Test.MyDelegate)
-    &#125;;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>新增函数（或者修复代码[IFix.Patch]的Unity协程），用到了 yield
-return</p>
-<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">[IFix.Interpret]
-public IEnumerator TestInterface()
-&#123;
-    yield return new WaitForSeconds(1);
-    UnityEngine.Debug.Log(&quot;wait one second&quot;);
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>新增函数（或者修复代码[IFix.Patch]），赋值到一个delegate变量</p>
-<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">public class Test 
-&#123;
-    public delegate int MyDelegate(int a, int b);
-    
-    [IFix.Interpret]
-    public MyDelegate TestDelegate()
-    &#123;
-        return (a,b) &#x3D;&gt; a + b;
-    &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>新增一个类，该类实现了一个接口</p>
-<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">[IFix.Interpret]
-public class SubSystem : ISubSystem
-&#123;
-    public bool running &#123; get &#123; return true; &#125; &#125;
-    public void Print()
-    &#123;
-        UnityEngine.Debug.Log(&quot;SubSystem1.Print&quot;);
-    &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>注入dll后，使用<strong>ILSpy</strong>能看到dll中有注入的类<strong>ILFixInterfaceBridge</strong></p>
-<h3 id="patch阶段">2.2 Patch阶段</h3>
-<p>Patch阶段针对修复内容使用对应的Tag * 修复方法 ：[IFix.Patch] *
-新增方法、类型 ：[IFix.Interpret]</p>
-<h4 id="修复方法">2.2.1 修复方法</h4>
-<p>需要修复的方法，再Patch阶段加上[Patch]标签，在执行生成Patch时，被修复的方法就会被写到生成的Patch里，例如，将Add方法从原先的
-<strong>a * b</strong> 改成正确的逻辑 <strong>a + b</strong>：</p>
-<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">[Patch]
-public int Add(int a, int b)
-&#123;
-    return a + b;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<blockquote>
-<p>不支持修复泛型函数，不支持修复构造函数</p>
-</blockquote>
-<h3 id="新增函数类型">2.2.2 新增函数、类型</h3>
-<ul>
-<li>新增一个函数</li>
-</ul>
-<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">[IFix.Interpret]
-public bool Greater(int a,int b)
-&#123;
-    return a &gt; b;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<ul>
-<li>新增一个类</li>
-</ul>
-<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">[IFix.Interpret]
-public class NewClass
-&#123;
-    ...
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<ul>
-<li>新增一个属性</li>
-</ul>
-<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">private string name;&#x2F;&#x2F;这个name字段是原生的
-
-public string Name
-&#123;
-    [IFix.Interpret]
-    set
-    &#123;
-    	name &#x3D; value;    
-    &#125;
-    [IFix.Interpret]
-    get
-    &#123;
-        return name;
-    &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<blockquote>
-<p>不支持继承原生类，泛型类，不支持在原生类中新增字段</p>
-</blockquote>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">]]></content>
-      <categories>
-        <category>Unity开发</category>
-      </categories>
-      <tags>
-        <tag>Unity</tag>
-        <tag>C#</tag>
-        <tag>InjectFix</tag>
       </tags>
   </entry>
   <entry>
@@ -4452,111 +4452,6 @@ href="https://blog.csdn.net/leonwei/article/details/84821849">UE4渲染系统概
       </tags>
   </entry>
   <entry>
-    <title>UE4 static 变量 GC 导致闪退问题</title>
-    <url>/post/75d9be60/</url>
-    <content><![CDATA[<p>最近开发一个 UMG 插件，插件里用到了静态变量，在 UE4
-编辑器里运行没有啥问题，然后打了手机包iOS后，运行一段时间后，闪退了，闪退点就是我写的代码里中访问全局变量的时候，使用
-UnrealVS 插件在 VS2019 下开启 Window 模式，也出现了类似的闪退问题：</p>
-<p>UnrealVS 参数 &gt; "E:.uproject" -game -windowed -log -verbose</p>
-<p>闪退代码处：</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">// .h 文件</span>
-<span class="token function">UCLASS</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token keyword">class</span> <span class="token class-name">UMGEXT_API</span> UExtTextBlock <span class="token operator">:</span> <span class="token keyword">public</span> UTextBlock
-<span class="token punctuation">&#123;</span>
-    <span class="token keyword">static</span> UDataTable<span class="token operator">*</span> ExtTextStyleSet<span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-
-<span class="token comment">// .cpp 文件</span>
-UDataTable<span class="token operator">*</span> UExtTextBlock<span class="token double-colon punctuation">::</span>ExtTextStyleSet <span class="token operator">=</span> <span class="token keyword">nullptr</span><span class="token punctuation">;</span>
-
-<span class="token keyword">void</span> <span class="token class-name">UExtTextBlock</span><span class="token double-colon punctuation">::</span><span class="token function">EnsureTextDataTable</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token punctuation">&#123;</span>
-    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">nullptr</span> <span class="token operator">==</span> ExtTextStyleSet <span class="token operator">||</span> <span class="token operator">!</span>ExtTextStyleSet<span class="token operator">-></span><span class="token function">IsValidLowLevel</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-    <span class="token punctuation">&#123;</span>
-        ExtTextStyleSet <span class="token operator">=</span> <span class="token generic-function"><span class="token function">LoadObject</span><span class="token generic class-name"><span class="token operator">&lt;</span>UDataTable<span class="token operator">></span></span></span><span class="token punctuation">(</span><span class="token keyword">nullptr</span><span class="token punctuation">,</span> <span class="token operator">*</span>DataPath<span class="token punctuation">)</span><span class="token punctuation">;</span>
-        ExtTextStyleSet<span class="token operator">-></span><span class="token function">AddToRoot</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span>
-
-FTextBlockStyle <span class="token class-name">UExtTextBlock</span><span class="token double-colon punctuation">::</span><span class="token function">GetTextStyleByName</span><span class="token punctuation">(</span>FName StyleName<span class="token punctuation">)</span>
-<span class="token punctuation">&#123;</span>
-    <span class="token function">EnsureTextDataTable</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    FTextBlockStyle Style <span class="token operator">=</span> <span class="token class-name">FTextBlockStyle</span><span class="token double-colon punctuation">::</span><span class="token function">GetDefault</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token keyword">nullptr</span> <span class="token operator">==</span> UExtTextBlock<span class="token double-colon punctuation">::</span>ExtTextStyleSet<span class="token punctuation">)</span>
-    <span class="token punctuation">&#123;</span>
-        <span class="token keyword">return</span> Style<span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-
-    <span class="token comment">/// 闪退地方</span>
-    <span class="token keyword">auto</span> RowMap <span class="token operator">=</span> UExtTextBlock<span class="token double-colon punctuation">::</span>ExtTextStyleSet<span class="token operator">-></span><span class="token function">GetRowMap</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token keyword">if</span><span class="token punctuation">(</span>RowMap<span class="token punctuation">.</span><span class="token function">Contains</span><span class="token punctuation">(</span>StyleName<span class="token punctuation">)</span><span class="token punctuation">)</span>
-    <span class="token punctuation">&#123;</span>
-        FRichTextStyleRow<span class="token operator">*</span> RichTextStyle <span class="token operator">=</span> <span class="token punctuation">(</span>FRichTextStyleRow<span class="token operator">*</span><span class="token punctuation">)</span><span class="token punctuation">(</span>RowMap<span class="token punctuation">[</span>StyleName<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        Style <span class="token operator">=</span> RichTextStyle<span class="token operator">-></span>TextStyle<span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-    <span class="token keyword">return</span> Style<span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>用 VS2019 调试闪退点，查看 UExtTextBlock::ExtTextStyleSet
-内存，每次都不一样，而且类型对象完全不匹配，所以联想到可能是内存空间被GC，然后之前指向的内存被其他变量占用了，于是去谷歌。</p>
-<p>要防止对象被GC，有4种方式：</p>
-<ul>
-<li>作为成员变量并标记为UPROPERTY()；</li>
-<li>创建对象后 AddToRoot() ；（退出游戏时需要RemoveFromRoot()）</li>
-<li>FStreamableManager Load资源时，bManageActiveHandle 设置为true；</li>
-<li>FGCObjectScopeGuard 在指定代码区域内保持对象；</li>
-</ul>
-<blockquote>
-<p>注意： 一个UObject类型的变量，即使是static，默认也会被GC掉。</p>
-</blockquote>
-<p>知道了原因，就好解决问题了，于是做了一下修改：</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">/// 插件模块代码 </span>
-<span class="token comment">/// 启动时: 加载创建静态变量，并且将 静态变量加到 Root 上</span>
-<span class="token keyword">void</span> <span class="token class-name">FUMGExtModule</span><span class="token double-colon punctuation">::</span><span class="token function">StartupModule</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token punctuation">&#123;</span>
-    <span class="token function">UE_LOG</span><span class="token punctuation">(</span>LogUMGExtModule<span class="token punctuation">,</span> Display<span class="token punctuation">,</span> <span class="token function">TEXT</span><span class="token punctuation">(</span><span class="token string">"UMGExtModule StartupModule"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-
-    <span class="token class-name">UExtTextBlock</span><span class="token double-colon punctuation">::</span><span class="token function">EnsureTextDataTable</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-
-<span class="token comment">/// 模块卸载时：将静态变量从 Root 拿掉</span>
-<span class="token keyword">void</span> <span class="token class-name">FUMGExtModule</span><span class="token double-colon punctuation">::</span><span class="token function">ShutdownModule</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token punctuation">&#123;</span>
-    <span class="token function">UE_LOG</span><span class="token punctuation">(</span>LogUMGExtModule<span class="token punctuation">,</span> Display<span class="token punctuation">,</span> <span class="token function">TEXT</span><span class="token punctuation">(</span><span class="token string">"UMGExtModule ShutdownModule"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-
-    <span class="token class-name">UExtTextBlock</span><span class="token double-colon punctuation">::</span><span class="token function">ClearTextDataTable</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-
-<span class="token comment">/// 对应类的代码</span>
-<span class="token keyword">void</span> <span class="token class-name">UExtTextBlock</span><span class="token double-colon punctuation">::</span><span class="token function">EnsureTextDataTable</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token punctuation">&#123;</span>
-    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">nullptr</span> <span class="token operator">==</span> ExtTextStyleSet <span class="token operator">||</span> <span class="token operator">!</span>ExtTextStyleSet<span class="token operator">-></span><span class="token function">IsValidLowLevel</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-    <span class="token punctuation">&#123;</span>
-        ExtTextStyleSet <span class="token operator">=</span> <span class="token generic-function"><span class="token function">LoadObject</span><span class="token generic class-name"><span class="token operator">&lt;</span>UDataTable<span class="token operator">></span></span></span><span class="token punctuation">(</span><span class="token keyword">nullptr</span><span class="token punctuation">,</span> <span class="token operator">*</span>DataPath<span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token comment">/// AddToRoot : 防止被 GC</span>
-        ExtTextStyleSet<span class="token operator">-></span><span class="token function">AddToRoot</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span>
-
-<span class="token keyword">void</span> <span class="token class-name">UExtTextBlock</span><span class="token double-colon punctuation">::</span><span class="token function">ClearTextDataTable</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token punctuation">&#123;</span>
-    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">nullptr</span> <span class="token operator">!=</span> ExtTextStyleSet<span class="token punctuation">)</span>
-    <span class="token punctuation">&#123;</span>
-        <span class="token comment">/// RemoveFromRoot : 可以 GC 了 </span>
-        ExtTextStyleSet<span class="token operator">-></span><span class="token function">RemoveFromRoot</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">]]></content>
-      <categories>
-        <category>UE4</category>
-      </categories>
-      <tags>
-        <tag>C++</tag>
-        <tag>UE4</tag>
-        <tag>GC</tag>
-        <tag>Static</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>UE4 SlateUI事件机制</title>
     <url>/post/360e070e/</url>
     <content><![CDATA[<p>最近开发过程中，碰到一个比较奇怪的Bug，同事在场景中创建了个3D
@@ -5294,6 +5189,111 @@ FHittestGrid<span class="token double-colon punctuation">::</span>FIndexAndDista
         <tag>C++</tag>
         <tag>UE4</tag>
         <tag>UMG</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>UE4 static 变量 GC 导致闪退问题</title>
+    <url>/post/75d9be60/</url>
+    <content><![CDATA[<p>最近开发一个 UMG 插件，插件里用到了静态变量，在 UE4
+编辑器里运行没有啥问题，然后打了手机包iOS后，运行一段时间后，闪退了，闪退点就是我写的代码里中访问全局变量的时候，使用
+UnrealVS 插件在 VS2019 下开启 Window 模式，也出现了类似的闪退问题：</p>
+<p>UnrealVS 参数 &gt; "E:.uproject" -game -windowed -log -verbose</p>
+<p>闪退代码处：</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">// .h 文件</span>
+<span class="token function">UCLASS</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">class</span> <span class="token class-name">UMGEXT_API</span> UExtTextBlock <span class="token operator">:</span> <span class="token keyword">public</span> UTextBlock
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">static</span> UDataTable<span class="token operator">*</span> ExtTextStyleSet<span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token comment">// .cpp 文件</span>
+UDataTable<span class="token operator">*</span> UExtTextBlock<span class="token double-colon punctuation">::</span>ExtTextStyleSet <span class="token operator">=</span> <span class="token keyword">nullptr</span><span class="token punctuation">;</span>
+
+<span class="token keyword">void</span> <span class="token class-name">UExtTextBlock</span><span class="token double-colon punctuation">::</span><span class="token function">EnsureTextDataTable</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">nullptr</span> <span class="token operator">==</span> ExtTextStyleSet <span class="token operator">||</span> <span class="token operator">!</span>ExtTextStyleSet<span class="token operator">-></span><span class="token function">IsValidLowLevel</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token punctuation">&#123;</span>
+        ExtTextStyleSet <span class="token operator">=</span> <span class="token generic-function"><span class="token function">LoadObject</span><span class="token generic class-name"><span class="token operator">&lt;</span>UDataTable<span class="token operator">></span></span></span><span class="token punctuation">(</span><span class="token keyword">nullptr</span><span class="token punctuation">,</span> <span class="token operator">*</span>DataPath<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        ExtTextStyleSet<span class="token operator">-></span><span class="token function">AddToRoot</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span>
+
+FTextBlockStyle <span class="token class-name">UExtTextBlock</span><span class="token double-colon punctuation">::</span><span class="token function">GetTextStyleByName</span><span class="token punctuation">(</span>FName StyleName<span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token function">EnsureTextDataTable</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    FTextBlockStyle Style <span class="token operator">=</span> <span class="token class-name">FTextBlockStyle</span><span class="token double-colon punctuation">::</span><span class="token function">GetDefault</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token keyword">nullptr</span> <span class="token operator">==</span> UExtTextBlock<span class="token double-colon punctuation">::</span>ExtTextStyleSet<span class="token punctuation">)</span>
+    <span class="token punctuation">&#123;</span>
+        <span class="token keyword">return</span> Style<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token comment">/// 闪退地方</span>
+    <span class="token keyword">auto</span> RowMap <span class="token operator">=</span> UExtTextBlock<span class="token double-colon punctuation">::</span>ExtTextStyleSet<span class="token operator">-></span><span class="token function">GetRowMap</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span><span class="token punctuation">(</span>RowMap<span class="token punctuation">.</span><span class="token function">Contains</span><span class="token punctuation">(</span>StyleName<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token punctuation">&#123;</span>
+        FRichTextStyleRow<span class="token operator">*</span> RichTextStyle <span class="token operator">=</span> <span class="token punctuation">(</span>FRichTextStyleRow<span class="token operator">*</span><span class="token punctuation">)</span><span class="token punctuation">(</span>RowMap<span class="token punctuation">[</span>StyleName<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        Style <span class="token operator">=</span> RichTextStyle<span class="token operator">-></span>TextStyle<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+    <span class="token keyword">return</span> Style<span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>用 VS2019 调试闪退点，查看 UExtTextBlock::ExtTextStyleSet
+内存，每次都不一样，而且类型对象完全不匹配，所以联想到可能是内存空间被GC，然后之前指向的内存被其他变量占用了，于是去谷歌。</p>
+<p>要防止对象被GC，有4种方式：</p>
+<ul>
+<li>作为成员变量并标记为UPROPERTY()；</li>
+<li>创建对象后 AddToRoot() ；（退出游戏时需要RemoveFromRoot()）</li>
+<li>FStreamableManager Load资源时，bManageActiveHandle 设置为true；</li>
+<li>FGCObjectScopeGuard 在指定代码区域内保持对象；</li>
+</ul>
+<blockquote>
+<p>注意： 一个UObject类型的变量，即使是static，默认也会被GC掉。</p>
+</blockquote>
+<p>知道了原因，就好解决问题了，于是做了一下修改：</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">/// 插件模块代码 </span>
+<span class="token comment">/// 启动时: 加载创建静态变量，并且将 静态变量加到 Root 上</span>
+<span class="token keyword">void</span> <span class="token class-name">FUMGExtModule</span><span class="token double-colon punctuation">::</span><span class="token function">StartupModule</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token function">UE_LOG</span><span class="token punctuation">(</span>LogUMGExtModule<span class="token punctuation">,</span> Display<span class="token punctuation">,</span> <span class="token function">TEXT</span><span class="token punctuation">(</span><span class="token string">"UMGExtModule StartupModule"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token class-name">UExtTextBlock</span><span class="token double-colon punctuation">::</span><span class="token function">EnsureTextDataTable</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token comment">/// 模块卸载时：将静态变量从 Root 拿掉</span>
+<span class="token keyword">void</span> <span class="token class-name">FUMGExtModule</span><span class="token double-colon punctuation">::</span><span class="token function">ShutdownModule</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token function">UE_LOG</span><span class="token punctuation">(</span>LogUMGExtModule<span class="token punctuation">,</span> Display<span class="token punctuation">,</span> <span class="token function">TEXT</span><span class="token punctuation">(</span><span class="token string">"UMGExtModule ShutdownModule"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token class-name">UExtTextBlock</span><span class="token double-colon punctuation">::</span><span class="token function">ClearTextDataTable</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token comment">/// 对应类的代码</span>
+<span class="token keyword">void</span> <span class="token class-name">UExtTextBlock</span><span class="token double-colon punctuation">::</span><span class="token function">EnsureTextDataTable</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">nullptr</span> <span class="token operator">==</span> ExtTextStyleSet <span class="token operator">||</span> <span class="token operator">!</span>ExtTextStyleSet<span class="token operator">-></span><span class="token function">IsValidLowLevel</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token punctuation">&#123;</span>
+        ExtTextStyleSet <span class="token operator">=</span> <span class="token generic-function"><span class="token function">LoadObject</span><span class="token generic class-name"><span class="token operator">&lt;</span>UDataTable<span class="token operator">></span></span></span><span class="token punctuation">(</span><span class="token keyword">nullptr</span><span class="token punctuation">,</span> <span class="token operator">*</span>DataPath<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token comment">/// AddToRoot : 防止被 GC</span>
+        ExtTextStyleSet<span class="token operator">-></span><span class="token function">AddToRoot</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token keyword">void</span> <span class="token class-name">UExtTextBlock</span><span class="token double-colon punctuation">::</span><span class="token function">ClearTextDataTable</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">nullptr</span> <span class="token operator">!=</span> ExtTextStyleSet<span class="token punctuation">)</span>
+    <span class="token punctuation">&#123;</span>
+        <span class="token comment">/// RemoveFromRoot : 可以 GC 了 </span>
+        ExtTextStyleSet<span class="token operator">-></span><span class="token function">RemoveFromRoot</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">]]></content>
+      <categories>
+        <category>UE4</category>
+      </categories>
+      <tags>
+        <tag>C++</tag>
+        <tag>UE4</tag>
+        <tag>GC</tag>
+        <tag>Static</tag>
       </tags>
   </entry>
   <entry>
