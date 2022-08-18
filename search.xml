@@ -3153,7 +3153,7 @@ class="math inline">\(F_e\)</span></p>
 <h4 id="运动方程">运动方程</h4>
 <p>综合上面的受力，我们就能得到质点的合力方程：<span
 class="math inline">\(F=F_i + F_d + F_d + F_g +
-F_e\)</span>，然后使用之前提到的隐式欧拉公式：</p>
+F_e\)</span>，然后使用之前提到的半隐式欧拉公式：</p>
 <p><span class="math display">\[\begin{aligned}
 \vec{v}(t_1) &amp;= \vec{v}(t_0) +
 M^{-1}  \textcolor{SkyBlue}{\vec{F}(t_0) } \Delta t \\
@@ -3370,7 +3370,8 @@ Buffer，分别来存储质点的位置跟速度，使用线程数组存储二�
 class="math inline">\(M\)</span> 个约束函数</li>
 <li><span
 class="math inline">\(n_j\)</span>：基数（约束函数中例子个数）</li>
-<li>$C_j：^{3n_j} $：约束函数（在三维坐标中，每个节点坐标由 3
+<li><span class="math inline">\(C_j：\mathbb{R}^{3n_j} \rightarrow
+\mathbb{R}\)</span>：约束函数（在三维坐标中，每个节点坐标由 3
 个坐标）</li>
 <li>$ {i_1, ... , i_{n_j} }, i_k $：约束函数中节点</li>
 <li><span class="math inline">\(k_j \in [0,
@@ -3478,7 +3479,7 @@ class="math inline">\(\boldsymbol{v}_i \leftarrow
 <blockquote>
 <ol type="1">
 <li>这里的 <span class="math inline">\(\boldsymbol{f}_{ext}\)</span>
-包含重力，风力等)</li>
+包含重力，风力等</li>
 <li>然后如果有些质点要固定不动，可以将质量设置成无限大，则 <span
 class="math inline">\(w_i\)</span> 为 0 ，质点的位置就不受影响）</li>
 </ol>
