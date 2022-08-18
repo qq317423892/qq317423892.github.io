@@ -3714,6 +3714,7 @@ fluids</a></p>
 <script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">]]></content>
       <categories>
         <category>物理</category>
+        <category>PBD</category>
       </categories>
       <tags>
         <tag>PBD</tag>
@@ -7468,6 +7469,792 @@ code-XXXXXXX</p>
       </categories>
       <tags>
         <tag>others</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>egret UI 合批</title>
+    <url>/post/289143f8/</url>
+    <content><![CDATA[<h2 id="图集方案">图集方案</h2>
+<h3 id="使用-texture-merger">使用 Texture Merger</h3>
+<p>Egret 官方提供的图集工具，使用比较简单，打开工具，选择 <strong>Sprite
+Sheet</strong></p>
+<div data-align="center">
+<p><img data-src="/images/egret_ui_batch/texture_merger.png" width="80%" height="80%" /></p>
+</div>
+<p>然后将要打图集的图片拖到窗口中，</p>
+<div data-align="center">
+<p><img data-src="/images/egret_ui_batch/texture_merger_add.png" width="80%" height="80%" /></p>
+</div>
+<p>然后会弹出<strong>新建项目</strong>确认框，输入名字，点击确定。</p>
+<div data-align="center">
+<p><img data-src="/images/egret_ui_batch/texture_merger_add.png" width="80%" height="80%" /></p>
+</div>
+<p>最后点
+<strong>导出</strong>，导出合图文件，导出时，恶意选择导出比例（100%、200%、50%）：</p>
+<div data-align="center">
+<p><img data-src="/images/egret_ui_batch/texture_merger_save.png" width="80%" height="80%" /></p>
+</div>
+<p>导出后资源如下：</p>
+<div data-align="center">
+<p><img data-src="/images/egret_ui_batch/texture_merger_res.png" width="30%" height="30%" /></p>
+</div>
+<p>然后将导出的资源放到项目 Resource 目录下，将资源加到
+<strong>default.res.json</strong>（这里注意，json 文件格式一定要选择
+sheet 类型）</p>
+<div data-align="center">
+<p><img data-src="/images/egret_ui_batch/import_sheet.png" width="60%" height="60%" /></p>
+</div>
+<p>然后就可以在 UI 编辑器里使用图集里的资源了
+<strong>111_json.00</strong>：</p>
+<div data-align="center">
+<p><img data-src="/images/egret_ui_batch/exml_use_sheet.png" width="60%" height="60%" /></p>
+</div>
+<p>代码中使用图集：</p>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript"><span class="token comment">// 下面的方法需要先在 default.res.json 中设置加载组</span>
+<span class="token comment">// 并且手动加载组中图集资源后，才能使用如下方式获取图集</span>
+
+<span class="token comment">// 加载整个图集</span>
+<span class="token keyword">let</span> ss<span class="token operator">:</span> egret<span class="token punctuation">.</span>SpriteSheet <span class="token operator">=</span> <span class="token constant">RES</span><span class="token punctuation">.</span><span class="token function">getRes</span><span class="token punctuation">(</span><span class="token string">"111_json"</span><span class="token punctuation">)</span>
+<span class="token keyword">let</span> tex<span class="token operator">:</span> egret<span class="token punctuation">.</span>Texture <span class="token operator">=</span> ss<span class="token punctuation">.</span><span class="token function">getTexture</span><span class="token punctuation">(</span><span class="token string">"00"</span><span class="token punctuation">)</span>
+<span class="token keyword">let</span> b1<span class="token operator">:</span> egret<span class="token punctuation">.</span>Bitmap <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">egret</span><span class="token punctuation">.</span><span class="token function">Bitmap</span><span class="token punctuation">(</span>tex<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// 通过二级 key 加载图集，如果有多张图集出现同名的子 key，</span>
+<span class="token comment">// 返回最后加载的图集中的子 key 对应的贴图</span>
+<span class="token keyword">let</span> b2<span class="token operator">:</span> egret<span class="token punctuation">.</span>Bitmap <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">egret</span><span class="token punctuation">.</span><span class="token function">Bitmap</span><span class="token punctuation">(</span><span class="token constant">RES</span><span class="token punctuation">.</span><span class="token function">getRes</span><span class="token punctuation">(</span><span class="token string">"00"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// 指定图集以及子键</span>
+<span class="token keyword">let</span> b3<span class="token operator">:</span> egret<span class="token punctuation">.</span>Bitmap <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">egret</span><span class="token punctuation">.</span><span class="token function">Bitmap</span><span class="token punctuation">(</span><span class="token constant">RES</span><span class="token punctuation">.</span><span class="token function">getRes</span><span class="token punctuation">(</span><span class="token string">"111_json.00"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">let</span> b4<span class="token operator">:</span> egret<span class="token punctuation">.</span>Bitmap <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">egret</span><span class="token punctuation">.</span><span class="token function">Bitmap</span><span class="token punctuation">(</span><span class="token constant">RES</span><span class="token punctuation">.</span><span class="token function">getRes</span><span class="token punctuation">(</span><span class="token string">"111_json#00"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="使用-freetexturepacker">使用 FreeTexturePacker</h3>
+<p>官方自带的工具已经很好用了，不过有些时候，图集操作可以通过批处理命令，自带的工具不支持，因此选用其他方案。TextrurePacker
+收费，这里选用免费的 FREE TEXTURE PACKER <a
+href="#ref-anchor-1"><sup>1</sup></a>，按照文档上的操作，初步实现打出图集：</p>
+<ul>
+<li>安装 nodejs</li>
+<li>下载官方给的 demo，并解压</li>
+<li>在 demo 目录打开命令窗口</li>
+<li>执行： npm install -g grunt</li>
+<li>执行： npm install</li>
+<li>执行： grunt</li>
+</ul>
+<p>最终图集生成在目录下的 dest 目录中：包含 <strong>一张图集</strong> +
+<strong>一个 json 文件</strong>，demo 中给的代码打出的图集 egret
+编辑并不能识别，需要修改打包脚本 js 文件 <a
+href="#ref-anchor-2"><sup>2</sup></a></p>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">module<span class="token punctuation">.</span><span class="token function-variable function">exports</span> <span class="token operator">=</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">grunt</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    grunt<span class="token punctuation">.</span><span class="token function">initConfig</span><span class="token punctuation">(</span><span class="token punctuation">&#123;</span>
+        <span class="token literal-property property">free_tex_packer</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+            <span class="token literal-property property">demo</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+                <span class="token literal-property property">files</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+                    <span class="token punctuation">&#123;</span> <span class="token literal-property property">expand</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span> <span class="token literal-property property">src</span><span class="token operator">:</span> <span class="token string">'src/**/*'</span><span class="token punctuation">,</span> 
+                        <span class="token literal-property property">basePath</span><span class="token operator">:</span> <span class="token string">'src/'</span><span class="token punctuation">,</span> <span class="token literal-property property">filter</span><span class="token operator">:</span> <span class="token string">'isFile'</span> <span class="token punctuation">&#125;</span>
+                <span class="token punctuation">]</span><span class="token punctuation">,</span>
+                <span class="token literal-property property">options</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+                    <span class="token literal-property property">dest</span><span class="token operator">:</span> <span class="token string">'dest'</span><span class="token punctuation">,</span>
+                    <span class="token literal-property property">textureName</span><span class="token operator">:</span> <span class="token string">"atlas"</span><span class="token punctuation">,</span>
+                    <span class="token literal-property property">width</span><span class="token operator">:</span> <span class="token number">1024</span><span class="token punctuation">,</span>
+                    <span class="token literal-property property">height</span><span class="token operator">:</span> <span class="token number">1024</span><span class="token punctuation">,</span>
+                    <span class="token literal-property property">fixedSize</span><span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span>
+                    <span class="token literal-property property">padding</span><span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+                    <span class="token literal-property property">allowRotation</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+                    <span class="token literal-property property">detectIdentical</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+                    <span class="token literal-property property">allowTrim</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+                    <span class="token literal-property property">exporter</span><span class="token operator">:</span> <span class="token string">"Egret2D"</span><span class="token punctuation">,</span> <span class="token comment">// old:  Pixi</span>
+                    <span class="token literal-property property">removeFileExtension</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+                    <span class="token literal-property property">prependFolderName</span><span class="token operator">:</span> <span class="token boolean">true</span>
+                <span class="token punctuation">&#125;</span>
+            <span class="token punctuation">&#125;</span>
+        <span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    
+    grunt<span class="token punctuation">.</span><span class="token function">loadNpmTasks</span><span class="token punctuation">(</span><span class="token string">'grunt-free-tex-packer'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    grunt<span class="token punctuation">.</span><span class="token function">registerTask</span><span class="token punctuation">(</span><span class="token string">'default'</span><span class="token punctuation">,</span> <span class="token punctuation">[</span><span class="token string">'free_tex_packer'</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>改完后依旧不行，就去查看 egret 的图集格式<a
+href="#ref-anchor-3"><sup>3</sup></a></p>
+<pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
+    <span class="token property">"file"</span><span class="token operator">:</span><span class="token string">"111.png"</span><span class="token punctuation">,</span>
+    <span class="token property">"frames"</span><span class="token operator">:</span><span class="token punctuation">&#123;</span>
+        <span class="token property">"00"</span><span class="token operator">:</span><span class="token punctuation">&#123;</span><span class="token property">"x"</span><span class="token operator">:</span><span class="token number">364</span><span class="token punctuation">,</span><span class="token property">"y"</span><span class="token operator">:</span><span class="token number">384</span><span class="token punctuation">,</span><span class="token property">"w"</span><span class="token operator">:</span><span class="token number">68</span><span class="token punctuation">,</span><span class="token property">"h"</span><span class="token operator">:</span><span class="token number">93</span><span class="token punctuation">,</span><span class="token property">"offX"</span><span class="token operator">:</span><span class="token number">4</span><span class="token punctuation">,</span>
+            <span class="token property">"offY"</span><span class="token operator">:</span><span class="token number">12</span><span class="token punctuation">,</span><span class="token property">"sourceW"</span><span class="token operator">:</span><span class="token number">121</span><span class="token punctuation">,</span><span class="token property">"sourceH"</span><span class="token operator">:</span><span class="token number">121</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+
+        <span class="token property">"01"</span><span class="token operator">:</span><span class="token punctuation">&#123;</span><span class="token property">"x"</span><span class="token operator">:</span><span class="token number">272</span><span class="token punctuation">,</span><span class="token property">"y"</span><span class="token operator">:</span><span class="token number">461</span><span class="token punctuation">,</span><span class="token property">"w"</span><span class="token operator">:</span><span class="token number">67</span><span class="token punctuation">,</span><span class="token property">"h"</span><span class="token operator">:</span><span class="token number">93</span><span class="token punctuation">,</span><span class="token property">"offX"</span><span class="token operator">:</span><span class="token number">9</span><span class="token punctuation">,</span>
+            <span class="token property">"offY"</span><span class="token operator">:</span><span class="token number">13</span><span class="token punctuation">,</span><span class="token property">"sourceW"</span><span class="token operator">:</span><span class="token number">121</span><span class="token punctuation">,</span><span class="token property">"sourceH"</span><span class="token operator">:</span><span class="token number">121</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>修改成 Egret2D 后，demo 中打出的图集 json 不是 egret 格式</p>
+<pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
+    <span class="token property">"file"</span><span class="token operator">:</span> <span class="token string">"atlas.png"</span><span class="token punctuation">,</span>
+    <span class="token property">"frames"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+        <span class="token property">"00"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span><span class="token property">"x"</span><span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span><span class="token property">"y"</span><span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span><span class="token property">"w"</span><span class="token operator">:</span> <span class="token number">121</span><span class="token punctuation">,</span><span class="token property">"h"</span><span class="token operator">:</span> <span class="token number">121</span><span class="token punctuation">,</span><span class="token property">"hw"</span><span class="token operator">:</span> <span class="token number">60.5</span><span class="token punctuation">,</span><span class="token property">"hh"</span><span class="token operator">:</span> <span class="token number">60.5</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+        <span class="token property">"01"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span><span class="token property">"x"</span><span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span><span class="token property">"y"</span><span class="token operator">:</span> <span class="token number">121</span><span class="token punctuation">,</span><span class="token property">"w"</span><span class="token operator">:</span> <span class="token number">121</span><span class="token punctuation">,</span><span class="token property">"h"</span><span class="token operator">:</span> <span class="token number">121</span><span class="token punctuation">,</span><span class="token property">"hw"</span><span class="token operator">:</span> <span class="token number">60.5</span><span class="token punctuation">,</span><span class="token property">"hh"</span><span class="token operator">:</span> <span class="token number">60.5</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>查看 free-tex-packer-core<a href="#ref-anchor-2"><sup>2</sup></a>
+源码，可以看到导出模板：</p>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript"><span class="token comment">// Egret2D.mst</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token string-property property">"file"</span><span class="token operator">:</span> <span class="token string">"&#123;&#123;config.imageName&#125;&#125;"</span><span class="token punctuation">,</span>
+    <span class="token string-property property">"frames"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+        <span class="token punctuation">&#123;</span><span class="token punctuation">&#123;</span>#rects<span class="token punctuation">&#125;</span><span class="token punctuation">&#125;</span>
+        <span class="token string-property property">"&#123;&#123;&#123;name&#125;&#125;&#125;"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+            <span class="token string-property property">"x"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span><span class="token punctuation">&#123;</span>frame<span class="token punctuation">.</span>x<span class="token punctuation">&#125;</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+            <span class="token string-property property">"y"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span><span class="token punctuation">&#123;</span>frame<span class="token punctuation">.</span>y<span class="token punctuation">&#125;</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+            <span class="token string-property property">"w"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span><span class="token punctuation">&#123;</span>frame<span class="token punctuation">.</span>w<span class="token punctuation">&#125;</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+            <span class="token string-property property">"h"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span><span class="token punctuation">&#123;</span>frame<span class="token punctuation">.</span>h<span class="token punctuation">&#125;</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+            <span class="token string-property property">"hw"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span><span class="token punctuation">&#123;</span>frame<span class="token punctuation">.</span>hw<span class="token punctuation">&#125;</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+            <span class="token string-property property">"hh"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span><span class="token punctuation">&#123;</span>frame<span class="token punctuation">.</span>hh<span class="token punctuation">&#125;</span><span class="token punctuation">&#125;</span>
+        <span class="token punctuation">&#125;</span><span class="token punctuation">&#123;</span><span class="token punctuation">&#123;</span><span class="token operator">^</span>last<span class="token punctuation">&#125;</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span><span class="token punctuation">&#123;</span><span class="token punctuation">&#123;</span><span class="token operator">/</span>last<span class="token punctuation">&#125;</span><span class="token punctuation">&#125;</span>
+        <span class="token punctuation">&#123;</span><span class="token punctuation">&#123;</span><span class="token operator">/</span>rects<span class="token punctuation">&#125;</span><span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>因此参考文档使用自定义的导出模板：</p>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript"><span class="token comment">// template.txt</span>
+<span class="token punctuation">&#123;</span>
+  <span class="token string-property property">"file"</span><span class="token operator">:</span> <span class="token string">"&#123;&#123;config.imageName&#125;&#125;"</span><span class="token punctuation">,</span>
+  <span class="token string-property property">"frames"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+    <span class="token punctuation">&#123;</span><span class="token punctuation">&#123;</span>#rects<span class="token punctuation">&#125;</span><span class="token punctuation">&#125;</span>
+    <span class="token string-property property">"&#123;&#123;&#123;name&#125;&#125;&#125;"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+        <span class="token string-property property">"x"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span><span class="token punctuation">&#123;</span>frame<span class="token punctuation">.</span>x<span class="token punctuation">&#125;</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span> 
+        <span class="token string-property property">"y"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span><span class="token punctuation">&#123;</span>frame<span class="token punctuation">.</span>y<span class="token punctuation">&#125;</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span> 
+        <span class="token string-property property">"w"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span><span class="token punctuation">&#123;</span>frame<span class="token punctuation">.</span>w<span class="token punctuation">&#125;</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span> 
+        <span class="token string-property property">"h"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span><span class="token punctuation">&#123;</span>frame<span class="token punctuation">.</span>h<span class="token punctuation">&#125;</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span> 
+        <span class="token string-property property">"offX"</span><span class="token operator">:</span><span class="token punctuation">&#123;</span><span class="token punctuation">&#123;</span>spriteSourceSize<span class="token punctuation">.</span>x<span class="token punctuation">&#125;</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+        <span class="token string-property property">"offY"</span><span class="token operator">:</span><span class="token punctuation">&#123;</span><span class="token punctuation">&#123;</span>spriteSourceSize<span class="token punctuation">.</span>y<span class="token punctuation">&#125;</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+        <span class="token string-property property">"sourceW"</span><span class="token operator">:</span><span class="token punctuation">&#123;</span><span class="token punctuation">&#123;</span>spriteSourceSize<span class="token punctuation">.</span>w<span class="token punctuation">&#125;</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+        <span class="token string-property property">"sourceH"</span><span class="token operator">:</span><span class="token punctuation">&#123;</span><span class="token punctuation">&#123;</span>spriteSourceSize<span class="token punctuation">.</span>h<span class="token punctuation">&#125;</span><span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">&#123;</span><span class="token punctuation">&#123;</span><span class="token operator">^</span>last<span class="token punctuation">&#125;</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span><span class="token punctuation">&#123;</span><span class="token punctuation">&#123;</span><span class="token operator">/</span>last<span class="token punctuation">&#125;</span><span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#123;</span><span class="token punctuation">&#123;</span><span class="token operator">/</span>rects<span class="token punctuation">&#125;</span><span class="token punctuation">&#125;</span>
+  <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<blockquote>
+<p>x：小图的有效像素区域在大图中的起始坐标 x y:
+小图的有效像素区域在大图中的起始坐标 y w:
+小图的有效像素区域在大图中的宽度 h: 小图的有效像素区域在大图中的高度
+offX：原始图片的左上角非透明区域的起始坐标 x (未开启 trim， offX = 0)
+offY：原始图片的左上角非透明区域的起始坐标 y (未开启 trim， offY = 0)
+sourceW：原始图片的宽度 sourceH：原始图片的高度</p>
+</blockquote>
+<p>然后修改 grunt demo
+代码，改成读取目录，分别创建对应的图集，当然也可以增加自定规则，将某几个目录打成一张图集，或者哪些目录不打图集：</p>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token class-name">String</span><span class="token punctuation">.</span>prototype<span class="token punctuation">.</span><span class="token function-variable function">format</span> <span class="token operator">=</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">var</span> formatted <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">;</span>
+    <span class="token keyword">for</span><span class="token punctuation">(</span> <span class="token keyword">var</span> arg <span class="token keyword">in</span> arguments <span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        formatted <span class="token operator">=</span> formatted<span class="token punctuation">.</span><span class="token function">replace</span><span class="token punctuation">(</span><span class="token string">"&#123;"</span> <span class="token operator">+</span> arg <span class="token operator">+</span> <span class="token string">"&#125;"</span><span class="token punctuation">,</span> arguments<span class="token punctuation">[</span>arg<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+    <span class="token keyword">return</span> formatted<span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+
+<span class="token keyword">let</span> exporter <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+    <span class="token literal-property property">fileExt</span><span class="token operator">:</span> <span class="token string">"json"</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">template</span><span class="token operator">:</span> <span class="token string">"./template.txt"</span><span class="token punctuation">,</span>
+
+    <span class="token comment">// 去除透明部分在合图</span>
+    <span class="token comment">// 这个配置会覆盖 options 中的，一定要配置</span>
+    <span class="token literal-property property">allowTrim</span><span class="token operator">:</span> <span class="token boolean">true</span> 
+<span class="token punctuation">&#125;</span>
+
+<span class="token keyword">function</span> <span class="token function">getOption</span><span class="token punctuation">(</span><span class="token parameter">textureName</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">let</span> options <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+        <span class="token literal-property property">dest</span><span class="token operator">:</span> <span class="token string">'dest'</span><span class="token punctuation">,</span>
+        <span class="token literal-property property">textureName</span><span class="token operator">:</span> textureName<span class="token punctuation">,</span>
+        <span class="token literal-property property">fixedSize</span><span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span>
+        <span class="token literal-property property">padding</span><span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+        <span class="token literal-property property">allowRotation</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+        <span class="token literal-property property">detectIdentical</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+        <span class="token literal-property property">powerOfTwo</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+        <span class="token literal-property property">allowTrim</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+        <span class="token literal-property property">trimMode</span><span class="token operator">:</span> <span class="token string">"trim"</span><span class="token punctuation">,</span>
+        <span class="token literal-property property">packer</span><span class="token operator">:</span> <span class="token string">"MaxRectsPacker"</span><span class="token punctuation">,</span>
+        <span class="token literal-property property">exporter</span><span class="token operator">:</span> exporter<span class="token punctuation">,</span>
+        <span class="token literal-property property">removeFileExtension</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+        <span class="token literal-property property">prependFolderName</span><span class="token operator">:</span> <span class="token boolean">true</span>
+    <span class="token punctuation">&#125;</span>
+    <span class="token keyword">return</span> options
+<span class="token punctuation">&#125;</span>
+
+<span class="token keyword">function</span> <span class="token function">getAtlasInfo</span><span class="token punctuation">(</span><span class="token parameter">src<span class="token punctuation">,</span> atlasName</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">let</span> srcPath <span class="token operator">=</span> <span class="token string">"&#123;0&#125;/*"</span><span class="token punctuation">.</span><span class="token function">format</span><span class="token punctuation">(</span>src<span class="token punctuation">)</span>
+    <span class="token keyword">let</span> basePath <span class="token operator">=</span> <span class="token string">"&#123;0&#125;/"</span><span class="token punctuation">.</span><span class="token function">format</span><span class="token punctuation">(</span>src<span class="token punctuation">)</span>
+    <span class="token keyword">let</span> atlas <span class="token operator">=</span>  <span class="token punctuation">&#123;</span>
+        <span class="token literal-property property">files</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+            <span class="token punctuation">&#123;</span><span class="token literal-property property">expand</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span> <span class="token literal-property property">src</span><span class="token operator">:</span> srcPath<span class="token punctuation">,</span> <span class="token literal-property property">basePath</span><span class="token operator">:</span> basePath<span class="token punctuation">,</span> <span class="token literal-property property">filter</span><span class="token operator">:</span> <span class="token string">'isFile'</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+        <span class="token punctuation">]</span><span class="token punctuation">,</span>
+        <span class="token literal-property property">options</span><span class="token operator">:</span> <span class="token function">getOption</span><span class="token punctuation">(</span>atlasName<span class="token punctuation">)</span> 
+    <span class="token punctuation">&#125;</span>
+    <span class="token keyword">return</span> atlas
+<span class="token punctuation">&#125;</span>
+
+<span class="token keyword">function</span> <span class="token function">getTexturePackConf</span><span class="token punctuation">(</span><span class="token parameter">rootDir</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">let</span> packerConf <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span>
+    <span class="token keyword">var</span> fs <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">"fs"</span><span class="token punctuation">)</span>
+    <span class="token keyword">var</span> path <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">"path"</span><span class="token punctuation">)</span>
+
+    fs<span class="token punctuation">.</span><span class="token function">readdirSync</span><span class="token punctuation">(</span>rootDir<span class="token punctuation">,</span> <span class="token punctuation">&#123;</span> <span class="token literal-property property">withFileTypes</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">forEach</span><span class="token punctuation">(</span><span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">dir</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">var</span> filePath <span class="token operator">=</span> path<span class="token punctuation">.</span><span class="token function">join</span><span class="token punctuation">(</span>rootDir<span class="token punctuation">,</span> dir<span class="token punctuation">.</span>name<span class="token punctuation">)</span>
+        <span class="token keyword">if</span><span class="token punctuation">(</span>dir<span class="token punctuation">.</span><span class="token function">isDirectory</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+        <span class="token punctuation">&#123;</span>
+            packerConf<span class="token punctuation">[</span>dir<span class="token punctuation">.</span>name<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">getAtlasInfo</span><span class="token punctuation">(</span>filePath<span class="token punctuation">,</span> dir<span class="token punctuation">.</span>name<span class="token punctuation">)</span>
+        <span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">return</span> packerConf
+<span class="token punctuation">&#125;</span>
+
+module<span class="token punctuation">.</span><span class="token function-variable function">exports</span> <span class="token operator">=</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">grunt</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">let</span> rootDir <span class="token operator">=</span> <span class="token string">"./src"</span>
+    rootDir <span class="token operator">=</span> <span class="token string">"E:/work/project/H5/ClockBloodUI/ClockTower/resource/ui_res"</span>
+    <span class="token keyword">let</span> packConf <span class="token operator">=</span> <span class="token function">getTexturePackConf</span><span class="token punctuation">(</span>rootDir<span class="token punctuation">)</span>
+    grunt<span class="token punctuation">.</span><span class="token function">initConfig</span><span class="token punctuation">(</span><span class="token punctuation">&#123;</span>
+        <span class="token literal-property property">free_tex_packer</span><span class="token operator">:</span> packConf
+    <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    
+    grunt<span class="token punctuation">.</span><span class="token function">loadNpmTasks</span><span class="token punctuation">(</span><span class="token string">'grunt-free-tex-packer'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    grunt<span class="token punctuation">.</span><span class="token function">registerTask</span><span class="token punctuation">(</span><span class="token string">'default'</span><span class="token punctuation">,</span> <span class="token punctuation">[</span><span class="token string">'free_tex_packer'</span><span class="token punctuation">,</span> <span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>结果如下：</p>
+<div data-align="center">
+<p><img data-src="/images/egret_ui_batch/packer_result.png" width="80%" height="80%" /></p>
+</div>
+<p>然后就是扫描已有的皮肤文件，将目前引用的贴图信息，修改成图集信息。</p>
+<h2 id="动态合图">动态合图</h2>
+<p>KM
+上看到一篇动态合图的文章，里面讲到网页版拉取小图会比拉取大图速度快，因此动态合图也是一个方案，不过
+KM 上讲的技术点比较少，还需要看源码，下面是对 egret 渲染的源码分析：</p>
+<h3 id="egret-渲染流程">egret 渲染流程</h3>
+<h4 id="egret-全局渲染器">egret 全局渲染器</h4>
+<p>egret 有两个渲染器 <strong>systemRender</strong> 跟
+<strong>canvasRender</strong></p>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript"><span class="token keyword">namespace</span> egret<span class="token punctuation">.</span>sys 
+<span class="token punctuation">&#123;</span>
+    <span class="token comment">// 忽略下面坑爹的官方注释，web 端下渲染主要使用到的是 systemRender</span>
+    <span class="token comment">// WebGLRenderer 中有几处地方会使用到  canvasRenderer</span>
+
+    <span class="token comment">// 用于碰撞检测绘制</span>
+    <span class="token keyword">export</span> <span class="token keyword">let</span> systemRenderer<span class="token operator">:</span> SystemRenderer<span class="token punctuation">;</span>
+    <span class="token comment">// 显示渲染器接口</span>
+    <span class="token keyword">export</span> <span class="token keyword">let</span> canvasRenderer<span class="token operator">:</span> SystemRenderer<span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>这两渲染器的基类都是 <strong>SystemRenderer</strong></p>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript"><span class="token keyword">export</span> <span class="token keyword">interface</span> <span class="token class-name">SystemRenderer</span> 
+<span class="token punctuation">&#123;</span>
+    <span class="token function">render</span><span class="token punctuation">(</span>displayObject<span class="token operator">:</span> DisplayObject<span class="token punctuation">,</span> buffer<span class="token operator">:</span> RenderBuffer<span class="token punctuation">,</span> 
+      matrix<span class="token operator">:</span> Matrix<span class="token punctuation">,</span> forRenderTexture<span class="token operator">?</span><span class="token operator">:</span> <span class="token builtin">boolean</span><span class="token punctuation">)</span><span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">;</span>
+    
+    <span class="token function">drawNodeToBuffer</span><span class="token punctuation">(</span>node<span class="token operator">:</span> sys<span class="token punctuation">.</span>RenderNode<span class="token punctuation">,</span> buffer<span class="token operator">:</span> RenderBuffer<span class="token punctuation">,</span> 
+    matrix<span class="token operator">:</span> Matrix<span class="token punctuation">,</span> forHitTest<span class="token operator">?</span><span class="token operator">:</span> <span class="token builtin">boolean</span><span class="token punctuation">)</span><span class="token operator">:</span> <span class="token keyword">void</span><span class="token punctuation">;</span>
+
+    <span class="token function">renderClear</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>egret 引擎代码入口在项目工程中的 <strong>index.html</strong> 中的
+<strong>js</strong>
+代码，在这里会根据当前设备信息来创建对应的渲染器（canvasRenderer
+目前看源码只有渲染矢量节点，旧的文本渲染时用到）：</p>
+<ul>
+<li>webgl: systemRender 就是 WebGLRenderer，canvasRenderer 是 Canvas
+渲染器</li>
+<li>canvas: 这个时候，两个渲染器都是 Canvas 渲染器</li>
+</ul>
+<div data-align="center">
+<p><img data-src="/images/egret_ui_batch/webgl_render_call.png" width="80%" height="80%" /></p>
+</div>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript"><span class="token comment">// index.html</span>
+egret<span class="token punctuation">.</span><span class="token function">runEgret</span><span class="token punctuation">(</span><span class="token punctuation">&#123;</span> renderMode<span class="token operator">:</span> <span class="token string">"webgl"</span><span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// src/egret\web\EgretWeb.ts</span>
+<span class="token keyword">function</span> <span class="token function">runEgret</span><span class="token punctuation">(</span>options<span class="token operator">?</span><span class="token operator">:</span> runEgretOptions<span class="token punctuation">)</span><span class="token operator">:</span> <span class="token keyword">void</span> 
+<span class="token punctuation">&#123;</span>
+    sys<span class="token punctuation">.</span>CanvasRenderBuffer <span class="token operator">=</span> CanvasRenderBuffer<span class="token punctuation">;</span>
+    <span class="token function">setRenderMode</span><span class="token punctuation">(</span>options<span class="token punctuation">.</span>renderMode<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token keyword">function</span> <span class="token function">setRenderMode</span><span class="token punctuation">(</span>renderMode<span class="token operator">:</span> <span class="token builtin">string</span><span class="token punctuation">)</span><span class="token operator">:</span> <span class="token keyword">void</span> 
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>renderMode <span class="token operator">==</span> <span class="token string">"webgl"</span> <span class="token operator">&amp;&amp;</span> WebGLUtils<span class="token punctuation">.</span><span class="token function">checkCanUseWebGL</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> 
+    <span class="token punctuation">&#123;</span>
+        sys<span class="token punctuation">.</span>RenderBuffer <span class="token operator">=</span> web<span class="token punctuation">.</span>WebGLRenderBuffer<span class="token punctuation">;</span>
+        sys<span class="token punctuation">.</span>systemRenderer <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">WebGLRenderer</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        sys<span class="token punctuation">.</span>canvasRenderer <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">CanvasRenderer</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        sys<span class="token punctuation">.</span>customHitTestBuffer <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">WebGLRenderBuffer</span><span class="token punctuation">(</span><span class="token number">3</span><span class="token punctuation">,</span> <span class="token number">3</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        sys<span class="token punctuation">.</span>canvasHitTestBuffer <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">CanvasRenderBuffer</span><span class="token punctuation">(</span><span class="token number">3</span><span class="token punctuation">,</span> <span class="token number">3</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        Capabilities<span class="token punctuation">[</span><span class="token string">"renderMode"</span> <span class="token operator">+</span> <span class="token string">""</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token string">"webgl"</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+    <span class="token keyword">else</span> 
+    <span class="token punctuation">&#123;</span>
+        sys<span class="token punctuation">.</span>RenderBuffer <span class="token operator">=</span> web<span class="token punctuation">.</span>CanvasRenderBuffer<span class="token punctuation">;</span>
+        sys<span class="token punctuation">.</span>systemRenderer <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">CanvasRenderer</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        sys<span class="token punctuation">.</span>canvasRenderer <span class="token operator">=</span> sys<span class="token punctuation">.</span>systemRenderer<span class="token punctuation">;</span>
+        sys<span class="token punctuation">.</span>customHitTestBuffer <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">CanvasRenderBuffer</span><span class="token punctuation">(</span><span class="token number">3</span><span class="token punctuation">,</span> <span class="token number">3</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        sys<span class="token punctuation">.</span>canvasHitTestBuffer <span class="token operator">=</span> sys<span class="token punctuation">.</span>customHitTestBuffer<span class="token punctuation">;</span>
+        Capabilities<span class="token punctuation">[</span><span class="token string">"renderMode"</span> <span class="token operator">+</span> <span class="token string">""</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token string">"canvas"</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h4 id="egret-渲染-player">egret 渲染 Player</h4>
+<p>创建完渲染器，还需要创建
+Player，这个是直接渲染可见节点的对象，会直接获取 stage 上的
+displayList，调用渲染函数 drawToSurface</p>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript"><span class="token comment">// src\egret\player\Player.ts</span>
+<span class="token keyword">export</span> <span class="token keyword">class</span> <span class="token class-name">Player</span> <span class="token keyword">extends</span> <span class="token class-name">HashObject</span> 
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">public</span> <span class="token function">constructor</span><span class="token punctuation">(</span>buffer<span class="token operator">:</span> RenderBuffer<span class="token punctuation">,</span> stage<span class="token operator">:</span> Stage<span class="token punctuation">,</span> entryClassName<span class="token operator">:</span> <span class="token builtin">string</span><span class="token punctuation">)</span> 
+    <span class="token punctuation">&#123;</span>
+        <span class="token keyword">super</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>stage <span class="token operator">=</span> stage<span class="token punctuation">;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>screenDisplayList <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">createDisplayList</span><span class="token punctuation">(</span>stage<span class="token punctuation">,</span> buffer<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">private</span> <span class="token function">createDisplayList</span><span class="token punctuation">(</span>stage<span class="token operator">:</span> Stage<span class="token punctuation">,</span> buffer<span class="token operator">:</span> RenderBuffer<span class="token punctuation">)</span><span class="token operator">:</span> DisplayList 
+    <span class="token punctuation">&#123;</span>
+        <span class="token keyword">let</span> displayList <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">DisplayList</span><span class="token punctuation">(</span>stage<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        displayList<span class="token punctuation">.</span>renderBuffer <span class="token operator">=</span> buffer<span class="token punctuation">;</span>
+        stage<span class="token punctuation">.</span>$displayList <span class="token operator">=</span> displayList<span class="token punctuation">;</span>
+        <span class="token keyword">return</span> displayList<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token function">$render</span><span class="token punctuation">(</span>triggerByFrame<span class="token operator">:</span> <span class="token builtin">boolean</span><span class="token punctuation">,</span> costTicker<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">)</span><span class="token operator">:</span> <span class="token keyword">void</span> 
+    <span class="token punctuation">&#123;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>egret<span class="token punctuation">.</span>nativeRender<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+            egret_native<span class="token punctuation">.</span><span class="token function">updateNativeRender</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            egret_native<span class="token punctuation">.</span><span class="token function">nrRender</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">return</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>egret<span class="token punctuation">.</span>sys<span class="token punctuation">.</span>systemRenderer<span class="token punctuation">.</span>renderClear<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+            egret<span class="token punctuation">.</span>sys<span class="token punctuation">.</span>systemRenderer<span class="token punctuation">.</span><span class="token function">renderClear</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+
+        <span class="token keyword">let</span> stage <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>stage<span class="token punctuation">;</span>
+        <span class="token keyword">let</span> t1 <span class="token operator">=</span> egret<span class="token punctuation">.</span><span class="token function">getTimer</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">let</span> drawCalls <span class="token operator">=</span> stage<span class="token punctuation">.</span>$displayList<span class="token punctuation">.</span><span class="token function">drawToSurface</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">let</span> t2 <span class="token operator">=</span> egret<span class="token punctuation">.</span><span class="token function">getTimer</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>triggerByFrame <span class="token operator">&amp;&amp;</span> <span class="token keyword">this</span><span class="token punctuation">.</span>showFPS<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+            fpsDisplay<span class="token punctuation">.</span><span class="token function">update</span><span class="token punctuation">(</span>drawCalls<span class="token punctuation">,</span> t2 <span class="token operator">-</span> t1<span class="token punctuation">,</span> costTicker<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>Player 创建也是在 runEgret 这个函数中，不过不是直接创建出
+Player，而是创建网页节点解析对象 WebPlayer。我们在运行一个 egret
+项目网页后，通过使用浏览器的<strong>检查</strong>功能，可以看到页面
+<strong>body</strong> 中只有一个 <strong>div</strong>
+标签，这个标签负责渲染整个游戏中的所有图元。</p>
+<div data-align="center">
+<p><img data-src="/images/egret_ui_batch/egret_body_div.png" width="80%" height="80%" /></p>
+</div>
+<p>创建流程如下：</p>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript"><span class="token comment">// src\egret\web\EgretWeb.ts</span>
+<span class="token keyword">function</span> <span class="token function">runEgret</span><span class="token punctuation">(</span>options<span class="token operator">?</span><span class="token operator">:</span> runEgretOptions<span class="token punctuation">)</span><span class="token operator">:</span> <span class="token keyword">void</span> 
+<span class="token punctuation">&#123;</span>
+  sys<span class="token punctuation">.</span>CanvasRenderBuffer <span class="token operator">=</span> CanvasRenderBuffer<span class="token punctuation">;</span>
+  <span class="token function">setRenderMode</span><span class="token punctuation">(</span>options<span class="token punctuation">.</span>renderMode<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+  <span class="token comment">// 创建 Player 对象</span>
+  <span class="token keyword">let</span> list <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">querySelectorAll</span><span class="token punctuation">(</span><span class="token string">".egret-player"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">let</span> length <span class="token operator">=</span> list<span class="token punctuation">.</span>length<span class="token punctuation">;</span>
+  <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> length<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> 
+  <span class="token punctuation">&#123;</span>
+      <span class="token keyword">let</span> container <span class="token operator">=</span> <span class="token operator">&lt;</span>HTMLDivElement<span class="token operator">></span>list<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
+      <span class="token keyword">let</span> player <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">WebPlayer</span><span class="token punctuation">(</span>container<span class="token punctuation">,</span> options<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      container<span class="token punctuation">[</span><span class="token string">"egret-player"</span><span class="token punctuation">]</span> <span class="token operator">=</span> player<span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>通过调试可以知道，egret 对 div 标签创建了一个 WebPlayer</p>
+<div data-align="center">
+<p><img data-src="/images/egret_ui_batch/create_div_webplayer.png" width="80%" height="80%" /></p>
+</div>
+<p>在 WebPlayer 中又包含一个 Player 对象，这个 Player 对象负责渲染</p>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript"><span class="token keyword">export</span> <span class="token keyword">class</span> <span class="token class-name">WebPlayer</span> <span class="token keyword">extends</span> <span class="token class-name">egret</span><span class="token punctuation">.</span>HashObject <span class="token keyword">implements</span> <span class="token class-name">egret</span><span class="token punctuation">.</span>sys<span class="token punctuation">.</span>Screen <span class="token punctuation">&#123;</span>
+
+  <span class="token keyword">public</span> <span class="token function">constructor</span><span class="token punctuation">(</span>container<span class="token operator">:</span> HTMLDivElement<span class="token punctuation">,</span> options<span class="token operator">:</span> runEgretOptions<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+      <span class="token keyword">super</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">init</span><span class="token punctuation">(</span>container<span class="token punctuation">,</span> options<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span>
+
+  <span class="token keyword">private</span> <span class="token function">init</span><span class="token punctuation">(</span>container<span class="token operator">:</span> HTMLDivElement<span class="token punctuation">,</span> options<span class="token operator">:</span> runEgretOptions<span class="token punctuation">)</span><span class="token operator">:</span> <span class="token keyword">void</span> <span class="token punctuation">&#123;</span>
+      <span class="token builtin">console</span><span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"Egret Engine Version:"</span><span class="token punctuation">,</span> egret<span class="token punctuation">.</span>Capabilities<span class="token punctuation">.</span>engineVersion<span class="token punctuation">)</span>
+      <span class="token keyword">let</span> option <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">readOption</span><span class="token punctuation">(</span>container<span class="token punctuation">,</span> options<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">let</span> stage <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">egret</span><span class="token punctuation">.</span><span class="token function">Stage</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      stage<span class="token punctuation">.</span>$screen <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">;</span>
+
+      <span class="token keyword">let</span> buffer <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">sys</span><span class="token punctuation">.</span><span class="token function">RenderBuffer</span><span class="token punctuation">(</span><span class="token keyword">undefined</span><span class="token punctuation">,</span> <span class="token keyword">undefined</span><span class="token punctuation">,</span> <span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">let</span> player <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">egret</span><span class="token punctuation">.</span>sys<span class="token punctuation">.</span><span class="token function">Player</span><span class="token punctuation">(</span>buffer<span class="token punctuation">,</span> stage<span class="token punctuation">,</span> option<span class="token punctuation">.</span>entryClassName<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>player <span class="token operator">=</span> player<span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h4 id="displaylist">DisplayList</h4>
+<p>Player 渲染调用的是 DisplayList 的接口，DisplayList 会从 root
+节点开始渲染图元</p>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript"><span class="token keyword">export</span> <span class="token keyword">class</span> <span class="token class-name">DisplayList</span> <span class="token keyword">extends</span> <span class="token class-name">HashObject</span> 
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">private</span> renderBuffer <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">RenderBuffer</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">public</span> <span class="token function">drawToSurface</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span> <span class="token builtin">number</span> 
+    <span class="token punctuation">&#123;</span>
+        <span class="token keyword">let</span> drawCalls <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+        <span class="token keyword">let</span> buffer <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>renderBuffer<span class="token punctuation">;</span>
+        buffer<span class="token punctuation">.</span><span class="token function">clear</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        drawCalls <span class="token operator">=</span> systemRenderer<span class="token punctuation">.</span><span class="token function">render</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>root<span class="token punctuation">,</span> buffer<span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>offsetMatrix<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>最后调用到 WebGLRenderer 中的渲染函数：</p>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript"><span class="token keyword">export</span> <span class="token keyword">class</span> <span class="token class-name">WebGLRenderer</span> <span class="token keyword">implements</span> <span class="token class-name">sys</span><span class="token punctuation">.</span>SystemRenderer 
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">public</span> <span class="token function">render</span><span class="token punctuation">(</span>displayObject<span class="token operator">:</span> DisplayObject<span class="token punctuation">,</span> buffer<span class="token operator">:</span> sys<span class="token punctuation">.</span>RenderBuffer<span class="token punctuation">,</span> 
+        matrix<span class="token operator">:</span> Matrix<span class="token punctuation">,</span> forRenderTexture<span class="token operator">?</span><span class="token operator">:</span> <span class="token builtin">boolean</span><span class="token punctuation">)</span><span class="token operator">:</span> <span class="token builtin">number</span> 
+    <span class="token punctuation">&#123;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>nestLevel<span class="token operator">++</span><span class="token punctuation">;</span>
+        <span class="token keyword">let</span> webglBuffer<span class="token operator">:</span> WebGLRenderBuffer <span class="token operator">=</span> <span class="token operator">&lt;</span>WebGLRenderBuffer<span class="token operator">></span>buffer<span class="token punctuation">;</span>
+        <span class="token keyword">let</span> webglBufferContext<span class="token operator">:</span> WebGLRenderContext <span class="token operator">=</span> webglBuffer<span class="token punctuation">.</span>context<span class="token punctuation">;</span>
+        <span class="token keyword">let</span> root<span class="token operator">:</span> DisplayObject <span class="token operator">=</span> forRenderTexture <span class="token operator">?</span> displayObject <span class="token operator">:</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+
+        webglBufferContext<span class="token punctuation">.</span><span class="token function">pushBuffer</span><span class="token punctuation">(</span>webglBuffer<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token comment">//绘制显示对象</span>
+        webglBuffer<span class="token punctuation">.</span><span class="token function">transform</span><span class="token punctuation">(</span>matrix<span class="token punctuation">.</span>a<span class="token punctuation">,</span> matrix<span class="token punctuation">.</span>b<span class="token punctuation">,</span> matrix<span class="token punctuation">.</span>c<span class="token punctuation">,</span> matrix<span class="token punctuation">.</span>d<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">drawDisplayObject</span><span class="token punctuation">(</span>displayObject<span class="token punctuation">,</span> webglBuffer<span class="token punctuation">,</span> matrix<span class="token punctuation">.</span>tx<span class="token punctuation">,</span> 
+            matrix<span class="token punctuation">.</span>ty<span class="token punctuation">,</span> <span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        webglBufferContext<span class="token punctuation">.</span><span class="token function">$drawWebGL</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">let</span> drawCall <span class="token operator">=</span> webglBuffer<span class="token punctuation">.</span>$drawCalls<span class="token punctuation">;</span>
+        webglBuffer<span class="token punctuation">.</span><span class="token function">onRenderFinish</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        webglBufferContext<span class="token punctuation">.</span><span class="token function">popBuffer</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">let</span> invert <span class="token operator">=</span> Matrix<span class="token punctuation">.</span><span class="token function">create</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        matrix<span class="token punctuation">.</span><span class="token function">$invertInto</span><span class="token punctuation">(</span>invert<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        webglBuffer<span class="token punctuation">.</span><span class="token function">transform</span><span class="token punctuation">(</span>invert<span class="token punctuation">.</span>a<span class="token punctuation">,</span> invert<span class="token punctuation">.</span>b<span class="token punctuation">,</span> invert<span class="token punctuation">.</span>c<span class="token punctuation">,</span> invert<span class="token punctuation">.</span>d<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        Matrix<span class="token punctuation">.</span><span class="token function">release</span><span class="token punctuation">(</span>invert<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        
+        <span class="token keyword">return</span> drawCall<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>从根节点开始渲染，进入 drawDisplayObject
+函数，并逐一变量子节点生成渲染指令：</p>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript"><span class="token comment">// cacheAsBitmap: 节点会有自己的 displayList </span>
+<span class="token comment">// 并将节点渲染到一张贴图上</span>
+
+<span class="token comment">// WebGlRenderer.ts</span>
+
+<span class="token keyword">private</span> <span class="token function">drawDisplayObject</span><span class="token punctuation">(</span>displayObject<span class="token operator">:</span> DisplayObject<span class="token punctuation">,</span> buffer<span class="token operator">:</span> WebGLRenderBuffer<span class="token punctuation">,</span> 
+    offsetX<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">,</span> offsetY<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">,</span> isStage<span class="token operator">?</span><span class="token operator">:</span> <span class="token builtin">boolean</span><span class="token punctuation">)</span><span class="token operator">:</span> <span class="token builtin">number</span> 
+<span class="token punctuation">&#123;</span>
+    <span class="token comment">// 忽略 cacheAsBitmap 的情况</span>
+    <span class="token comment">// let displayList = displayObject.$displayList;</span>
+    <span class="token keyword">let</span> node<span class="token operator">:</span> sys<span class="token punctuation">.</span>RenderNode <span class="token operator">=</span> displayObject<span class="token punctuation">.</span><span class="token function">$getRenderNode</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">if</span><span class="token punctuation">(</span>node<span class="token punctuation">)</span>
+    <span class="token punctuation">&#123;</span>
+        <span class="token keyword">switch</span> <span class="token punctuation">(</span>node<span class="token punctuation">.</span>type<span class="token punctuation">)</span> 
+        <span class="token punctuation">&#123;</span>
+            <span class="token keyword">case</span> sys<span class="token punctuation">.</span>RenderNodeType<span class="token punctuation">.</span>BitmapNode<span class="token operator">:</span>
+                <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">renderBitmap</span><span class="token punctuation">(</span><span class="token operator">&lt;</span>sys<span class="token punctuation">.</span>BitmapNode<span class="token operator">></span>node<span class="token punctuation">,</span> buffer<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">break</span><span class="token punctuation">;</span>
+            <span class="token keyword">case</span> sys<span class="token punctuation">.</span>RenderNodeType<span class="token punctuation">.</span>TextNode<span class="token operator">:</span>
+                <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">renderText</span><span class="token punctuation">(</span><span class="token operator">&lt;</span>sys<span class="token punctuation">.</span>TextNode<span class="token operator">></span>node<span class="token punctuation">,</span> buffer<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">break</span><span class="token punctuation">;</span>
+            <span class="token keyword">case</span> sys<span class="token punctuation">.</span>RenderNodeType<span class="token punctuation">.</span>GraphicsNode<span class="token operator">:</span>
+                <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">renderGraphics</span><span class="token punctuation">(</span><span class="token operator">&lt;</span>sys<span class="token punctuation">.</span>GraphicsNode<span class="token operator">></span>node<span class="token punctuation">,</span> buffer<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">break</span><span class="token punctuation">;</span>
+            <span class="token keyword">case</span> sys<span class="token punctuation">.</span>RenderNodeType<span class="token punctuation">.</span>GroupNode<span class="token operator">:</span>
+                <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">renderGroup</span><span class="token punctuation">(</span><span class="token operator">&lt;</span>sys<span class="token punctuation">.</span>GroupNode<span class="token operator">></span>node<span class="token punctuation">,</span> buffer<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">break</span><span class="token punctuation">;</span>
+            <span class="token keyword">case</span> sys<span class="token punctuation">.</span>RenderNodeType<span class="token punctuation">.</span>MeshNode<span class="token operator">:</span>
+                <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">renderMesh</span><span class="token punctuation">(</span><span class="token operator">&lt;</span>sys<span class="token punctuation">.</span>MeshNode<span class="token operator">></span>node<span class="token punctuation">,</span> buffer<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">break</span><span class="token punctuation">;</span>
+            <span class="token keyword">case</span> sys<span class="token punctuation">.</span>RenderNodeType<span class="token punctuation">.</span>NormalBitmapNode<span class="token operator">:</span>
+                <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">renderNormalBitmap</span><span class="token punctuation">(</span><span class="token operator">&lt;</span>sys<span class="token punctuation">.</span>NormalBitmapNode<span class="token operator">></span>node<span class="token punctuation">,</span> buffer<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">let</span> children <span class="token operator">=</span> displayObject<span class="token punctuation">.</span>$children<span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>children<span class="token punctuation">)</span> 
+    <span class="token punctuation">&#123;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>displayObject<span class="token punctuation">.</span>sortableChildren <span class="token operator">&amp;&amp;</span> displayObject<span class="token punctuation">.</span>$sortDirty<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+            <span class="token comment">//绘制排序 按照 zIndex 排序</span>
+            displayObject<span class="token punctuation">.</span><span class="token function">sortChildren</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token keyword">let</span> length <span class="token operator">=</span> children<span class="token punctuation">.</span>length<span class="token punctuation">;</span>
+        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> length<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> 
+        <span class="token punctuation">&#123;</span>
+            <span class="token keyword">let</span> child <span class="token operator">=</span> children<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
+            <span class="token keyword">switch</span> <span class="token punctuation">(</span>child<span class="token punctuation">.</span>$renderMode<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+                <span class="token keyword">case</span> RenderMode<span class="token punctuation">.</span><span class="token constant">NONE</span><span class="token operator">:</span>
+                    <span class="token keyword">break</span><span class="token punctuation">;</span>
+                <span class="token keyword">case</span> RenderMode<span class="token punctuation">.</span><span class="token constant">FILTER</span><span class="token operator">:</span>
+                    drawCalls <span class="token operator">+=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">drawWithFilter</span><span class="token punctuation">(</span>child<span class="token punctuation">,</span> buffer<span class="token punctuation">,</span> 
+                        offsetX2<span class="token punctuation">,</span> offsetY2<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    <span class="token keyword">break</span><span class="token punctuation">;</span>
+                <span class="token keyword">case</span> RenderMode<span class="token punctuation">.</span><span class="token constant">CLIP</span><span class="token operator">:</span>
+                    drawCalls <span class="token operator">+=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">drawWithClip</span><span class="token punctuation">(</span>child<span class="token punctuation">,</span> buffer<span class="token punctuation">,</span> 
+                        offsetX2<span class="token punctuation">,</span> offsetY2<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    <span class="token keyword">break</span><span class="token punctuation">;</span>
+                <span class="token keyword">case</span> RenderMode<span class="token punctuation">.</span><span class="token constant">SCROLLRECT</span><span class="token operator">:</span>
+                    drawCalls <span class="token operator">+=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">drawWithScrollRect</span><span class="token punctuation">(</span>child<span class="token punctuation">,</span> buffer<span class="token punctuation">,</span> 
+                        offsetX2<span class="token punctuation">,</span> offsetY2<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    <span class="token keyword">break</span><span class="token punctuation">;</span>
+                <span class="token keyword">default</span><span class="token operator">:</span>
+                    drawCalls <span class="token operator">+=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">drawDisplayObject</span><span class="token punctuation">(</span>child<span class="token punctuation">,</span> buffer<span class="token punctuation">,</span> 
+                        offsetX2<span class="token punctuation">,</span> offsetY2<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    <span class="token keyword">break</span><span class="token punctuation">;</span>
+            <span class="token punctuation">&#125;</span>
+        <span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<blockquote>
+<p>顺道提一嘴，如果层级使用了 <strong>sortableChildren</strong> 跟
+<strong>zIndex</strong>
+的会出现事件层级跟渲染层级不一致的情况就是在这里</p>
+</blockquote>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript"><span class="token comment">// src/egret/display/DisplayObjectContainer.ts</span>
+<span class="token function">$hitTest</span><span class="token punctuation">(</span>stageX<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">,</span> stageY<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">)</span><span class="token operator">:</span> DisplayObject 
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">let</span> found <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+    <span class="token keyword">let</span> target<span class="token operator">:</span> DisplayObject <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+    <span class="token comment">// 事件响应没有对子节点进行排序，而是从下往上遍历</span>
+    <span class="token comment">// 因此如果需要使用到 zIndex 这里需要做排序</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token operator">=</span> children<span class="token punctuation">.</span>length <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">>=</span> <span class="token number">0</span><span class="token punctuation">;</span> i<span class="token operator">--</span><span class="token punctuation">)</span> 
+    <span class="token punctuation">&#123;</span>
+        <span class="token keyword">const</span> child <span class="token operator">=</span> children<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>child<span class="token punctuation">.</span>$maskedObject<span class="token punctuation">)</span> 
+        <span class="token punctuation">&#123;</span>
+            <span class="token keyword">continue</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+        target <span class="token operator">=</span> child<span class="token punctuation">.</span><span class="token function">$hitTest</span><span class="token punctuation">(</span>stageX<span class="token punctuation">,</span> stageY<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>渲染图片的函数主要就是 <strong>renderBitmap</strong></p>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript"><span class="token keyword">private</span> <span class="token function">renderBitmap</span><span class="token punctuation">(</span>node<span class="token operator">:</span> sys<span class="token punctuation">.</span>BitmapNode<span class="token punctuation">,</span> buffer<span class="token operator">:</span> WebGLRenderBuffer<span class="token punctuation">)</span><span class="token operator">:</span> <span class="token keyword">void</span> 
+<span class="token punctuation">&#123;</span>
+    buffer<span class="token punctuation">.</span>context<span class="token punctuation">.</span><span class="token function">drawImage</span><span class="token punctuation">(</span>image<span class="token punctuation">,</span> 
+        data<span class="token punctuation">[</span>pos<span class="token operator">++</span><span class="token punctuation">]</span><span class="token punctuation">,</span> data<span class="token punctuation">[</span>pos<span class="token operator">++</span><span class="token punctuation">]</span><span class="token punctuation">,</span> data<span class="token punctuation">[</span>pos<span class="token operator">++</span><span class="token punctuation">]</span><span class="token punctuation">,</span> data<span class="token punctuation">[</span>pos<span class="token operator">++</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+        data<span class="token punctuation">[</span>pos<span class="token operator">++</span><span class="token punctuation">]</span><span class="token punctuation">,</span> data<span class="token punctuation">[</span>pos<span class="token operator">++</span><span class="token punctuation">]</span><span class="token punctuation">,</span> data<span class="token punctuation">[</span>pos<span class="token operator">++</span><span class="token punctuation">]</span><span class="token punctuation">,</span> data<span class="token punctuation">[</span>pos<span class="token operator">++</span><span class="token punctuation">]</span><span class="token punctuation">,</span> 
+        node<span class="token punctuation">.</span>imageWidth<span class="token punctuation">,</span> node<span class="token punctuation">.</span>imageHeight<span class="token punctuation">,</span> node<span class="token punctuation">.</span>rotated<span class="token punctuation">,</span> node<span class="token punctuation">.</span>smoothing<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+
+
+WebGLRenderContext<span class="token punctuation">.</span><span class="token function">drawImage</span><span class="token punctuation">(</span>
+    image<span class="token operator">:</span> BitmapData<span class="token punctuation">,</span>
+    sourceX<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">,</span> sourceY<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">,</span> sourceWidth<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">,</span> sourceHeight<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">,</span>
+    destX<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">,</span> destY<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">,</span> destWidth<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">,</span> destHeight<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">,</span>
+    imageSourceWidth<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">,</span> imageSourceHeight<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">,</span> 
+    rotated<span class="token operator">:</span> <span class="token builtin">boolean</span><span class="token punctuation">,</span> smoothing<span class="token operator">?</span><span class="token operator">:</span> <span class="token builtin">boolean</span><span class="token punctuation">)</span><span class="token operator">:</span> <span class="token keyword">void</span> 
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">let</span> buffer <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>currentBuffer<span class="token punctuation">;</span>
+
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">drawTexture</span><span class="token punctuation">(</span>texture<span class="token punctuation">,</span>
+        sourceX<span class="token punctuation">,</span> sourceY<span class="token punctuation">,</span> sourceWidth<span class="token punctuation">,</span> sourceHeight<span class="token punctuation">,</span>
+        destX<span class="token punctuation">,</span> destY<span class="token punctuation">,</span> destWidth<span class="token punctuation">,</span> destHeight<span class="token punctuation">,</span>
+        imageSourceWidth<span class="token punctuation">,</span> imageSourceHeight<span class="token punctuation">,</span>
+        <span class="token keyword">undefined</span><span class="token punctuation">,</span> <span class="token keyword">undefined</span><span class="token punctuation">,</span> <span class="token keyword">undefined</span><span class="token punctuation">,</span> <span class="token keyword">undefined</span><span class="token punctuation">,</span> rotated<span class="token punctuation">,</span> smoothing<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+
+WebGLRenderContext<span class="token punctuation">.</span><span class="token function">drawTexture</span><span class="token punctuation">(</span>
+    texture<span class="token operator">:</span> WebGLTexture<span class="token punctuation">,</span>
+    sourceX<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">,</span> sourceY<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">,</span> sourceWidth<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">,</span> sourceHeight<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">,</span>
+    destX<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">,</span> destY<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">,</span> destWidth<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">,</span> destHeight<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">,</span> 
+    textureWidth<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">,</span> textureHeight<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">,</span>
+    meshUVs<span class="token operator">?</span><span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span> meshVertices<span class="token operator">?</span><span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span> 
+    meshIndices<span class="token operator">?</span><span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span> bounds<span class="token operator">?</span><span class="token operator">:</span> Rectangle<span class="token punctuation">,</span> 
+    rotated<span class="token operator">?</span><span class="token operator">:</span> <span class="token builtin">boolean</span><span class="token punctuation">,</span> smoothing<span class="token operator">?</span><span class="token operator">:</span> <span class="token builtin">boolean</span><span class="token punctuation">)</span><span class="token operator">:</span> <span class="token keyword">void</span> 
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">let</span> buffer <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>currentBuffer<span class="token punctuation">;</span>
+    
+    <span class="token comment">// 调用 $drawWebGL 绘制</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>meshVertices <span class="token operator">&amp;&amp;</span> meshIndices<span class="token punctuation">)</span> 
+    <span class="token punctuation">&#123;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>vao<span class="token punctuation">.</span><span class="token function">reachMaxSize</span><span class="token punctuation">(</span>meshVertices<span class="token punctuation">.</span>length <span class="token operator">/</span> <span class="token number">2</span><span class="token punctuation">,</span> meshIndices<span class="token punctuation">.</span>length<span class="token punctuation">)</span><span class="token punctuation">)</span> 
+        <span class="token punctuation">&#123;</span>
+            <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">$drawWebGL</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span> 
+    <span class="token keyword">else</span> 
+    <span class="token punctuation">&#123;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>vao<span class="token punctuation">.</span><span class="token function">reachMaxSize</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> 
+        <span class="token punctuation">&#123;</span>
+            <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">$drawWebGL</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token comment">// 往 this.drawData 推 drawData</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>drawCmdManager<span class="token punctuation">.</span><span class="token function">pushDrawTexture</span><span class="token punctuation">(</span>texture<span class="token punctuation">,</span> count<span class="token punctuation">,</span> 
+        <span class="token keyword">this</span><span class="token punctuation">.</span>$filter<span class="token punctuation">,</span> textureWidth<span class="token punctuation">,</span> textureHeight<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    buffer<span class="token punctuation">.</span>currentTexture <span class="token operator">=</span> texture<span class="token punctuation">;</span>
+    <span class="token comment">// 增加顶点数据</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>vao<span class="token punctuation">.</span><span class="token function">cacheArrays</span><span class="token punctuation">(</span>buffer<span class="token punctuation">,</span> 
+        sourceX<span class="token punctuation">,</span> sourceY<span class="token punctuation">,</span> sourceWidth<span class="token punctuation">,</span> sourceHeight<span class="token punctuation">,</span>
+        destX<span class="token punctuation">,</span> destY<span class="token punctuation">,</span> destWidth<span class="token punctuation">,</span> destHeight<span class="token punctuation">,</span> 
+        textureWidth<span class="token punctuation">,</span> textureHeight<span class="token punctuation">,</span>
+        meshUVs<span class="token punctuation">,</span> meshVertices<span class="token punctuation">,</span> meshIndices<span class="token punctuation">,</span> rotated<span class="token punctuation">)</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token keyword">public</span> WebGLRenderContext<span class="token punctuation">.</span><span class="token function">$drawWebGL</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">let</span> length <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>drawCmdManager<span class="token punctuation">.</span>drawDataLen<span class="token punctuation">;</span>
+    <span class="token keyword">let</span> offset <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> length<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> 
+    <span class="token punctuation">&#123;</span>
+        <span class="token keyword">let</span> data <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>drawCmdManager<span class="token punctuation">.</span>drawData<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
+        <span class="token comment">// 忽略上传 indicesArray 信息</span>
+
+        <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">drawData</span><span class="token punctuation">(</span>data<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>最后是调用 gl 的地方</p>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript"><span class="token keyword">private</span> <span class="token function">drawData</span><span class="token punctuation">(</span>data<span class="token operator">:</span> <span class="token builtin">any</span><span class="token punctuation">,</span> offset<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">)</span> 
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">let</span> gl <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>context<span class="token punctuation">;</span>
+    <span class="token keyword">let</span> program<span class="token operator">:</span> EgretWebGLProgram<span class="token punctuation">;</span>
+     <span class="token keyword">switch</span> <span class="token punctuation">(</span>data<span class="token punctuation">.</span>type<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">case</span> <span class="token constant">DRAWABLE_TYPE</span><span class="token punctuation">.</span><span class="token constant">TEXTURE</span><span class="token operator">:</span>
+            <span class="token comment">//这段的切换可以优化  filter 滤镜 后处理 ？</span>
+            <span class="token comment">// getProgram 获取顶点跟片源 shader</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>filter<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+                <span class="token keyword">if</span> <span class="token punctuation">(</span>filter<span class="token punctuation">.</span>type <span class="token operator">===</span> <span class="token string">"custom"</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+                    program <span class="token operator">=</span> EgretWebGLProgram<span class="token punctuation">.</span><span class="token function">getProgram</span><span class="token punctuation">(</span>gl<span class="token punctuation">,</span> filter<span class="token punctuation">.</span>$vertexSrc<span class="token punctuation">,</span> 
+                    filter<span class="token punctuation">.</span>$fragmentSrc<span class="token punctuation">,</span> filter<span class="token punctuation">.</span>$shaderKey<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token punctuation">&#125;</span> 
+            <span class="token punctuation">&#125;</span> 
+            <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>filter<span class="token punctuation">.</span>type <span class="token operator">===</span> <span class="token string">"glow"</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+                program <span class="token operator">=</span> EgretWebGLProgram<span class="token punctuation">.</span><span class="token function">getProgram</span><span class="token punctuation">(</span>gl<span class="token punctuation">,</span> 
+                    EgretShaderLib<span class="token punctuation">.</span>default_vert<span class="token punctuation">,</span> 
+                    EgretShaderLib<span class="token punctuation">.</span>glow_frag<span class="token punctuation">,</span> <span class="token string">"glow"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">&#125;</span>
+            <span class="token keyword">else</span>
+            <span class="token punctuation">&#123;</span>
+                program <span class="token operator">=</span> EgretWebGLProgram<span class="token punctuation">.</span><span class="token function">getProgram</span><span class="token punctuation">(</span>gl<span class="token punctuation">,</span> 
+                    EgretShaderLib<span class="token punctuation">.</span>default_vert<span class="token punctuation">,</span> 
+                    EgretShaderLib<span class="token punctuation">.</span>texture_frag<span class="token punctuation">,</span> <span class="token string">"texture"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">&#125;</span>
+
+            <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">activeProgram</span><span class="token punctuation">(</span>gl<span class="token punctuation">,</span> program<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">syncUniforms</span><span class="token punctuation">(</span>program<span class="token punctuation">,</span> filter<span class="token punctuation">,</span> data<span class="token punctuation">.</span>textureWidth<span class="token punctuation">,</span> 
+                data<span class="token punctuation">.</span>textureHeight<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            offset <span class="token operator">+=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">drawTextureElements</span><span class="token punctuation">(</span>data<span class="token punctuation">,</span> offset<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token comment">// src/egret/web/WebSysImpl.ts</span>
+<span class="token keyword">function</span> <span class="token function">drawTextureElements</span><span class="token punctuation">(</span>renderContext<span class="token punctuation">,</span> data<span class="token punctuation">,</span> offset<span class="token punctuation">)</span> 
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">var</span> webglrendercontext <span class="token operator">=</span> renderContext<span class="token punctuation">;</span>
+    <span class="token keyword">var</span> gl <span class="token operator">=</span> webglrendercontext<span class="token punctuation">.</span>context<span class="token punctuation">;</span>
+    gl<span class="token punctuation">.</span><span class="token function">activeTexture</span><span class="token punctuation">(</span>gl<span class="token punctuation">.</span><span class="token constant">TEXTURE0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    gl<span class="token punctuation">.</span><span class="token function">bindTexture</span><span class="token punctuation">(</span>gl<span class="token punctuation">.</span><span class="token constant">TEXTURE_2D</span><span class="token punctuation">,</span> data<span class="token punctuation">.</span>texture<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">var</span> size <span class="token operator">=</span> data<span class="token punctuation">.</span>count <span class="token operator">*</span> <span class="token number">3</span><span class="token punctuation">;</span>
+    gl<span class="token punctuation">.</span><span class="token function">drawElements</span><span class="token punctuation">(</span>gl<span class="token punctuation">.</span><span class="token constant">TRIANGLES</span><span class="token punctuation">,</span> size<span class="token punctuation">,</span> gl<span class="token punctuation">.</span><span class="token constant">UNSIGNED_SHORT</span><span class="token punctuation">,</span> offset <span class="token operator">*</span> <span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> size<span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>了解完 egret 渲染流程后，我找到了 egret 论坛中的一篇帖子<a
+href="#ref-anchor-4"><sup>4</sup></a>，主要思路是利用 egret 本身提供的
+<strong>cacheBitMap</strong> 功能，渲染时:</p>
+<ul>
+<li>创建一张大图 RenderTexture</li>
+<li>将需要渲染的节点放到一个根节点上，并按照尺寸依次在大图上申请空间，并根据返回的位置设置控件在根节点上的坐标</li>
+<li>使用 renderTexture 的方法，将这个根节点渲染到 RenderTexture
+上，这样就生成了图集</li>
+<li>图集生成完毕，替换掉渲染节点中的 Texture 信息将其指向大图即可。</li>
+</ul>
+<pre class="line-numbers language-typescript" data-language="typescript"><code class="language-typescript"><span class="token comment">// 收集渲染节点，并将其放置到根节点上</span>
+<span class="token keyword">this</span><span class="token punctuation">.</span>pack <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">MaxRectsBinPack</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>maxSize<span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>maxSize<span class="token punctuation">,</span> <span class="token boolean">false</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">var</span> key <span class="token keyword">in</span> textMap<span class="token punctuation">)</span> 
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">var</span> qlabelList <span class="token operator">=</span> textMap<span class="token punctuation">[</span>key<span class="token punctuation">]</span><span class="token punctuation">.</span>qlabelList<span class="token punctuation">;</span>
+    <span class="token keyword">var</span> textField <span class="token operator">=</span> qlabelList<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>textField<span class="token punctuation">;</span>
+    textField<span class="token punctuation">.</span>width <span class="token operator">+=</span> <span class="token number">2</span><span class="token punctuation">;</span>
+    textField<span class="token punctuation">.</span>height <span class="token operator">+=</span> <span class="token number">2</span><span class="token punctuation">;</span>
+    <span class="token keyword">var</span> bounds <span class="token operator">=</span> textField<span class="token punctuation">.</span><span class="token function">getBounds</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">// 使用切图算法，获取子节点在图集上的位置信息</span>
+    <span class="token keyword">var</span> rect <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>pack<span class="token punctuation">.</span><span class="token function">insert</span><span class="token punctuation">(</span>bounds<span class="token punctuation">.</span>width<span class="token punctuation">,</span> bounds<span class="token punctuation">.</span>height<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>rect<span class="token punctuation">.</span>width<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">throw</span> <span class="token punctuation">(</span><span class="token string">"DSpriteSheet的尺寸"</span> <span class="token operator">+</span> <span class="token keyword">this</span><span class="token punctuation">.</span>maxSize <span class="token operator">+</span> 
+            <span class="token string">"溢出，请新建一个DSpriteSheet对象"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+    <span class="token comment">// 根据切图算法返回的位置，设置节点位置</span>
+    textField<span class="token punctuation">.</span>x <span class="token operator">=</span> rect<span class="token punctuation">.</span>x<span class="token punctuation">;</span>
+    textField<span class="token punctuation">.</span>y <span class="token operator">=</span> rect<span class="token punctuation">.</span>y<span class="token punctuation">;</span>
+    textMap<span class="token punctuation">[</span>key<span class="token punctuation">]</span><span class="token punctuation">.</span>bounds <span class="token operator">=</span> rect<span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>container<span class="token punctuation">.</span><span class="token function">addChild</span><span class="token punctuation">(</span>textField<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token keyword">this</span><span class="token punctuation">.</span>spriteTexture<span class="token punctuation">)</span> 
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>spriteTexture <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">egret</span><span class="token punctuation">.</span><span class="token function">RenderTexture</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token comment">// 将布局好的节点全部渲染到 renderTexture 上</span>
+<span class="token keyword">this</span><span class="token punctuation">.</span>spriteTexture<span class="token punctuation">.</span><span class="token function">drawToTexture</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>container<span class="token punctuation">,</span> 
+    <span class="token keyword">new</span> <span class="token class-name">egret</span><span class="token punctuation">.</span><span class="token function">Rectangle</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>maxSize<span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>maxSize<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// 生成切图信息，方便从大图 renderTexture 生成小图的 Texture 信息</span>
+<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token keyword">this</span><span class="token punctuation">.</span>spriteSheet<span class="token punctuation">)</span> 
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>spriteSheet <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">egret</span><span class="token punctuation">.</span><span class="token function">SpriteSheet</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>spriteTexture<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">var</span> key <span class="token keyword">in</span> textMap<span class="token punctuation">)</span> 
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">var</span> qlabelList <span class="token operator">=</span> textMap<span class="token punctuation">[</span>key<span class="token punctuation">]</span><span class="token punctuation">.</span>qlabelList<span class="token punctuation">;</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">var</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> qlabelList<span class="token punctuation">.</span>length<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> 
+    <span class="token punctuation">&#123;</span>
+        <span class="token keyword">var</span> qlabel <span class="token operator">=</span> qlabelList<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
+        <span class="token keyword">var</span> bounds <span class="token operator">=</span> textMap<span class="token punctuation">[</span>key<span class="token punctuation">]</span><span class="token punctuation">.</span>bounds<span class="token punctuation">;</span>
+        <span class="token keyword">var</span> texture <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>spriteSheet<span class="token punctuation">.</span><span class="token function">getTexture</span><span class="token punctuation">(</span>key<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token comment">// if (texture) &#123;</span>
+        <span class="token comment">//     qlabel.texture = texture;</span>
+        <span class="token comment">// &#125;</span>
+        <span class="token comment">// else &#123;</span>
+
+        <span class="token comment">// 从大图上获取对应小图的信息创建出该节点的贴图</span>
+        <span class="token comment">// 并替换节点的贴图</span>
+        qlabel<span class="token punctuation">.</span>texture <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>spriteSheet<span class="token punctuation">.</span><span class="token function">createTexture</span><span class="token punctuation">(</span>key<span class="token punctuation">,</span>
+            Math<span class="token punctuation">.</span><span class="token function">round</span><span class="token punctuation">(</span>bounds<span class="token punctuation">.</span>x<span class="token punctuation">)</span><span class="token punctuation">,</span>
+            Math<span class="token punctuation">.</span><span class="token function">round</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>maxSize <span class="token operator">-</span> bounds<span class="token punctuation">.</span>height <span class="token operator">-</span> bounds<span class="token punctuation">.</span>y<span class="token punctuation">)</span><span class="token punctuation">,</span>
+            Math<span class="token punctuation">.</span><span class="token function">round</span><span class="token punctuation">(</span>bounds<span class="token punctuation">.</span>width<span class="token punctuation">)</span><span class="token punctuation">,</span>
+            Math<span class="token punctuation">.</span><span class="token function">round</span><span class="token punctuation">(</span>bounds<span class="token punctuation">.</span>height<span class="token punctuation">)</span>
+        <span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        qlabel<span class="token punctuation">.</span>textField<span class="token punctuation">.</span>width <span class="token operator">-=</span> <span class="token number">2</span><span class="token punctuation">;</span>
+        qlabel<span class="token punctuation">.</span>textField<span class="token punctuation">.</span>height <span class="token operator">-=</span> <span class="token number">2</span><span class="token punctuation">;</span>
+        qlabel<span class="token punctuation">.</span><span class="token function">onRender</span><span class="token punctuation">.</span><span class="token function">call</span><span class="token punctuation">(</span>qlabel<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token comment">// &#125;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>参考这个思路，后续实现 Image 节点的动态合图。</p>
+<h2 id="参考资料">参考资料</h2>
+<div id="ref-anchor-1">
+
+</div>
+<p><a href="http://free-tex-packer.com/grunt/">1. Free Texture Pakcer
+grunt module</a></p>
+<div id="ref-anchor-2">
+
+</div>
+<p><a
+href="https://github.com/odrick/free-tex-packer-core#custom-exporter">2.
+free-tex-packer-core git 使用文档</a></p>
+<div id="ref-anchor-3">
+
+</div>
+<p><a
+href="https://github.com/egret-labs/egret-core/wiki/Egret-SpriteSheet-Specification">3.
+Egret SpriteSheet 文件格式规范</a></p>
+<div id="ref-anchor-4">
+
+</div>
+<p><a
+href="https://bbs.egret.com/thread-43642-1-1.html">4.一个高性能的文本控件</a></p>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">]]></content>
+      <categories>
+        <category>h5</category>
+        <category>egret</category>
+      </categories>
+      <tags>
+        <tag>egret</tag>
+        <tag>ui</tag>
       </tags>
   </entry>
 </search>
