@@ -1557,457 +1557,6 @@ public string Name
       </tags>
   </entry>
   <entry>
-    <title>UE4 landscape 使用 Texture Array</title>
-    <url>/post/e4cef16/</url>
-    <content><![CDATA[<h1 id="landscape-使用-texturearray">Landscape 使用 TextureArray</h1>
-<p>UE4 中 Landscape
-一般会用到多张贴图来丰富地形地貌，例如下面是一个地形的例子：</p>
-<p><img data-src="/images/landscape_texture_array/landscape_layer.png" width="50%" height="50%" /></p>
-<p>这个地形包含 7 个 Layer，每个 Layer 由三张贴图组成：</p>
-<p><img data-src="/images/landscape_texture_array/landscape_texture.png" width="100%" height="100%" /></p>
-<p>然后再加上权重图，在打安卓包时，就会出现如下错误：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">UATHelper: Packaging <span class="token punctuation">(</span>Android <span class="token punctuation">(</span>ASTC<span class="token punctuation">))</span>:   LogShaderCompilers: Display: shader uses <span class="token number">19</span> samplers exceeding the limit of <span class="token number">16</span>
-UATHelper: Packaging <span class="token punctuation">(</span>Android <span class="token punctuation">(</span>ASTC<span class="token punctuation">))</span>:   LogShaderCompilers: Display: shader uses <span class="token number">21</span> samplers exceeding the limit of <span class="token number">16</span>
-UATHelper: Packaging <span class="token punctuation">(</span>Android <span class="token punctuation">(</span>ASTC<span class="token punctuation">))</span>:   LogShaderCompilers: Display: shader uses <span class="token number">20</span> samplers exceeding the limit of <span class="token number">16</span>
-UATHelper: Packaging <span class="token punctuation">(</span>Android <span class="token punctuation">(</span>ASTC<span class="token punctuation">))</span>:   LogShaderCompilers: Warning: Failed to compile Material /Game/STF/Pack03-Lands
-capePro/Environment/Landscape/Landscape/M_landscapeGround_ajustabel.M_landscapeGround_ajustabel <span class="token punctuation">(</span>MI:/Game/STF/Pack03-La
-ndscapePro/Maps/TestMap.testmap:PersistentLevel.Landscape_1.LandscapeMaterialInstanceConstant_290<span class="token punctuation">)</span> <span class="token keyword">for</span> platform GLSL_ES3_1
-_ANDROID, Default Material will be used <span class="token keyword">in</span> game.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>然后真机上测试，地形会使用默认的材质，这显然不是我们想要的效果，要解决这个问题一个是减少贴图数量，另外一个办法就是使用
-TextureArray。</p>
-<h2 id="texturearray">1 TextureArray</h2>
-<p>在 UE4 4.26 版本，TextureArray 功能是默认开启的：</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">static</span> TAutoConsoleVariable<span class="token operator">&lt;</span>int32<span class="token operator">></span> <span class="token function">CVarAllowTexture2DArrayAssetCreation</span><span class="token punctuation">(</span>
-    <span class="token function">TEXT</span><span class="token punctuation">(</span><span class="token string">"r.AllowTexture2DArrayCreation"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
-    <span class="token number">1</span><span class="token punctuation">,</span>
-    <span class="token function">TEXT</span><span class="token punctuation">(</span><span class="token string">"Enable UTexture2DArray assets"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
-    ECVF_Default
-<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h3 id="创建-texturearray">1.1 创建 TextureArray</h3>
-<p>创建 TextureArray
-的方法有两种，一种是直接创建，通过右键菜单，直接创建资源：</p>
-<p><img data-src="/images/landscape_texture_array/create_texture_array.png" width="80%" height="80%" /></p>
-<p>然后打开 TextureArray 资源，既可设置 TextureArray
-中的贴图列表，注意：只有大小、格式一致的贴图才可以放到通一个
-TextureArray 里，如果新增加的贴图不匹配，TextureArray
-会自动删除最后一个新增的贴图。</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">bool</span> <span class="token class-name">UTexture2DArray</span><span class="token double-colon punctuation">::</span><span class="token function">CheckArrayTexturesCompatibility</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token punctuation">&#123;</span>
-    <span class="token keyword">bool</span> bError <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
-
-    <span class="token keyword">if</span> <span class="token punctuation">(</span>TextureSourceCmp<span class="token punctuation">.</span><span class="token function">GetSizeX</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!=</span> SizeX <span class="token operator">||</span> TextureSourceCmp<span class="token punctuation">.</span><span class="token function">GetSizeY</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!=</span> SizeY<span class="token punctuation">)</span>
-    <span class="token punctuation">&#123;</span>
-        <span class="token function">UE_LOG</span><span class="token punctuation">(</span>LogTexture<span class="token punctuation">,</span> Warning<span class="token punctuation">,</span> <span class="token function">TEXT</span><span class="token punctuation">(</span>"Texture2DArray creation failed<span class="token punctuation">.</span> 
-            Textures <span class="token operator">%</span>s <span class="token operator">and</span> <span class="token operator">%</span>s have different sizes<span class="token punctuation">.</span>"<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token operator">*</span>TextureName<span class="token punctuation">,</span> <span class="token operator">*</span>TextureNameCmp<span class="token punctuation">)</span><span class="token punctuation">;</span>
-        bError <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-
-    <span class="token keyword">if</span> <span class="token punctuation">(</span>PixelFormatCmp <span class="token operator">!=</span> PixelFormat<span class="token punctuation">)</span>
-    <span class="token punctuation">&#123;</span>
-        <span class="token function">UE_LOG</span><span class="token punctuation">(</span>LogTexture<span class="token punctuation">,</span> Warning<span class="token punctuation">,</span> <span class="token function">TEXT</span><span class="token punctuation">(</span>"Texture2DArray creation failed<span class="token punctuation">.</span> 
-            Textures <span class="token operator">%</span>s <span class="token operator">and</span> <span class="token operator">%</span>s have incompatible pixel formats<span class="token punctuation">.</span>"<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token operator">*</span>TextureName<span class="token punctuation">,</span> <span class="token operator">*</span>TextureNameCmp<span class="token punctuation">)</span><span class="token punctuation">;</span>
-        bError <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-
-    <span class="token keyword">return</span> <span class="token punctuation">(</span><span class="token operator">!</span>bError<span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>当然我们也可以选中一堆贴图，然后将选中的贴图直接生成一个 TextureArray
-资源。</p>
-<p><img data-src="/images/landscape_texture_array/create_texture_array_batch.png" width="100%" height="100%" /></p>
-<p>往 TextureArray 中增加贴图</p>
-<p><img data-src="/images/landscape_texture_array/add_texture.png" width="100%" height="100%" /></p>
-<p>然后可以在编辑界面，修改 TextureArray 的一些属性：</p>
-<ul>
-<li>开启 Mipmaps</li>
-</ul>
-<p><img data-src="/images/landscape_texture_array/mipmaps.png" width="50%" height="50%" /></p>
-<ul>
-<li>修改压缩格式</li>
-</ul>
-<p><img data-src="/images/landscape_texture_array/compression.png" width="50%" height="50%" /></p>
-<h3 id="使用-texturearray">1.2 使用 TextureArray</h3>
-<p>创建好 TextureArray
-后，在材质中使用的方法如下，正常我们采样贴图做法如下：</p>
-<p><img data-src="/images/landscape_texture_array/mat_normal.png" width="100%" height="100%" /></p>
-<p>使用 TextureArray 后，UVs
-坐标不再是“二维”的了，而是“三维”，第三个分量需要指定采样 TextureArray
-中第几张贴图的索引值（0 ~ num - 1）：</p>
-<p><img data-src="/images/landscape_texture_array/mat_texture_array.png" width="100%" height="100%" /></p>
-<h3 id="sample-对比">1.3 sample 对比</h3>
-<p>使用 unlit 模式下查看，不使用 TextureArray 的 Sample 数目为 3：</p>
-<p><img data-src="/images/landscape_texture_array/normal_sample.png" width="100%" height="100%" /></p>
-<p>同样模式下查看，使用 TextureArray 的 Sample 数目为 3：</p>
-<p><img data-src="/images/landscape_texture_array/texture_array_sample.png" width="100%" height="100%" /></p>
-<blockquote>
-<p>Lit 模式下，会有额外的 sample 次数，因此在 lit 模式下对应的 sample
-不一样。</p>
-</blockquote>
-<p><img data-src="/images/landscape_texture_array/lit_sample.png" width="100%" height="100%" /></p>
-<h3 id="texture2darray-源码">1.4 Texture2DArray 源码</h3>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp">FTextureResource<span class="token operator">*</span> <span class="token class-name">UTexture2DArray</span><span class="token double-colon punctuation">::</span><span class="token function">CreateResource</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token punctuation">&#123;</span>
-    <span class="token keyword">const</span> FPixelFormatInfo<span class="token operator">&amp;</span> FormatInfo <span class="token operator">=</span> GPixelFormats<span class="token punctuation">[</span><span class="token function">GetPixelFormat</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
-    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">GetNumMips</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">></span> <span class="token number">0</span> <span class="token operator">&amp;&amp;</span> FormatInfo<span class="token punctuation">.</span>Supported<span class="token punctuation">)</span>
-    <span class="token punctuation">&#123;</span>
-        <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token function">FTexture2DArrayResource</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">,</span> 
-            <span class="token function">GetResourcePostInitState</span><span class="token punctuation">(</span>PlatformData<span class="token punctuation">,</span> GSupportsTexture2DArrayStreaming<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span>
-
-
-<span class="token keyword">void</span> <span class="token class-name">FStreamableTextureResource</span><span class="token double-colon punctuation">::</span><span class="token function">InitRHI</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token punctuation">&#123;</span>
-    <span class="token function">CreateTexture</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-
-<span class="token keyword">class</span> <span class="token class-name">FTexture2DArrayResource</span> <span class="token operator">:</span> <span class="token base-clause"><span class="token keyword">public</span> <span class="token class-name">FStreamableTextureResource</span></span>
-<span class="token punctuation">&#123;</span>
-<span class="token keyword">protected</span><span class="token operator">:</span>
-
-    <span class="token keyword">void</span> <span class="token function">CreateTexture</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">final</span> <span class="token keyword">override</span>
-    <span class="token punctuation">&#123;</span>
-       
-        TRefCountPtr<span class="token operator">&lt;</span>FRHITexture2DArray<span class="token operator">></span> TextureArray <span class="token operator">=</span> <span class="token function">RHICreateTexture2DArray</span><span class="token punctuation">(</span>FirstMip<span class="token punctuation">.</span>SizeX<span class="token punctuation">,</span> 
-            FirstMip<span class="token punctuation">.</span>SizeY<span class="token punctuation">,</span> FirstMip<span class="token punctuation">.</span>SizeZ<span class="token punctuation">,</span> PixelFormat<span class="token punctuation">,</span> State<span class="token punctuation">.</span>NumRequestedLODs<span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">,</span> CreationFlags<span class="token punctuation">,</span> 
-            CreateInfo<span class="token punctuation">)</span><span class="token punctuation">;</span>
-        TextureRHI <span class="token operator">=</span> TextureArray<span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span>
-
-<span class="token comment">// 最终调用，然后转成平台相关接口</span>
-GDynamicRHI<span class="token operator">-></span><span class="token function">RHICreateTexture2DArray</span><span class="token punctuation">(</span>SizeX<span class="token punctuation">,</span> SizeY<span class="token punctuation">,</span> 
-    SizeZ<span class="token punctuation">,</span> Format<span class="token punctuation">,</span> NumMips<span class="token punctuation">,</span> NumSamples<span class="token punctuation">,</span> Flags<span class="token punctuation">,</span> InResourceState<span class="token punctuation">,</span> CreateInfo<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h3 id="修改地形材质">1.5 修改地形材质</h3>
-<p>演示 Demo 的材质原先如下，将单独的贴图采样，修改成 TextureArray：</p>
-<p><img data-src="/images/landscape_texture_array/shader_before.png" width="100%" height="100%" /></p>
-<p><img data-src="/images/landscape_texture_array/shader_after.png" width="100%" height="100%" /></p>
-<p>这里注意下贴图格式跟采样格式要匹配</p>
-<p>贴图格式:</p>
-<p><img data-src="/images/landscape_texture_array/texture_type.png" width="50%" height="50%" /></p>
-<p>采样类型：</p>
-<p><img data-src="/images/landscape_texture_array/sample_type.png" width="40%" height="40%" /></p>
-<blockquote>
-<p>这里 Diffuse 采样需要使用 Color Normal 采样使用 Normal Roughness
-这里给的是 Grayscale，因此采样类型需要改成 Grayscale</p>
-</blockquote>
-<p>使用 TextureArray 修改之前的地形材质，打包然后在真机运行：</p>
-<p><img data-src="/images/landscape_texture_array/android_pic.jpg" width="100%" height="100%" /></p>
-<p>地形有部分区域出现了明显的方格，以及死黑区域。</p>
-<h3 id="解决方块问题">1.6 解决方块问题</h3>
-<p>经过尝试，发现当靠近地形时，会有明显方块，但是远距离查看地形时，采样正确，猜测是顶点采样的
-UV 出问题了</p>
-<p>这是近处的效果：</p>
-<p><img data-src="/images/landscape_texture_array/android_near.jpg" width="100%" height="100%" /></p>
-<p>这是远处的效果：</p>
-<p><img data-src="/images/landscape_texture_array/android_far.jpg" width="100%" height="100%" /></p>
-<p>然后经过尝试发现，使用普通的 TextureCord 能正常显示贴图，然后使用了
-LandscapeCorrd 然后配合 Divide，且当除数不为 1 时，就会出现方块：</p>
-<p>于是查看 Landscape shader 源码，来尝试解决问题。</p>
-<h2 id="landscape-材质">2 Landscape 材质</h2>
-<p>新建一个简单的地形材质，节点如下：</p>
-<p><img data-src="/images/landscape_texture_array/shader.png" width="80%" height="80%" /></p>
-<p>使用 RenderDoc 抓帧，可以看到在手机上，地形的 Shader 主要有两个：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">MobileBasePassVertexShader.usf
-MobileBasePassPixelShader.usf<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<h3 id="pixel-shader">2.1 Pixel Shader</h3>
-<p>通过 RenderDoc 截取到地形渲染的 PS shadner 代码如下，采样贴图的 UV
-数据来源 TexCorrds</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">// Engine\Shaders\Private\MobileBasePassPixelShader.usf</span>
-<span class="token keyword">void</span> <span class="token function">Main</span><span class="token punctuation">(</span>
-    FVertexFactoryInterpolantsVSToPS Interpolants<span class="token punctuation">,</span> 
-    FMobileBasePassInterpolantsVSToPS BasePassInterpolants<span class="token punctuation">,</span>
-    in float4 SvPosition
-<span class="token punctuation">)</span>
-<span class="token punctuation">&#123;</span>
-    FPixelMaterialInputs PixelMaterialInputs<span class="token punctuation">;</span>
-    FMaterialPixelParameters MaterialParameters <span class="token operator">=</span> <span class="token function">GetMaterialPixelParameters</span><span class="token punctuation">(</span>Interpolants<span class="token punctuation">,</span> SvPosition<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token comment">// CalcMaterialParametersEx 定义</span>
-    <span class="token comment">// 材质编辑器 -> windows -> shader code -> hlsl 导出代码</span>
-    <span class="token function">CalcMaterialParametersEx</span><span class="token punctuation">(</span>MaterialParameters<span class="token punctuation">,</span> PixelMaterialInputs<span class="token punctuation">,</span> 
-        In<span class="token punctuation">.</span>SvPosition<span class="token punctuation">,</span> ScreenPosition<span class="token punctuation">,</span> In<span class="token punctuation">.</span>bIsFrontFace<span class="token punctuation">,</span> TranslatedWorldPosition<span class="token punctuation">,</span> 
-        TranslatedWorldPosition<span class="token punctuation">)</span>
-    <span class="token punctuation">&#123;</span>
-        <span class="token function">CalcPixelMaterialInputs</span><span class="token punctuation">(</span>MaterialParameters<span class="token punctuation">,</span> PixelMaterialInputs<span class="token punctuation">)</span>
-        <span class="token punctuation">&#123;</span>
-            <span class="token comment">// Local7 Local8 其实就是将 TexCorrd X Y 分别取出来</span>
-            <span class="token keyword">float</span> Local7 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>MaterialParameters<span class="token punctuation">.</span>TexCoords<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>xy<span class="token punctuation">,</span>  <span class="token function">float2</span> <span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            <span class="token keyword">float</span> Local8 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>MaterialParameters<span class="token punctuation">.</span>TexCoords<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>xy<span class="token punctuation">,</span>  <span class="token function">float2</span> <span class="token punctuation">(</span><span class="token number">1</span> <span class="token punctuation">,</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-
-            float2  Local9 <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token number">1</span> <span class="token operator">*</span>  <span class="token function">float2</span><span class="token punctuation">(</span>Local8<span class="token punctuation">,</span> Local7<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            float2  Local10 <span class="token operator">=</span> <span class="token punctuation">(</span>Local9 <span class="token operator">+</span>  <span class="token function">float2</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span> 
-            <span class="token comment">// 这里是材质编辑器中采样用到的 Param_1</span>
-            float2  Local11 <span class="token operator">=</span> <span class="token punctuation">(</span>Local10 <span class="token operator">*</span> Material_ScalarExpressions<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>y<span class="token punctuation">)</span><span class="token punctuation">;</span> 
-            float4 Local13 <span class="token operator">=</span> <span class="token function">ProcessMaterialColorTextureLookup</span><span class="token punctuation">(</span><span class="token function">Texture2DSampleBias</span><span class="token punctuation">(</span>Material_Texture2D_1<span class="token punctuation">,</span>
-                Material_Texture2D_1Sampler<span class="token punctuation">,</span> Local11<span class="token punctuation">,</span> View_MaterialTextureMipBias<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token punctuation">&#125;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p><img data-src="/images/landscape_texture_array/render_debug.png" width="80%" height="80%" /></p>
-<p>TexCorrd 来源这个函数：</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp">FMaterialPixelParameters <span class="token function">GetMaterialPixelParameters</span><span class="token punctuation">(</span>
-    FVertexFactoryInterpolantsVSToPS Interpolants<span class="token punctuation">,</span> 
-    float4 SvPosition<span class="token punctuation">)</span>
-<span class="token punctuation">&#123;</span>
-    FMaterialPixelParameters Result <span class="token operator">=</span> <span class="token function">MakeInitializedMaterialPixelParameters</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-
-
-<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">if</span> <span class="token expression">NUM_MATERIAL_TEXCOORDS     </span><span class="token comment">// XY layer</span></span>
-    Result<span class="token punctuation">.</span>TexCoords<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=</span> Interpolants<span class="token punctuation">.</span>LayerTexCoord<span class="token punctuation">.</span>xy<span class="token punctuation">;</span>
-<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">endif</span></span>
-
-    <span class="token keyword">return</span> Result<span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-
-
-<span class="token comment">// 这是 VS 到 PS 参数的类型定义：</span>
-<span class="token keyword">struct</span> <span class="token class-name">FMobileShadingBasePassVSToPS</span>
-<span class="token punctuation">&#123;</span>
-    <span class="token keyword">struct</span> <span class="token class-name">FVertexFactoryInterpolantsVSToPS</span>
-    <span class="token punctuation">&#123;</span>
-        float2  LayerTexCoord   <span class="token operator">:</span> TEXCOORD0<span class="token punctuation">;</span> <span class="token comment">// xy == texcoord</span>
-    <span class="token punctuation">&#125;</span><span class="token punctuation">;</span>  FactoryInterpolants<span class="token punctuation">;</span>
-
-    <span class="token keyword">struct</span> <span class="token class-name">FSharedMobileBasePassInterpolants</span>
-    <span class="token punctuation">&#123;</span>
-        float4 PixelPosition    <span class="token operator">:</span> TEXCOORD8<span class="token punctuation">;</span> <span class="token comment">// xyz = world position, w = clip z</span>
-    <span class="token punctuation">&#125;</span>  BasePassInterpolants<span class="token punctuation">;</span>
-
-
-    float4 Position <span class="token operator">:</span> SV_POSITION<span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>其中，FMobileShadingBasePassVSToPS 就是 VS
-中的输出结果对象类型，接下来就看下 FactoryInterpolants
-这个变量的生成过程。</p>
-<h3 id="顶点-shader-逻辑">2.2 顶点 Shader 逻辑</h3>
-<p>PS 里的输入就是从 C++ 中传入的 Index Buff</p>
-<p><img data-src="/images/landscape_texture_array/fs_index_detail.png" width="100%" height="100%" /></p>
-<p>Uniform 主要包含两个</p>
-<p><img data-src="/images/landscape_texture_array/fs_uniform.png" width="50%" height="50%" /></p>
-<p>Primitive Uniform</p>
-<p><img data-src="/images/landscape_texture_array/fs_uniform_primitive.png" width="100%" height="100%" /></p>
-<p><img data-src="/images/landscape_texture_array/uniform_primitive.png" width="50%" height="50%" /></p>
-<p>Landscape Uniform</p>
-<p><img data-src="/images/landscape_texture_array/fs_uniform_landscape.png" width="100%" height="100%" /></p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">// Engine\Shaders\Private\MobileBasePassVertexShader.usf</span>
-<span class="token keyword">void</span> <span class="token function">Main</span><span class="token punctuation">(</span>
-    FVertexFactoryInput Input<span class="token punctuation">,</span> 
-    out FMobileShadingBasePassVSOutput Output
-<span class="token punctuation">)</span>
-<span class="token punctuation">&#123;</span>
-    <span class="token comment">// 这里之前讲过，如果不考虑 LOD 的情况，返回的坐标是每个顶点位置偏移</span>
-    FVertexFactoryIntermediates VFIntermediates <span class="token operator">=</span> <span class="token function">GetVertexFactoryIntermediates</span><span class="token punctuation">(</span>Input<span class="token punctuation">)</span><span class="token punctuation">;</span>
-
-    float4 WorldPositionExcludingWPO <span class="token operator">=</span> <span class="token function">VertexFactoryGetWorldPosition</span><span class="token punctuation">(</span>Input<span class="token punctuation">,</span> VFIntermediates<span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p><img data-src="/images/landscape_texture_array/fs_out.png" width="100%" height="100%" /></p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp">float3 <span class="token function">GetLocalPosition</span><span class="token punctuation">(</span>FVertexFactoryIntermediates Intermediates<span class="token punctuation">)</span>
-<span class="token punctuation">&#123;</span>
-    <span class="token comment">// LocalPosition 可以看做是每个顶点在各自 Section 中的 x y</span>
-    <span class="token comment">// ZW 是对应 Section  (0, 0) (0, 1) (1, 0) (1, 1)</span>
-    <span class="token comment">// SubsectionOffsetParams : (0.5, 0.5, 0.5, 7)，w 表示每个 Section 的大小</span>
-    <span class="token keyword">return</span> <span class="token function">INVARIANT</span><span class="token punctuation">(</span>Intermediates<span class="token punctuation">.</span>LocalPosition <span class="token operator">+</span> <span class="token function">float3</span><span class="token punctuation">(</span>Intermediates<span class="token punctuation">.</span>InputPosition<span class="token punctuation">.</span>zw
-        <span class="token operator">*</span> LandscapeParameters<span class="token punctuation">.</span>SubsectionOffsetParams<span class="token punctuation">.</span>ww<span class="token punctuation">,</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-
-float4 <span class="token function">VertexFactoryGetWorldPosition</span><span class="token punctuation">(</span>FVertexFactoryInput Input<span class="token punctuation">,</span> FVertexFactoryIntermediates Intermediates<span class="token punctuation">)</span>
-<span class="token punctuation">&#123;</span>
-    <span class="token keyword">return</span> <span class="token function">INVARIANT</span><span class="token punctuation">(</span><span class="token function">TransformLocalToTranslatedWorld</span><span class="token punctuation">(</span><span class="token function">GetLocalPosition</span><span class="token punctuation">(</span>Intermediates<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-
-<span class="token comment">// Primive.LocalToWorld</span>
-<span class="token comment">// 100   0     0     0</span>
-<span class="token comment">// 0     100   0     0</span>
-<span class="token comment">// 0     0     100   0</span>
-<span class="token comment">// 100   200   0     1</span>
-float4 <span class="token function">TransformLocalToTranslatedWorld</span><span class="token punctuation">(</span>float3 LocalPosition<span class="token punctuation">)</span>
-<span class="token punctuation">&#123;</span>
-    float3 RotatedPosition <span class="token operator">=</span> Primitive<span class="token punctuation">.</span>LocalToWorld<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>xyz <span class="token operator">*</span> LocalPosition<span class="token punctuation">.</span>xxx 
-        <span class="token operator">+</span> Primitive<span class="token punctuation">.</span>LocalToWorld<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">.</span>xyz <span class="token operator">*</span> LocalPosition<span class="token punctuation">.</span>yyy 
-        <span class="token operator">+</span> Primitive<span class="token punctuation">.</span>LocalToWorld<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">.</span>xyz <span class="token operator">*</span> LocalPosition<span class="token punctuation">.</span>zzz<span class="token punctuation">;</span>
-    
-    <span class="token keyword">return</span> <span class="token function">float4</span><span class="token punctuation">(</span>RotatedPosition <span class="token operator">+</span> <span class="token punctuation">(</span>Primitive<span class="token punctuation">.</span>LocalToWorld<span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span><span class="token punctuation">.</span>xyz <span class="token operator">+</span> ResolvedView<span class="token punctuation">.</span>PreViewTranslation<span class="token punctuation">.</span>xyz<span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>然后就能计算出每个顶点的坐标了，我们主要关注的是 PS 中采样用到的
-TexCoord_0，因此继续查看这个变量的计算过程。</p>
-<p>VS 向 PS 传参的类型是 FMobileShadingBasePassVSOutput</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token macro-name">FMobileShadingBasePassVSOutput</span> <span class="token expression">FMobileShadingBasePassVSToPS</span></span>
-<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token macro-name">VertexFactoryGetInterpolants</span> <span class="token expression">VertexFactoryGetInterpolantsVSToPS</span></span>
-
-<span class="token comment">// Engine\Shaders\Private\MobileBasePassVertexShader.usf</span>
-<span class="token comment">// VS Main 函数入口</span>
-<span class="token keyword">void</span> <span class="token function">Main</span><span class="token punctuation">(</span>
-    FVertexFactoryInput Input
-    <span class="token punctuation">,</span> out FMobileShadingBasePassVSOutput Output
-    <span class="token punctuation">)</span>
-<span class="token punctuation">&#123;</span>
-    <span class="token comment">// 省去一堆代码</span>
-    <span class="token comment">// 之前的坐标计算</span>
-    float4 WorldPositionExcludingWPO <span class="token operator">=</span> <span class="token function">VertexFactoryGetWorldPosition</span><span class="token punctuation">(</span>Input<span class="token punctuation">,</span> VFIntermediates<span class="token punctuation">)</span><span class="token punctuation">;</span>
-
-    <span class="token comment">// FactoryInterpolants 的生成在这里</span>
-    Output<span class="token punctuation">.</span>FactoryInterpolants <span class="token operator">=</span> <span class="token function">VertexFactoryGetInterpolants</span><span class="token punctuation">(</span>Input<span class="token punctuation">,</span> VFIntermediates<span class="token punctuation">,</span> VertexParameters<span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-
-<span class="token comment">// Engine\Shaders\Private\LandscapeVertexFactory.ush</span>
-FVertexFactoryInterpolantsVSToPS <span class="token function">VertexFactoryGetInterpolantsVSToPS</span><span class="token punctuation">(</span>
-    FVertexFactoryInput Input<span class="token punctuation">,</span> 
-    FVertexFactoryIntermediates Intermediates<span class="token punctuation">,</span> 
-    FMaterialVertexParameters VertexParameters<span class="token punctuation">)</span>
-<span class="token punctuation">&#123;</span>
-    FVertexFactoryInterpolantsVSToPS Interpolants<span class="token punctuation">;</span>
-
-    Interpolants <span class="token operator">=</span> <span class="token punctuation">(</span>FVertexFactoryInterpolantsVSToPS<span class="token punctuation">)</span><span class="token number">0</span><span class="token punctuation">;</span>
-    <span class="token comment">// 随后计算 TexCorrd</span>
-    FLandscapeTexCoords LandscapeTexCoords <span class="token operator">=</span> <span class="token function">GetLandscapeTexCoords</span><span class="token punctuation">(</span>InputPosition<span class="token punctuation">,</span> Intermediates<span class="token punctuation">)</span>
-
-<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">if</span> <span class="token expression"><span class="token punctuation">(</span>ES3_1_PROFILE<span class="token punctuation">)</span></span></span>
-    Interpolants<span class="token punctuation">.</span>LayerTexCoord <span class="token operator">=</span> LandscapeTexCoords<span class="token punctuation">.</span>LayerTexCoord<span class="token punctuation">;</span>
-    Interpolants<span class="token punctuation">.</span>WeightMapTexCoord  <span class="token operator">=</span> LandscapeTexCoords<span class="token punctuation">.</span>WeightMapTexCoord<span class="token punctuation">;</span> 
-<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">endif</span></span>
-<span class="token punctuation">&#125;</span>
-
-FLandscapeTexCoords <span class="token function">GetLandscapeTexCoords</span><span class="token punctuation">(</span>
-    FVertexFactoryInput Input<span class="token punctuation">,</span> 
-    FVertexFactoryIntermediates Intermediates<span class="token punctuation">)</span>
-<span class="token punctuation">&#123;</span>
-
-    FLandscapeTexCoords Result<span class="token punctuation">;</span>
-    <span class="token comment">// 根据输入跟 Uniform 中的值，输出 Texcorrd</span>
-    <span class="token comment">// LocalPosition :  0,0 ~ 7,7</span>
-    <span class="token comment">// SubsectionSizeVertsLayerUVPan : 8, 0.14286, 0, 0</span>
-    <span class="token comment">// InputPosition.zw : 0,0 ~ 1,1</span>
-    <span class="token comment">// SubsectionOffsetParams : 0.5, 0.5, 0.5, 7</span>
-    Result<span class="token punctuation">.</span>LayerTexCoord<span class="token punctuation">.</span>xy <span class="token operator">=</span> Intermediates<span class="token punctuation">.</span>LocalPosition<span class="token punctuation">.</span>xy <span class="token operator">+</span> 
-        LandscapeParameters<span class="token punctuation">.</span>SubsectionSizeVertsLayerUVPan<span class="token punctuation">.</span>zw <span class="token operator">+</span> 
-        Intermediates<span class="token punctuation">.</span>InputPosition<span class="token punctuation">.</span>zw <span class="token operator">*</span> LandscapeParameters<span class="token punctuation">.</span>SubsectionOffsetParams<span class="token punctuation">.</span>ww<span class="token punctuation">;</span>
-    
-    <span class="token keyword">return</span> Result<span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>可以得出计算得出的 LayerTexCoord 其实就是 Landscape 中每个顶点对应在
-Component 中的位置。最终计算出来的 TextCorrd_0
-结果如下图，可以看到计算得出的 UV 其实大部分都会大于
-1，采样的时候贴图设置的是 Wrap，因此最终地形上的纹理会平铺。</p>
-<p><img data-src="/images/landscape_texture_array/fs_out_texcoord0.png" width="100%" height="100%" /></p>
-<p>下面是不同方式采样贴图，跟是否使用高精度的对照图，左边列的是使用
-TextureCoord 采样贴图的（Corrd），右边列是使用 LandScapeCorrd
-方式（LandScape），上面一排是未勾选高精度（normal），下面一排是勾选了高精度的（hp）。
-<img data-src="/images/landscape_texture_array/compare.png" width="100%" height="100%" /></p>
-<p>而且离地形远点越远，偏差越大</p>
-<p><img data-src="/images/landscape_texture_array/block_bug.png" width="100%" height="100%" /></p>
-<p>RenderDoc 抓帧，FS 输出的 TextureCorrd0 数据完全一致。顶点 Shader
-没问题，只能继续分析 Pixel Shader，通过 RenderDoc 抓取 PS 代码发现：</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">//  LandscapeCorrd</span>
-highp vec2 v31 <span class="token operator">=</span> <span class="token function">vec2</span><span class="token punctuation">(</span><span class="token number">1.0</span><span class="token punctuation">,</span> <span class="token number">0.0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token keyword">float</span> h32 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>in_TEXCOORD0<span class="token punctuation">,</span> v31<span class="token punctuation">)</span><span class="token punctuation">;</span>
-vec2 v30<span class="token punctuation">;</span>
-v30<span class="token punctuation">.</span>x <span class="token operator">=</span> h32<span class="token punctuation">;</span>
-highp vec2 v33 <span class="token operator">=</span> <span class="token function">vec2</span><span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">0.0</span><span class="token punctuation">,</span> <span class="token number">1.0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token keyword">float</span> h34 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>in_TEXCOORD0<span class="token punctuation">,</span> v33<span class="token punctuation">)</span><span class="token punctuation">;</span>
-v30<span class="token punctuation">.</span>y <span class="token operator">=</span> h34<span class="token punctuation">;</span>
-vec2 v35 <span class="token operator">=</span> v30 <span class="token operator">*</span> _30<span class="token punctuation">.</span>pu_m<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">.</span>xx<span class="token punctuation">;</span>
-highp <span class="token keyword">float</span> f36 <span class="token operator">=</span> <span class="token number">0.5</span><span class="token punctuation">;</span>
-highp <span class="token keyword">float</span> f5 <span class="token operator">=</span> f36<span class="token punctuation">;</span>
-
-
-highp vec2 v38 <span class="token operator">=</span> v35<span class="token punctuation">;</span>
-highp vec4 v39 <span class="token operator">=</span> _30<span class="token punctuation">.</span>pu_m<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
-<span class="token keyword">float</span> h40 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>v7<span class="token punctuation">,</span> v39<span class="token punctuation">)</span><span class="token punctuation">;</span>
-highp vec2 v41 <span class="token operator">=</span> v35<span class="token punctuation">;</span>
-highp vec4 v42 <span class="token operator">=</span> _30<span class="token punctuation">.</span>pu_m<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
-<span class="token keyword">float</span> h43 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>v7<span class="token punctuation">,</span> v42<span class="token punctuation">)</span><span class="token punctuation">;</span>
-vec3 v37 <span class="token operator">=</span> <span class="token function">clamp</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token function">texture</span><span class="token punctuation">(</span>Material_Texture2D_0<span class="token punctuation">,</span> v38<span class="token punctuation">)</span><span class="token punctuation">.</span>xyz <span class="token operator">*</span> <span class="token function">vec3</span><span class="token punctuation">(</span>h40<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">+</span> 
-    <span class="token punctuation">(</span><span class="token function">texture</span><span class="token punctuation">(</span>Material_Texture2D_1<span class="token punctuation">,</span> v41<span class="token punctuation">)</span><span class="token punctuation">.</span>xyz <span class="token operator">*</span> <span class="token function">vec3</span><span class="token punctuation">(</span>h43<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">vec3</span><span class="token punctuation">(</span><span class="token number">0.0</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">vec3</span><span class="token punctuation">(</span><span class="token number">1.0</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-
-<span class="token comment">// TextureCord</span>
-highp <span class="token keyword">float</span> f31 <span class="token operator">=</span> _30<span class="token punctuation">.</span>pu_m<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">.</span>x<span class="token punctuation">;</span>
-vec2 v32 <span class="token operator">=</span> in_TEXCOORD0 <span class="token operator">*</span> <span class="token function">vec2</span><span class="token punctuation">(</span>f31<span class="token punctuation">)</span><span class="token punctuation">;</span>
-vec2 v30 <span class="token operator">=</span> v32<span class="token punctuation">;</span>
-highp <span class="token keyword">float</span> f33 <span class="token operator">=</span> <span class="token number">0.5</span><span class="token punctuation">;</span>
-highp <span class="token keyword">float</span> f5 <span class="token operator">=</span> f33<span class="token punctuation">;</span>
-highp vec2 v35 <span class="token operator">=</span> v30<span class="token punctuation">;</span>
-highp vec4 v36 <span class="token operator">=</span> _30<span class="token punctuation">.</span>pu_m<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
-<span class="token keyword">float</span> h37 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>v7<span class="token punctuation">,</span> v36<span class="token punctuation">)</span><span class="token punctuation">;</span>
-highp vec2 v38 <span class="token operator">=</span> v30<span class="token punctuation">;</span>
-highp vec4 v39 <span class="token operator">=</span> _30<span class="token punctuation">.</span>pu_m<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
-<span class="token keyword">float</span> h40 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>v7<span class="token punctuation">,</span> v39<span class="token punctuation">)</span><span class="token punctuation">;</span>
-vec3 v34 <span class="token operator">=</span> <span class="token function">clamp</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token function">texture</span><span class="token punctuation">(</span>Material_Texture2D_0<span class="token punctuation">,</span> v35<span class="token punctuation">)</span><span class="token punctuation">.</span>xyz <span class="token operator">*</span> <span class="token function">vec3</span><span class="token punctuation">(</span>h37<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">+</span> 
-    <span class="token punctuation">(</span><span class="token function">texture</span><span class="token punctuation">(</span>Material_Texture2D_1<span class="token punctuation">,</span> v38<span class="token punctuation">)</span><span class="token punctuation">.</span>xyz <span class="token operator">*</span> <span class="token function">vec3</span><span class="token punctuation">(</span>h40<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">vec3</span><span class="token punctuation">(</span><span class="token number">0.0</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">vec3</span><span class="token punctuation">(</span><span class="token number">1.0</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>精简后得到的 Diff 如下：</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">//  LandscapeCorrd</span>
-highp vec2 v31 <span class="token operator">=</span> <span class="token function">vec2</span><span class="token punctuation">(</span><span class="token number">1.0</span><span class="token punctuation">,</span> <span class="token number">0.0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token keyword">float</span> h32 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>in_TEXCOORD0<span class="token punctuation">,</span> v31<span class="token punctuation">)</span><span class="token punctuation">;</span>
-vec2 v30<span class="token punctuation">;</span>
-v30<span class="token punctuation">.</span>x <span class="token operator">=</span> h32<span class="token punctuation">;</span>
-highp vec2 v33 <span class="token operator">=</span> <span class="token function">vec2</span><span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">0.0</span><span class="token punctuation">,</span> <span class="token number">1.0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token keyword">float</span> h34 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>in_TEXCOORD0<span class="token punctuation">,</span> v33<span class="token punctuation">)</span><span class="token punctuation">;</span>
-v30<span class="token punctuation">.</span>y <span class="token operator">=</span> h34<span class="token punctuation">;</span>
-vec2 v35 <span class="token operator">=</span> v30 <span class="token operator">*</span> _30<span class="token punctuation">.</span>pu_m<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">.</span>xx<span class="token punctuation">;</span>
-
-<span class="token comment">// TextureCord</span>
-highp <span class="token keyword">float</span> f31 <span class="token operator">=</span> _30<span class="token punctuation">.</span>pu_m<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">.</span>x<span class="token punctuation">;</span>
-vec2 v32 <span class="token operator">=</span> in_TEXCOORD0 <span class="token operator">*</span> <span class="token function">vec2</span><span class="token punctuation">(</span>f31<span class="token punctuation">)</span><span class="token punctuation">;</span>
-vec2 v30 <span class="token operator">=</span> v32<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>两种方式只是最终获取 UV 的计算方式不同，尝试修改 Shader
-代码，将出现偏差的代码改成：</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">//  LandscapeCorrd</span>
-highp vec2 v31 <span class="token operator">=</span> <span class="token function">vec2</span><span class="token punctuation">(</span><span class="token number">1.0</span><span class="token punctuation">,</span> <span class="token number">0.0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token keyword">float</span> h32 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>in_TEXCOORD0<span class="token punctuation">,</span> v31<span class="token punctuation">)</span><span class="token punctuation">;</span>
-vec2 v30<span class="token punctuation">;</span>
-v30<span class="token punctuation">.</span>x <span class="token operator">=</span> h32<span class="token punctuation">;</span>
-highp vec2 v33 <span class="token operator">=</span> <span class="token function">vec2</span><span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">0.0</span><span class="token punctuation">,</span> <span class="token number">1.0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token keyword">float</span> h34 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>in_TEXCOORD0<span class="token punctuation">,</span> v33<span class="token punctuation">)</span><span class="token punctuation">;</span>
-v30<span class="token punctuation">.</span>y <span class="token operator">=</span> h34<span class="token punctuation">;</span>
-<span class="token operator">-</span> vec2 v35 <span class="token operator">=</span> v30 <span class="token operator">*</span> _30<span class="token punctuation">.</span>pu_m<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">.</span>xx<span class="token punctuation">;</span>
-<span class="token operator">+</span> vec2 v35 <span class="token operator">=</span> in_TEXCOORD0 <span class="token operator">*</span> _30<span class="token punctuation">.</span>pu_m<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">.</span>xx<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>应用修改后，采样完全正确，因此定位到问题是计算 UV
-坐标阶段，然后分别使用 Debug
-功能，获取最终反编译后的代码，对比后发现如下差异：</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">// 修改后                           // 修改前</span>
-<span class="token operator">*</span>_277 <span class="token operator">=</span> _276<span class="token punctuation">;</span>                      <span class="token operator">*</span>_277 <span class="token operator">=</span> _276<span class="token punctuation">;</span>
-float2 _279 <span class="token operator">=</span> <span class="token operator">*</span>in_TEXCOORD0<span class="token punctuation">;</span>       float2 _279 <span class="token operator">=</span> <span class="token operator">*</span>v30 <span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">[</span>RelaxedPrecision<span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-<p>发现修改前后差异是变量 V30 后有个：
-RelaxedPrecision，不强制驱动使用fp16计算，具体解析在<a
-href="https://www.zhihu.com/pin/1176097684682895360">此链接</a></p>
-<p>然后尝试回退代码，将其中用到的变量都改成高精度：</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp">highp vec2 v31 <span class="token operator">=</span> <span class="token function">vec2</span><span class="token punctuation">(</span><span class="token number">1.0</span><span class="token punctuation">,</span> <span class="token number">0.0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token operator">-</span> <span class="token keyword">float</span> h32 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>in_TEXCOORD0<span class="token punctuation">,</span> v31<span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token operator">+</span> highp <span class="token keyword">float</span> h32 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>in_TEXCOORD0<span class="token punctuation">,</span> v31<span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token operator">-</span> vec2 v30<span class="token punctuation">;</span>
-<span class="token operator">+</span> highp vec2 v30<span class="token punctuation">;</span>
-v30<span class="token punctuation">.</span>x <span class="token operator">=</span> h32<span class="token punctuation">;</span>
-highp vec2 v33 <span class="token operator">=</span> <span class="token function">vec2</span><span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">0.0</span><span class="token punctuation">,</span> <span class="token number">1.0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token operator">-</span> <span class="token keyword">float</span> h34 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>in_TEXCOORD0<span class="token punctuation">,</span> v33<span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token operator">+</span> highp <span class="token keyword">float</span> h34 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>in_TEXCOORD0<span class="token punctuation">,</span> v33<span class="token punctuation">)</span><span class="token punctuation">;</span>
-v30<span class="token punctuation">.</span>y <span class="token operator">=</span> h34<span class="token punctuation">;</span>
-vec2 v35 <span class="token operator">=</span> v30 <span class="token operator">*</span> _30<span class="token punctuation">.</span>pu_m<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">.</span>xx<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>反编译后的代码 diff 如下：</p>
-<p><img data-src="/images/landscape_texture_array/hp_diff.png" width="80%" height="80%" /></p>
-<p>应用修改后，效果也完全正确，因此，当使用 LandscapeCord 节点获取 UV
-坐标时，UE4 编译生成的代码，会对变量做优化，增加
-RelaxedPrecision，这就导致在不同的设备上，运行计算的精度是不确定的，因此在使用该节点时需要注意。</p>
-<p>最后抓帧查看 Landscape 开启高精度后的 ps
-代码，来验证一下之前的问题：</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">// 开启高精度后，v13 被定义成了 highp，对比未开启高精度的 v30</span>
-highp vec2 v13<span class="token punctuation">;</span>
-v13<span class="token punctuation">.</span>x <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>in_TEXCOORD0<span class="token punctuation">,</span> <span class="token function">vec2</span><span class="token punctuation">(</span><span class="token number">1.0</span><span class="token punctuation">,</span> <span class="token number">0.0</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-v13<span class="token punctuation">.</span>y <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>in_TEXCOORD0<span class="token punctuation">,</span> <span class="token function">vec2</span><span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">0.0</span><span class="token punctuation">,</span> <span class="token number">1.0</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-highp vec2 v14 <span class="token operator">=</span> v13 <span class="token operator">*</span> _16<span class="token punctuation">.</span>pu_h<span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">]</span><span class="token punctuation">.</span>xx<span class="token punctuation">;</span>
-highp vec3 v15 <span class="token operator">=</span> <span class="token function">clamp</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token function">texture</span><span class="token punctuation">(</span>Material_Texture2D_0<span class="token punctuation">,</span> v14<span class="token punctuation">)</span><span class="token punctuation">.</span>xyz <span class="token operator">*</span> <span class="token function">vec3</span><span class="token punctuation">(</span><span class="token function">dot</span><span class="token punctuation">(</span>v5<span class="token punctuation">,</span> _16<span class="token punctuation">.</span>pu_h<span class="token punctuation">[</span><span class="token number">5</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">+</span> 
-    <span class="token punctuation">(</span><span class="token function">texture</span><span class="token punctuation">(</span>Material_Texture2D_1<span class="token punctuation">,</span> v14<span class="token punctuation">)</span><span class="token punctuation">.</span>xyz <span class="token operator">*</span> <span class="token function">vec3</span><span class="token punctuation">(</span><span class="token function">dot</span><span class="token punctuation">(</span>v5<span class="token punctuation">,</span> _16<span class="token punctuation">.</span>pu_h<span class="token punctuation">[</span><span class="token number">6</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">vec3</span><span class="token punctuation">(</span><span class="token number">0.0</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">vec3</span><span class="token punctuation">(</span><span class="token number">1.0</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">]]></content>
-      <categories>
-        <category>UE4</category>
-      </categories>
-      <tags>
-        <tag>C++</tag>
-        <tag>UE4</tag>
-        <tag>Landscape</tag>
-        <tag>TextureArray</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>UE4 地形 landscape</title>
     <url>/post/310fc368/</url>
     <content><![CDATA[<h1 id="ue4-landscape-mobile">UE4 Landscape Mobile</h1>
@@ -2848,6 +2397,457 @@ href="https://zwcloud.net/#blog/109">2.UE4移动端地形理解 -
       </tags>
   </entry>
   <entry>
+    <title>UE4 landscape 使用 Texture Array</title>
+    <url>/post/e4cef16/</url>
+    <content><![CDATA[<h1 id="landscape-使用-texturearray">Landscape 使用 TextureArray</h1>
+<p>UE4 中 Landscape
+一般会用到多张贴图来丰富地形地貌，例如下面是一个地形的例子：</p>
+<p><img data-src="/images/landscape_texture_array/landscape_layer.png" width="50%" height="50%" /></p>
+<p>这个地形包含 7 个 Layer，每个 Layer 由三张贴图组成：</p>
+<p><img data-src="/images/landscape_texture_array/landscape_texture.png" width="100%" height="100%" /></p>
+<p>然后再加上权重图，在打安卓包时，就会出现如下错误：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">UATHelper: Packaging <span class="token punctuation">(</span>Android <span class="token punctuation">(</span>ASTC<span class="token punctuation">))</span>:   LogShaderCompilers: Display: shader uses <span class="token number">19</span> samplers exceeding the limit of <span class="token number">16</span>
+UATHelper: Packaging <span class="token punctuation">(</span>Android <span class="token punctuation">(</span>ASTC<span class="token punctuation">))</span>:   LogShaderCompilers: Display: shader uses <span class="token number">21</span> samplers exceeding the limit of <span class="token number">16</span>
+UATHelper: Packaging <span class="token punctuation">(</span>Android <span class="token punctuation">(</span>ASTC<span class="token punctuation">))</span>:   LogShaderCompilers: Display: shader uses <span class="token number">20</span> samplers exceeding the limit of <span class="token number">16</span>
+UATHelper: Packaging <span class="token punctuation">(</span>Android <span class="token punctuation">(</span>ASTC<span class="token punctuation">))</span>:   LogShaderCompilers: Warning: Failed to compile Material /Game/STF/Pack03-Lands
+capePro/Environment/Landscape/Landscape/M_landscapeGround_ajustabel.M_landscapeGround_ajustabel <span class="token punctuation">(</span>MI:/Game/STF/Pack03-La
+ndscapePro/Maps/TestMap.testmap:PersistentLevel.Landscape_1.LandscapeMaterialInstanceConstant_290<span class="token punctuation">)</span> <span class="token keyword">for</span> platform GLSL_ES3_1
+_ANDROID, Default Material will be used <span class="token keyword">in</span> game.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>然后真机上测试，地形会使用默认的材质，这显然不是我们想要的效果，要解决这个问题一个是减少贴图数量，另外一个办法就是使用
+TextureArray。</p>
+<h2 id="texturearray">1 TextureArray</h2>
+<p>在 UE4 4.26 版本，TextureArray 功能是默认开启的：</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">static</span> TAutoConsoleVariable<span class="token operator">&lt;</span>int32<span class="token operator">></span> <span class="token function">CVarAllowTexture2DArrayAssetCreation</span><span class="token punctuation">(</span>
+    <span class="token function">TEXT</span><span class="token punctuation">(</span><span class="token string">"r.AllowTexture2DArrayCreation"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token number">1</span><span class="token punctuation">,</span>
+    <span class="token function">TEXT</span><span class="token punctuation">(</span><span class="token string">"Enable UTexture2DArray assets"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    ECVF_Default
+<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="创建-texturearray">1.1 创建 TextureArray</h3>
+<p>创建 TextureArray
+的方法有两种，一种是直接创建，通过右键菜单，直接创建资源：</p>
+<p><img data-src="/images/landscape_texture_array/create_texture_array.png" width="80%" height="80%" /></p>
+<p>然后打开 TextureArray 资源，既可设置 TextureArray
+中的贴图列表，注意：只有大小、格式一致的贴图才可以放到通一个
+TextureArray 里，如果新增加的贴图不匹配，TextureArray
+会自动删除最后一个新增的贴图。</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">bool</span> <span class="token class-name">UTexture2DArray</span><span class="token double-colon punctuation">::</span><span class="token function">CheckArrayTexturesCompatibility</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">bool</span> bError <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>TextureSourceCmp<span class="token punctuation">.</span><span class="token function">GetSizeX</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!=</span> SizeX <span class="token operator">||</span> TextureSourceCmp<span class="token punctuation">.</span><span class="token function">GetSizeY</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!=</span> SizeY<span class="token punctuation">)</span>
+    <span class="token punctuation">&#123;</span>
+        <span class="token function">UE_LOG</span><span class="token punctuation">(</span>LogTexture<span class="token punctuation">,</span> Warning<span class="token punctuation">,</span> <span class="token function">TEXT</span><span class="token punctuation">(</span>"Texture2DArray creation failed<span class="token punctuation">.</span> 
+            Textures <span class="token operator">%</span>s <span class="token operator">and</span> <span class="token operator">%</span>s have different sizes<span class="token punctuation">.</span>"<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token operator">*</span>TextureName<span class="token punctuation">,</span> <span class="token operator">*</span>TextureNameCmp<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        bError <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>PixelFormatCmp <span class="token operator">!=</span> PixelFormat<span class="token punctuation">)</span>
+    <span class="token punctuation">&#123;</span>
+        <span class="token function">UE_LOG</span><span class="token punctuation">(</span>LogTexture<span class="token punctuation">,</span> Warning<span class="token punctuation">,</span> <span class="token function">TEXT</span><span class="token punctuation">(</span>"Texture2DArray creation failed<span class="token punctuation">.</span> 
+            Textures <span class="token operator">%</span>s <span class="token operator">and</span> <span class="token operator">%</span>s have incompatible pixel formats<span class="token punctuation">.</span>"<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token operator">*</span>TextureName<span class="token punctuation">,</span> <span class="token operator">*</span>TextureNameCmp<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        bError <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">return</span> <span class="token punctuation">(</span><span class="token operator">!</span>bError<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>当然我们也可以选中一堆贴图，然后将选中的贴图直接生成一个 TextureArray
+资源。</p>
+<p><img data-src="/images/landscape_texture_array/create_texture_array_batch.png" width="100%" height="100%" /></p>
+<p>往 TextureArray 中增加贴图</p>
+<p><img data-src="/images/landscape_texture_array/add_texture.png" width="100%" height="100%" /></p>
+<p>然后可以在编辑界面，修改 TextureArray 的一些属性：</p>
+<ul>
+<li>开启 Mipmaps</li>
+</ul>
+<p><img data-src="/images/landscape_texture_array/mipmaps.png" width="50%" height="50%" /></p>
+<ul>
+<li>修改压缩格式</li>
+</ul>
+<p><img data-src="/images/landscape_texture_array/compression.png" width="50%" height="50%" /></p>
+<h3 id="使用-texturearray">1.2 使用 TextureArray</h3>
+<p>创建好 TextureArray
+后，在材质中使用的方法如下，正常我们采样贴图做法如下：</p>
+<p><img data-src="/images/landscape_texture_array/mat_normal.png" width="100%" height="100%" /></p>
+<p>使用 TextureArray 后，UVs
+坐标不再是“二维”的了，而是“三维”，第三个分量需要指定采样 TextureArray
+中第几张贴图的索引值（0 ~ num - 1）：</p>
+<p><img data-src="/images/landscape_texture_array/mat_texture_array.png" width="100%" height="100%" /></p>
+<h3 id="sample-对比">1.3 sample 对比</h3>
+<p>使用 unlit 模式下查看，不使用 TextureArray 的 Sample 数目为 3：</p>
+<p><img data-src="/images/landscape_texture_array/normal_sample.png" width="100%" height="100%" /></p>
+<p>同样模式下查看，使用 TextureArray 的 Sample 数目为 3：</p>
+<p><img data-src="/images/landscape_texture_array/texture_array_sample.png" width="100%" height="100%" /></p>
+<blockquote>
+<p>Lit 模式下，会有额外的 sample 次数，因此在 lit 模式下对应的 sample
+不一样。</p>
+</blockquote>
+<p><img data-src="/images/landscape_texture_array/lit_sample.png" width="100%" height="100%" /></p>
+<h3 id="texture2darray-源码">1.4 Texture2DArray 源码</h3>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp">FTextureResource<span class="token operator">*</span> <span class="token class-name">UTexture2DArray</span><span class="token double-colon punctuation">::</span><span class="token function">CreateResource</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">const</span> FPixelFormatInfo<span class="token operator">&amp;</span> FormatInfo <span class="token operator">=</span> GPixelFormats<span class="token punctuation">[</span><span class="token function">GetPixelFormat</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">GetNumMips</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">></span> <span class="token number">0</span> <span class="token operator">&amp;&amp;</span> FormatInfo<span class="token punctuation">.</span>Supported<span class="token punctuation">)</span>
+    <span class="token punctuation">&#123;</span>
+        <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token function">FTexture2DArrayResource</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">,</span> 
+            <span class="token function">GetResourcePostInitState</span><span class="token punctuation">(</span>PlatformData<span class="token punctuation">,</span> GSupportsTexture2DArrayStreaming<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span>
+
+
+<span class="token keyword">void</span> <span class="token class-name">FStreamableTextureResource</span><span class="token double-colon punctuation">::</span><span class="token function">InitRHI</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token function">CreateTexture</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token keyword">class</span> <span class="token class-name">FTexture2DArrayResource</span> <span class="token operator">:</span> <span class="token base-clause"><span class="token keyword">public</span> <span class="token class-name">FStreamableTextureResource</span></span>
+<span class="token punctuation">&#123;</span>
+<span class="token keyword">protected</span><span class="token operator">:</span>
+
+    <span class="token keyword">void</span> <span class="token function">CreateTexture</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">final</span> <span class="token keyword">override</span>
+    <span class="token punctuation">&#123;</span>
+       
+        TRefCountPtr<span class="token operator">&lt;</span>FRHITexture2DArray<span class="token operator">></span> TextureArray <span class="token operator">=</span> <span class="token function">RHICreateTexture2DArray</span><span class="token punctuation">(</span>FirstMip<span class="token punctuation">.</span>SizeX<span class="token punctuation">,</span> 
+            FirstMip<span class="token punctuation">.</span>SizeY<span class="token punctuation">,</span> FirstMip<span class="token punctuation">.</span>SizeZ<span class="token punctuation">,</span> PixelFormat<span class="token punctuation">,</span> State<span class="token punctuation">.</span>NumRequestedLODs<span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">,</span> CreationFlags<span class="token punctuation">,</span> 
+            CreateInfo<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        TextureRHI <span class="token operator">=</span> TextureArray<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token comment">// 最终调用，然后转成平台相关接口</span>
+GDynamicRHI<span class="token operator">-></span><span class="token function">RHICreateTexture2DArray</span><span class="token punctuation">(</span>SizeX<span class="token punctuation">,</span> SizeY<span class="token punctuation">,</span> 
+    SizeZ<span class="token punctuation">,</span> Format<span class="token punctuation">,</span> NumMips<span class="token punctuation">,</span> NumSamples<span class="token punctuation">,</span> Flags<span class="token punctuation">,</span> InResourceState<span class="token punctuation">,</span> CreateInfo<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="修改地形材质">1.5 修改地形材质</h3>
+<p>演示 Demo 的材质原先如下，将单独的贴图采样，修改成 TextureArray：</p>
+<p><img data-src="/images/landscape_texture_array/shader_before.png" width="100%" height="100%" /></p>
+<p><img data-src="/images/landscape_texture_array/shader_after.png" width="100%" height="100%" /></p>
+<p>这里注意下贴图格式跟采样格式要匹配</p>
+<p>贴图格式:</p>
+<p><img data-src="/images/landscape_texture_array/texture_type.png" width="50%" height="50%" /></p>
+<p>采样类型：</p>
+<p><img data-src="/images/landscape_texture_array/sample_type.png" width="40%" height="40%" /></p>
+<blockquote>
+<p>这里 Diffuse 采样需要使用 Color Normal 采样使用 Normal Roughness
+这里给的是 Grayscale，因此采样类型需要改成 Grayscale</p>
+</blockquote>
+<p>使用 TextureArray 修改之前的地形材质，打包然后在真机运行：</p>
+<p><img data-src="/images/landscape_texture_array/android_pic.jpg" width="100%" height="100%" /></p>
+<p>地形有部分区域出现了明显的方格，以及死黑区域。</p>
+<h3 id="解决方块问题">1.6 解决方块问题</h3>
+<p>经过尝试，发现当靠近地形时，会有明显方块，但是远距离查看地形时，采样正确，猜测是顶点采样的
+UV 出问题了</p>
+<p>这是近处的效果：</p>
+<p><img data-src="/images/landscape_texture_array/android_near.jpg" width="100%" height="100%" /></p>
+<p>这是远处的效果：</p>
+<p><img data-src="/images/landscape_texture_array/android_far.jpg" width="100%" height="100%" /></p>
+<p>然后经过尝试发现，使用普通的 TextureCord 能正常显示贴图，然后使用了
+LandscapeCorrd 然后配合 Divide，且当除数不为 1 时，就会出现方块：</p>
+<p>于是查看 Landscape shader 源码，来尝试解决问题。</p>
+<h2 id="landscape-材质">2 Landscape 材质</h2>
+<p>新建一个简单的地形材质，节点如下：</p>
+<p><img data-src="/images/landscape_texture_array/shader.png" width="80%" height="80%" /></p>
+<p>使用 RenderDoc 抓帧，可以看到在手机上，地形的 Shader 主要有两个：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">MobileBasePassVertexShader.usf
+MobileBasePassPixelShader.usf<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<h3 id="pixel-shader">2.1 Pixel Shader</h3>
+<p>通过 RenderDoc 截取到地形渲染的 PS shadner 代码如下，采样贴图的 UV
+数据来源 TexCorrds</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">// Engine\Shaders\Private\MobileBasePassPixelShader.usf</span>
+<span class="token keyword">void</span> <span class="token function">Main</span><span class="token punctuation">(</span>
+    FVertexFactoryInterpolantsVSToPS Interpolants<span class="token punctuation">,</span> 
+    FMobileBasePassInterpolantsVSToPS BasePassInterpolants<span class="token punctuation">,</span>
+    in float4 SvPosition
+<span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+    FPixelMaterialInputs PixelMaterialInputs<span class="token punctuation">;</span>
+    FMaterialPixelParameters MaterialParameters <span class="token operator">=</span> <span class="token function">GetMaterialPixelParameters</span><span class="token punctuation">(</span>Interpolants<span class="token punctuation">,</span> SvPosition<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">// CalcMaterialParametersEx 定义</span>
+    <span class="token comment">// 材质编辑器 -> windows -> shader code -> hlsl 导出代码</span>
+    <span class="token function">CalcMaterialParametersEx</span><span class="token punctuation">(</span>MaterialParameters<span class="token punctuation">,</span> PixelMaterialInputs<span class="token punctuation">,</span> 
+        In<span class="token punctuation">.</span>SvPosition<span class="token punctuation">,</span> ScreenPosition<span class="token punctuation">,</span> In<span class="token punctuation">.</span>bIsFrontFace<span class="token punctuation">,</span> TranslatedWorldPosition<span class="token punctuation">,</span> 
+        TranslatedWorldPosition<span class="token punctuation">)</span>
+    <span class="token punctuation">&#123;</span>
+        <span class="token function">CalcPixelMaterialInputs</span><span class="token punctuation">(</span>MaterialParameters<span class="token punctuation">,</span> PixelMaterialInputs<span class="token punctuation">)</span>
+        <span class="token punctuation">&#123;</span>
+            <span class="token comment">// Local7 Local8 其实就是将 TexCorrd X Y 分别取出来</span>
+            <span class="token keyword">float</span> Local7 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>MaterialParameters<span class="token punctuation">.</span>TexCoords<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>xy<span class="token punctuation">,</span>  <span class="token function">float2</span> <span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">float</span> Local8 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>MaterialParameters<span class="token punctuation">.</span>TexCoords<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>xy<span class="token punctuation">,</span>  <span class="token function">float2</span> <span class="token punctuation">(</span><span class="token number">1</span> <span class="token punctuation">,</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+            float2  Local9 <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token number">1</span> <span class="token operator">*</span>  <span class="token function">float2</span><span class="token punctuation">(</span>Local8<span class="token punctuation">,</span> Local7<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            float2  Local10 <span class="token operator">=</span> <span class="token punctuation">(</span>Local9 <span class="token operator">+</span>  <span class="token function">float2</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span> 
+            <span class="token comment">// 这里是材质编辑器中采样用到的 Param_1</span>
+            float2  Local11 <span class="token operator">=</span> <span class="token punctuation">(</span>Local10 <span class="token operator">*</span> Material_ScalarExpressions<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>y<span class="token punctuation">)</span><span class="token punctuation">;</span> 
+            float4 Local13 <span class="token operator">=</span> <span class="token function">ProcessMaterialColorTextureLookup</span><span class="token punctuation">(</span><span class="token function">Texture2DSampleBias</span><span class="token punctuation">(</span>Material_Texture2D_1<span class="token punctuation">,</span>
+                Material_Texture2D_1Sampler<span class="token punctuation">,</span> Local11<span class="token punctuation">,</span> View_MaterialTextureMipBias<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><img data-src="/images/landscape_texture_array/render_debug.png" width="80%" height="80%" /></p>
+<p>TexCorrd 来源这个函数：</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp">FMaterialPixelParameters <span class="token function">GetMaterialPixelParameters</span><span class="token punctuation">(</span>
+    FVertexFactoryInterpolantsVSToPS Interpolants<span class="token punctuation">,</span> 
+    float4 SvPosition<span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+    FMaterialPixelParameters Result <span class="token operator">=</span> <span class="token function">MakeInitializedMaterialPixelParameters</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">if</span> <span class="token expression">NUM_MATERIAL_TEXCOORDS     </span><span class="token comment">// XY layer</span></span>
+    Result<span class="token punctuation">.</span>TexCoords<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=</span> Interpolants<span class="token punctuation">.</span>LayerTexCoord<span class="token punctuation">.</span>xy<span class="token punctuation">;</span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">endif</span></span>
+
+    <span class="token keyword">return</span> Result<span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+
+
+<span class="token comment">// 这是 VS 到 PS 参数的类型定义：</span>
+<span class="token keyword">struct</span> <span class="token class-name">FMobileShadingBasePassVSToPS</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">struct</span> <span class="token class-name">FVertexFactoryInterpolantsVSToPS</span>
+    <span class="token punctuation">&#123;</span>
+        float2  LayerTexCoord   <span class="token operator">:</span> TEXCOORD0<span class="token punctuation">;</span> <span class="token comment">// xy == texcoord</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">;</span>  FactoryInterpolants<span class="token punctuation">;</span>
+
+    <span class="token keyword">struct</span> <span class="token class-name">FSharedMobileBasePassInterpolants</span>
+    <span class="token punctuation">&#123;</span>
+        float4 PixelPosition    <span class="token operator">:</span> TEXCOORD8<span class="token punctuation">;</span> <span class="token comment">// xyz = world position, w = clip z</span>
+    <span class="token punctuation">&#125;</span>  BasePassInterpolants<span class="token punctuation">;</span>
+
+
+    float4 Position <span class="token operator">:</span> SV_POSITION<span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>其中，FMobileShadingBasePassVSToPS 就是 VS
+中的输出结果对象类型，接下来就看下 FactoryInterpolants
+这个变量的生成过程。</p>
+<h3 id="顶点-shader-逻辑">2.2 顶点 Shader 逻辑</h3>
+<p>PS 里的输入就是从 C++ 中传入的 Index Buff</p>
+<p><img data-src="/images/landscape_texture_array/fs_index_detail.png" width="100%" height="100%" /></p>
+<p>Uniform 主要包含两个</p>
+<p><img data-src="/images/landscape_texture_array/fs_uniform.png" width="50%" height="50%" /></p>
+<p>Primitive Uniform</p>
+<p><img data-src="/images/landscape_texture_array/fs_uniform_primitive.png" width="100%" height="100%" /></p>
+<p><img data-src="/images/landscape_texture_array/uniform_primitive.png" width="50%" height="50%" /></p>
+<p>Landscape Uniform</p>
+<p><img data-src="/images/landscape_texture_array/fs_uniform_landscape.png" width="100%" height="100%" /></p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">// Engine\Shaders\Private\MobileBasePassVertexShader.usf</span>
+<span class="token keyword">void</span> <span class="token function">Main</span><span class="token punctuation">(</span>
+    FVertexFactoryInput Input<span class="token punctuation">,</span> 
+    out FMobileShadingBasePassVSOutput Output
+<span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token comment">// 这里之前讲过，如果不考虑 LOD 的情况，返回的坐标是每个顶点位置偏移</span>
+    FVertexFactoryIntermediates VFIntermediates <span class="token operator">=</span> <span class="token function">GetVertexFactoryIntermediates</span><span class="token punctuation">(</span>Input<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    float4 WorldPositionExcludingWPO <span class="token operator">=</span> <span class="token function">VertexFactoryGetWorldPosition</span><span class="token punctuation">(</span>Input<span class="token punctuation">,</span> VFIntermediates<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><img data-src="/images/landscape_texture_array/fs_out.png" width="100%" height="100%" /></p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp">float3 <span class="token function">GetLocalPosition</span><span class="token punctuation">(</span>FVertexFactoryIntermediates Intermediates<span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token comment">// LocalPosition 可以看做是每个顶点在各自 Section 中的 x y</span>
+    <span class="token comment">// ZW 是对应 Section  (0, 0) (0, 1) (1, 0) (1, 1)</span>
+    <span class="token comment">// SubsectionOffsetParams : (0.5, 0.5, 0.5, 7)，w 表示每个 Section 的大小</span>
+    <span class="token keyword">return</span> <span class="token function">INVARIANT</span><span class="token punctuation">(</span>Intermediates<span class="token punctuation">.</span>LocalPosition <span class="token operator">+</span> <span class="token function">float3</span><span class="token punctuation">(</span>Intermediates<span class="token punctuation">.</span>InputPosition<span class="token punctuation">.</span>zw
+        <span class="token operator">*</span> LandscapeParameters<span class="token punctuation">.</span>SubsectionOffsetParams<span class="token punctuation">.</span>ww<span class="token punctuation">,</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+
+float4 <span class="token function">VertexFactoryGetWorldPosition</span><span class="token punctuation">(</span>FVertexFactoryInput Input<span class="token punctuation">,</span> FVertexFactoryIntermediates Intermediates<span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">return</span> <span class="token function">INVARIANT</span><span class="token punctuation">(</span><span class="token function">TransformLocalToTranslatedWorld</span><span class="token punctuation">(</span><span class="token function">GetLocalPosition</span><span class="token punctuation">(</span>Intermediates<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token comment">// Primive.LocalToWorld</span>
+<span class="token comment">// 100   0     0     0</span>
+<span class="token comment">// 0     100   0     0</span>
+<span class="token comment">// 0     0     100   0</span>
+<span class="token comment">// 100   200   0     1</span>
+float4 <span class="token function">TransformLocalToTranslatedWorld</span><span class="token punctuation">(</span>float3 LocalPosition<span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+    float3 RotatedPosition <span class="token operator">=</span> Primitive<span class="token punctuation">.</span>LocalToWorld<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>xyz <span class="token operator">*</span> LocalPosition<span class="token punctuation">.</span>xxx 
+        <span class="token operator">+</span> Primitive<span class="token punctuation">.</span>LocalToWorld<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">.</span>xyz <span class="token operator">*</span> LocalPosition<span class="token punctuation">.</span>yyy 
+        <span class="token operator">+</span> Primitive<span class="token punctuation">.</span>LocalToWorld<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">.</span>xyz <span class="token operator">*</span> LocalPosition<span class="token punctuation">.</span>zzz<span class="token punctuation">;</span>
+    
+    <span class="token keyword">return</span> <span class="token function">float4</span><span class="token punctuation">(</span>RotatedPosition <span class="token operator">+</span> <span class="token punctuation">(</span>Primitive<span class="token punctuation">.</span>LocalToWorld<span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span><span class="token punctuation">.</span>xyz <span class="token operator">+</span> ResolvedView<span class="token punctuation">.</span>PreViewTranslation<span class="token punctuation">.</span>xyz<span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>然后就能计算出每个顶点的坐标了，我们主要关注的是 PS 中采样用到的
+TexCoord_0，因此继续查看这个变量的计算过程。</p>
+<p>VS 向 PS 传参的类型是 FMobileShadingBasePassVSOutput</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token macro-name">FMobileShadingBasePassVSOutput</span> <span class="token expression">FMobileShadingBasePassVSToPS</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token macro-name">VertexFactoryGetInterpolants</span> <span class="token expression">VertexFactoryGetInterpolantsVSToPS</span></span>
+
+<span class="token comment">// Engine\Shaders\Private\MobileBasePassVertexShader.usf</span>
+<span class="token comment">// VS Main 函数入口</span>
+<span class="token keyword">void</span> <span class="token function">Main</span><span class="token punctuation">(</span>
+    FVertexFactoryInput Input
+    <span class="token punctuation">,</span> out FMobileShadingBasePassVSOutput Output
+    <span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token comment">// 省去一堆代码</span>
+    <span class="token comment">// 之前的坐标计算</span>
+    float4 WorldPositionExcludingWPO <span class="token operator">=</span> <span class="token function">VertexFactoryGetWorldPosition</span><span class="token punctuation">(</span>Input<span class="token punctuation">,</span> VFIntermediates<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// FactoryInterpolants 的生成在这里</span>
+    Output<span class="token punctuation">.</span>FactoryInterpolants <span class="token operator">=</span> <span class="token function">VertexFactoryGetInterpolants</span><span class="token punctuation">(</span>Input<span class="token punctuation">,</span> VFIntermediates<span class="token punctuation">,</span> VertexParameters<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token comment">// Engine\Shaders\Private\LandscapeVertexFactory.ush</span>
+FVertexFactoryInterpolantsVSToPS <span class="token function">VertexFactoryGetInterpolantsVSToPS</span><span class="token punctuation">(</span>
+    FVertexFactoryInput Input<span class="token punctuation">,</span> 
+    FVertexFactoryIntermediates Intermediates<span class="token punctuation">,</span> 
+    FMaterialVertexParameters VertexParameters<span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+    FVertexFactoryInterpolantsVSToPS Interpolants<span class="token punctuation">;</span>
+
+    Interpolants <span class="token operator">=</span> <span class="token punctuation">(</span>FVertexFactoryInterpolantsVSToPS<span class="token punctuation">)</span><span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token comment">// 随后计算 TexCorrd</span>
+    FLandscapeTexCoords LandscapeTexCoords <span class="token operator">=</span> <span class="token function">GetLandscapeTexCoords</span><span class="token punctuation">(</span>InputPosition<span class="token punctuation">,</span> Intermediates<span class="token punctuation">)</span>
+
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">if</span> <span class="token expression"><span class="token punctuation">(</span>ES3_1_PROFILE<span class="token punctuation">)</span></span></span>
+    Interpolants<span class="token punctuation">.</span>LayerTexCoord <span class="token operator">=</span> LandscapeTexCoords<span class="token punctuation">.</span>LayerTexCoord<span class="token punctuation">;</span>
+    Interpolants<span class="token punctuation">.</span>WeightMapTexCoord  <span class="token operator">=</span> LandscapeTexCoords<span class="token punctuation">.</span>WeightMapTexCoord<span class="token punctuation">;</span> 
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">endif</span></span>
+<span class="token punctuation">&#125;</span>
+
+FLandscapeTexCoords <span class="token function">GetLandscapeTexCoords</span><span class="token punctuation">(</span>
+    FVertexFactoryInput Input<span class="token punctuation">,</span> 
+    FVertexFactoryIntermediates Intermediates<span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+
+    FLandscapeTexCoords Result<span class="token punctuation">;</span>
+    <span class="token comment">// 根据输入跟 Uniform 中的值，输出 Texcorrd</span>
+    <span class="token comment">// LocalPosition :  0,0 ~ 7,7</span>
+    <span class="token comment">// SubsectionSizeVertsLayerUVPan : 8, 0.14286, 0, 0</span>
+    <span class="token comment">// InputPosition.zw : 0,0 ~ 1,1</span>
+    <span class="token comment">// SubsectionOffsetParams : 0.5, 0.5, 0.5, 7</span>
+    Result<span class="token punctuation">.</span>LayerTexCoord<span class="token punctuation">.</span>xy <span class="token operator">=</span> Intermediates<span class="token punctuation">.</span>LocalPosition<span class="token punctuation">.</span>xy <span class="token operator">+</span> 
+        LandscapeParameters<span class="token punctuation">.</span>SubsectionSizeVertsLayerUVPan<span class="token punctuation">.</span>zw <span class="token operator">+</span> 
+        Intermediates<span class="token punctuation">.</span>InputPosition<span class="token punctuation">.</span>zw <span class="token operator">*</span> LandscapeParameters<span class="token punctuation">.</span>SubsectionOffsetParams<span class="token punctuation">.</span>ww<span class="token punctuation">;</span>
+    
+    <span class="token keyword">return</span> Result<span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>可以得出计算得出的 LayerTexCoord 其实就是 Landscape 中每个顶点对应在
+Component 中的位置。最终计算出来的 TextCorrd_0
+结果如下图，可以看到计算得出的 UV 其实大部分都会大于
+1，采样的时候贴图设置的是 Wrap，因此最终地形上的纹理会平铺。</p>
+<p><img data-src="/images/landscape_texture_array/fs_out_texcoord0.png" width="100%" height="100%" /></p>
+<p>下面是不同方式采样贴图，跟是否使用高精度的对照图，左边列的是使用
+TextureCoord 采样贴图的（Corrd），右边列是使用 LandScapeCorrd
+方式（LandScape），上面一排是未勾选高精度（normal），下面一排是勾选了高精度的（hp）。
+<img data-src="/images/landscape_texture_array/compare.png" width="100%" height="100%" /></p>
+<p>而且离地形远点越远，偏差越大</p>
+<p><img data-src="/images/landscape_texture_array/block_bug.png" width="100%" height="100%" /></p>
+<p>RenderDoc 抓帧，FS 输出的 TextureCorrd0 数据完全一致。顶点 Shader
+没问题，只能继续分析 Pixel Shader，通过 RenderDoc 抓取 PS 代码发现：</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">//  LandscapeCorrd</span>
+highp vec2 v31 <span class="token operator">=</span> <span class="token function">vec2</span><span class="token punctuation">(</span><span class="token number">1.0</span><span class="token punctuation">,</span> <span class="token number">0.0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">float</span> h32 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>in_TEXCOORD0<span class="token punctuation">,</span> v31<span class="token punctuation">)</span><span class="token punctuation">;</span>
+vec2 v30<span class="token punctuation">;</span>
+v30<span class="token punctuation">.</span>x <span class="token operator">=</span> h32<span class="token punctuation">;</span>
+highp vec2 v33 <span class="token operator">=</span> <span class="token function">vec2</span><span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">0.0</span><span class="token punctuation">,</span> <span class="token number">1.0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">float</span> h34 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>in_TEXCOORD0<span class="token punctuation">,</span> v33<span class="token punctuation">)</span><span class="token punctuation">;</span>
+v30<span class="token punctuation">.</span>y <span class="token operator">=</span> h34<span class="token punctuation">;</span>
+vec2 v35 <span class="token operator">=</span> v30 <span class="token operator">*</span> _30<span class="token punctuation">.</span>pu_m<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">.</span>xx<span class="token punctuation">;</span>
+highp <span class="token keyword">float</span> f36 <span class="token operator">=</span> <span class="token number">0.5</span><span class="token punctuation">;</span>
+highp <span class="token keyword">float</span> f5 <span class="token operator">=</span> f36<span class="token punctuation">;</span>
+
+
+highp vec2 v38 <span class="token operator">=</span> v35<span class="token punctuation">;</span>
+highp vec4 v39 <span class="token operator">=</span> _30<span class="token punctuation">.</span>pu_m<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token keyword">float</span> h40 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>v7<span class="token punctuation">,</span> v39<span class="token punctuation">)</span><span class="token punctuation">;</span>
+highp vec2 v41 <span class="token operator">=</span> v35<span class="token punctuation">;</span>
+highp vec4 v42 <span class="token operator">=</span> _30<span class="token punctuation">.</span>pu_m<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token keyword">float</span> h43 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>v7<span class="token punctuation">,</span> v42<span class="token punctuation">)</span><span class="token punctuation">;</span>
+vec3 v37 <span class="token operator">=</span> <span class="token function">clamp</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token function">texture</span><span class="token punctuation">(</span>Material_Texture2D_0<span class="token punctuation">,</span> v38<span class="token punctuation">)</span><span class="token punctuation">.</span>xyz <span class="token operator">*</span> <span class="token function">vec3</span><span class="token punctuation">(</span>h40<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">+</span> 
+    <span class="token punctuation">(</span><span class="token function">texture</span><span class="token punctuation">(</span>Material_Texture2D_1<span class="token punctuation">,</span> v41<span class="token punctuation">)</span><span class="token punctuation">.</span>xyz <span class="token operator">*</span> <span class="token function">vec3</span><span class="token punctuation">(</span>h43<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">vec3</span><span class="token punctuation">(</span><span class="token number">0.0</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">vec3</span><span class="token punctuation">(</span><span class="token number">1.0</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// TextureCord</span>
+highp <span class="token keyword">float</span> f31 <span class="token operator">=</span> _30<span class="token punctuation">.</span>pu_m<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">.</span>x<span class="token punctuation">;</span>
+vec2 v32 <span class="token operator">=</span> in_TEXCOORD0 <span class="token operator">*</span> <span class="token function">vec2</span><span class="token punctuation">(</span>f31<span class="token punctuation">)</span><span class="token punctuation">;</span>
+vec2 v30 <span class="token operator">=</span> v32<span class="token punctuation">;</span>
+highp <span class="token keyword">float</span> f33 <span class="token operator">=</span> <span class="token number">0.5</span><span class="token punctuation">;</span>
+highp <span class="token keyword">float</span> f5 <span class="token operator">=</span> f33<span class="token punctuation">;</span>
+highp vec2 v35 <span class="token operator">=</span> v30<span class="token punctuation">;</span>
+highp vec4 v36 <span class="token operator">=</span> _30<span class="token punctuation">.</span>pu_m<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token keyword">float</span> h37 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>v7<span class="token punctuation">,</span> v36<span class="token punctuation">)</span><span class="token punctuation">;</span>
+highp vec2 v38 <span class="token operator">=</span> v30<span class="token punctuation">;</span>
+highp vec4 v39 <span class="token operator">=</span> _30<span class="token punctuation">.</span>pu_m<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token keyword">float</span> h40 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>v7<span class="token punctuation">,</span> v39<span class="token punctuation">)</span><span class="token punctuation">;</span>
+vec3 v34 <span class="token operator">=</span> <span class="token function">clamp</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token function">texture</span><span class="token punctuation">(</span>Material_Texture2D_0<span class="token punctuation">,</span> v35<span class="token punctuation">)</span><span class="token punctuation">.</span>xyz <span class="token operator">*</span> <span class="token function">vec3</span><span class="token punctuation">(</span>h37<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">+</span> 
+    <span class="token punctuation">(</span><span class="token function">texture</span><span class="token punctuation">(</span>Material_Texture2D_1<span class="token punctuation">,</span> v38<span class="token punctuation">)</span><span class="token punctuation">.</span>xyz <span class="token operator">*</span> <span class="token function">vec3</span><span class="token punctuation">(</span>h40<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">vec3</span><span class="token punctuation">(</span><span class="token number">0.0</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">vec3</span><span class="token punctuation">(</span><span class="token number">1.0</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>精简后得到的 Diff 如下：</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">//  LandscapeCorrd</span>
+highp vec2 v31 <span class="token operator">=</span> <span class="token function">vec2</span><span class="token punctuation">(</span><span class="token number">1.0</span><span class="token punctuation">,</span> <span class="token number">0.0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">float</span> h32 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>in_TEXCOORD0<span class="token punctuation">,</span> v31<span class="token punctuation">)</span><span class="token punctuation">;</span>
+vec2 v30<span class="token punctuation">;</span>
+v30<span class="token punctuation">.</span>x <span class="token operator">=</span> h32<span class="token punctuation">;</span>
+highp vec2 v33 <span class="token operator">=</span> <span class="token function">vec2</span><span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">0.0</span><span class="token punctuation">,</span> <span class="token number">1.0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">float</span> h34 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>in_TEXCOORD0<span class="token punctuation">,</span> v33<span class="token punctuation">)</span><span class="token punctuation">;</span>
+v30<span class="token punctuation">.</span>y <span class="token operator">=</span> h34<span class="token punctuation">;</span>
+vec2 v35 <span class="token operator">=</span> v30 <span class="token operator">*</span> _30<span class="token punctuation">.</span>pu_m<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">.</span>xx<span class="token punctuation">;</span>
+
+<span class="token comment">// TextureCord</span>
+highp <span class="token keyword">float</span> f31 <span class="token operator">=</span> _30<span class="token punctuation">.</span>pu_m<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">.</span>x<span class="token punctuation">;</span>
+vec2 v32 <span class="token operator">=</span> in_TEXCOORD0 <span class="token operator">*</span> <span class="token function">vec2</span><span class="token punctuation">(</span>f31<span class="token punctuation">)</span><span class="token punctuation">;</span>
+vec2 v30 <span class="token operator">=</span> v32<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>两种方式只是最终获取 UV 的计算方式不同，尝试修改 Shader
+代码，将出现偏差的代码改成：</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">//  LandscapeCorrd</span>
+highp vec2 v31 <span class="token operator">=</span> <span class="token function">vec2</span><span class="token punctuation">(</span><span class="token number">1.0</span><span class="token punctuation">,</span> <span class="token number">0.0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">float</span> h32 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>in_TEXCOORD0<span class="token punctuation">,</span> v31<span class="token punctuation">)</span><span class="token punctuation">;</span>
+vec2 v30<span class="token punctuation">;</span>
+v30<span class="token punctuation">.</span>x <span class="token operator">=</span> h32<span class="token punctuation">;</span>
+highp vec2 v33 <span class="token operator">=</span> <span class="token function">vec2</span><span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">0.0</span><span class="token punctuation">,</span> <span class="token number">1.0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">float</span> h34 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>in_TEXCOORD0<span class="token punctuation">,</span> v33<span class="token punctuation">)</span><span class="token punctuation">;</span>
+v30<span class="token punctuation">.</span>y <span class="token operator">=</span> h34<span class="token punctuation">;</span>
+<span class="token operator">-</span> vec2 v35 <span class="token operator">=</span> v30 <span class="token operator">*</span> _30<span class="token punctuation">.</span>pu_m<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">.</span>xx<span class="token punctuation">;</span>
+<span class="token operator">+</span> vec2 v35 <span class="token operator">=</span> in_TEXCOORD0 <span class="token operator">*</span> _30<span class="token punctuation">.</span>pu_m<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">.</span>xx<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>应用修改后，采样完全正确，因此定位到问题是计算 UV
+坐标阶段，然后分别使用 Debug
+功能，获取最终反编译后的代码，对比后发现如下差异：</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">// 修改后                           // 修改前</span>
+<span class="token operator">*</span>_277 <span class="token operator">=</span> _276<span class="token punctuation">;</span>                      <span class="token operator">*</span>_277 <span class="token operator">=</span> _276<span class="token punctuation">;</span>
+float2 _279 <span class="token operator">=</span> <span class="token operator">*</span>in_TEXCOORD0<span class="token punctuation">;</span>       float2 _279 <span class="token operator">=</span> <span class="token operator">*</span>v30 <span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">[</span>RelaxedPrecision<span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>发现修改前后差异是变量 V30 后有个：
+RelaxedPrecision，不强制驱动使用fp16计算，具体解析在<a
+href="https://www.zhihu.com/pin/1176097684682895360">此链接</a></p>
+<p>然后尝试回退代码，将其中用到的变量都改成高精度：</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp">highp vec2 v31 <span class="token operator">=</span> <span class="token function">vec2</span><span class="token punctuation">(</span><span class="token number">1.0</span><span class="token punctuation">,</span> <span class="token number">0.0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token operator">-</span> <span class="token keyword">float</span> h32 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>in_TEXCOORD0<span class="token punctuation">,</span> v31<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token operator">+</span> highp <span class="token keyword">float</span> h32 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>in_TEXCOORD0<span class="token punctuation">,</span> v31<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token operator">-</span> vec2 v30<span class="token punctuation">;</span>
+<span class="token operator">+</span> highp vec2 v30<span class="token punctuation">;</span>
+v30<span class="token punctuation">.</span>x <span class="token operator">=</span> h32<span class="token punctuation">;</span>
+highp vec2 v33 <span class="token operator">=</span> <span class="token function">vec2</span><span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">0.0</span><span class="token punctuation">,</span> <span class="token number">1.0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token operator">-</span> <span class="token keyword">float</span> h34 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>in_TEXCOORD0<span class="token punctuation">,</span> v33<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token operator">+</span> highp <span class="token keyword">float</span> h34 <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>in_TEXCOORD0<span class="token punctuation">,</span> v33<span class="token punctuation">)</span><span class="token punctuation">;</span>
+v30<span class="token punctuation">.</span>y <span class="token operator">=</span> h34<span class="token punctuation">;</span>
+vec2 v35 <span class="token operator">=</span> v30 <span class="token operator">*</span> _30<span class="token punctuation">.</span>pu_m<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">.</span>xx<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>反编译后的代码 diff 如下：</p>
+<p><img data-src="/images/landscape_texture_array/hp_diff.png" width="80%" height="80%" /></p>
+<p>应用修改后，效果也完全正确，因此，当使用 LandscapeCord 节点获取 UV
+坐标时，UE4 编译生成的代码，会对变量做优化，增加
+RelaxedPrecision，这就导致在不同的设备上，运行计算的精度是不确定的，因此在使用该节点时需要注意。</p>
+<p>最后抓帧查看 Landscape 开启高精度后的 ps
+代码，来验证一下之前的问题：</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">// 开启高精度后，v13 被定义成了 highp，对比未开启高精度的 v30</span>
+highp vec2 v13<span class="token punctuation">;</span>
+v13<span class="token punctuation">.</span>x <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>in_TEXCOORD0<span class="token punctuation">,</span> <span class="token function">vec2</span><span class="token punctuation">(</span><span class="token number">1.0</span><span class="token punctuation">,</span> <span class="token number">0.0</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+v13<span class="token punctuation">.</span>y <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>in_TEXCOORD0<span class="token punctuation">,</span> <span class="token function">vec2</span><span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">0.0</span><span class="token punctuation">,</span> <span class="token number">1.0</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+highp vec2 v14 <span class="token operator">=</span> v13 <span class="token operator">*</span> _16<span class="token punctuation">.</span>pu_h<span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">]</span><span class="token punctuation">.</span>xx<span class="token punctuation">;</span>
+highp vec3 v15 <span class="token operator">=</span> <span class="token function">clamp</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token function">texture</span><span class="token punctuation">(</span>Material_Texture2D_0<span class="token punctuation">,</span> v14<span class="token punctuation">)</span><span class="token punctuation">.</span>xyz <span class="token operator">*</span> <span class="token function">vec3</span><span class="token punctuation">(</span><span class="token function">dot</span><span class="token punctuation">(</span>v5<span class="token punctuation">,</span> _16<span class="token punctuation">.</span>pu_h<span class="token punctuation">[</span><span class="token number">5</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">+</span> 
+    <span class="token punctuation">(</span><span class="token function">texture</span><span class="token punctuation">(</span>Material_Texture2D_1<span class="token punctuation">,</span> v14<span class="token punctuation">)</span><span class="token punctuation">.</span>xyz <span class="token operator">*</span> <span class="token function">vec3</span><span class="token punctuation">(</span><span class="token function">dot</span><span class="token punctuation">(</span>v5<span class="token punctuation">,</span> _16<span class="token punctuation">.</span>pu_h<span class="token punctuation">[</span><span class="token number">6</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">vec3</span><span class="token punctuation">(</span><span class="token number">0.0</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">vec3</span><span class="token punctuation">(</span><span class="token number">1.0</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">]]></content>
+      <categories>
+        <category>UE4</category>
+      </categories>
+      <tags>
+        <tag>C++</tag>
+        <tag>UE4</tag>
+        <tag>Landscape</tag>
+        <tag>TextureArray</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Position Based Dynamics</title>
     <url>/post/d6327b48/</url>
     <content><![CDATA[<p>不同于传统意义的PBA（即 Physically based Animation），PBD <a
@@ -3046,7 +3046,9 @@ class="math inline">\(\vec{p}=M\vec{v}\)</span></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Force：冲力</td>
-<td style="text-align: left;">$ = =M $</td>
+<td style="text-align: left;"><span
+class="math inline">\(\vec{F}=\frac{d \vec{p} }{dt} = M
+\vec{a}\)</span></td>
 </tr>
 </tbody>
 </table>
@@ -3085,15 +3087,17 @@ class="math inline">\(\vec{p}=M\vec{v}\)</span></td>
 <tr class="even">
 <td style="text-align: left;">Inertia
 tensor：转动惯量（转动惯量张量）</td>
-<td style="text-align: left;">$ I = R I_0 R^T $</td>
+<td style="text-align: left;">$ I = R I_0 R^T$</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Angular Momentum：角动量</td>
-<td style="text-align: left;">$ = I $</td>
+<td style="text-align: left;"><span class="math inline">\(\vec{L}= I
+\vec{w}\)</span></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Torque：力距</td>
-<td style="text-align: left;">$ = $</td>
+<td style="text-align: left;"><span class="math inline">\(\vec{\tau} =
+\frac{ d \vec{L} }{ dt }\)</span></td>
 </tr>
 </tbody>
 </table>
@@ -3148,8 +3152,8 @@ class="math inline">\(F_e\)</span></p>
 class="math inline">\(F=F_i + F_d + F_d + F_g +
 F_e\)</span>，然后使用之前提到的隐式欧拉公式：</p>
 <p><span class="math display">\[\begin{aligned}
-\vec{v}(t_1) &amp;= \vec{v}(t_0) + M^{-1}  \textcolor{Blue}{\vec{F}(t_0)
-} \Delta t \\
+\vec{v}(t_1) &amp;= \vec{v}(t_0) +
+M^{-1}  \textcolor{SkyBlue}{\vec{F}(t_0) } \Delta t \\
 \vec{x}(t_1) &amp;=\vec{x}(t_0) + \textcolor{Red}{ \vec{v}(t_1) } \Delta
 t
 \end{aligned}\]</span></p>
@@ -3349,7 +3353,7 @@ Buffer，分别来存储质点的位置跟速度，使用线程数组存储二�
 <h2 id="pbd-算法">PBD 算法</h2>
 <h3 id="pbd-算法基本定义">PBD 算法基本定义</h3>
 <p>首先定义 <strong>节点数据</strong>： <span class="math inline">\(i
-\isin [1, ..., N]\)</span></p>
+\in [1, ..., N]\)</span></p>
 <ul>
 <li><span class="math inline">\(N\)</span> ：节点个数</li>
 <li><span class="math inline">\(m_i\)</span>：节点的质量</li>
@@ -3357,7 +3361,7 @@ Buffer，分别来存储质点的位置跟速度，使用线程数组存储二�
 <li><span class="math inline">\(v_i\)</span>：节点速度</li>
 </ul>
 <p>第二部分是 <strong>约束数据</strong>：<span class="math inline">\(j
-\isin [1, ..., M]\)</span></p>
+\in [1, ..., M]\)</span></p>
 <ul>
 <li><span class="math inline">\(M\)</span>：<span
 class="math inline">\(M\)</span> 个约束函数</li>
@@ -3366,7 +3370,7 @@ class="math inline">\(n_j\)</span>：基数（约束函数中例子个数）</li
 <li>$C_j：^{3n_j} $：约束函数（在三维坐标中，每个节点坐标由 3
 个坐标）</li>
 <li>$ {i_1, ... , i_{n_j} }, i_k $：约束函数中节点</li>
-<li><span class="math inline">\(k_j \isin [0,
+<li><span class="math inline">\(k_j \in [0,
 1]\)</span>：约束刚度参数</li>
 <li><span class="math inline">\(C_j(x_{i_1}, ... , x_{i_{n_j}}) =
 0\)</span>：约束等式</li>
@@ -3420,8 +3424,7 @@ C(\vec{x_1}, \vec{x_2}) = ||\vec{x_1} - \vec{x_2}|| - d = 0
 \]</span></p>
 <blockquote>
 <p>在这里 <span class="math inline">\(C(\vec{x_1}, \vec{x_2})\)</span>
-是点 <span class="math inline">\(\bold p_1\)</span> 跟 <span
-class="math inline">\(\bold p_2\)</span> 一个约束函数，<span
+是点 $ p_1$ 跟 $ p_2$ 一个约束函数，<span
 class="math inline">\(n_j\)</span> 基数是 2</p>
 </blockquote>
 <p>这里可以直接套用文章中的求解得出 <span class="math inline">\(\Delta
@@ -3458,29 +3461,31 @@ p1) \times (p3 - p1)|}) - \varphi_0 = 0
 <p><img data-src="/images/pbd_phy/algorithm.png" width="60%" height="60%" /></p>
 </div>
 <p>首先初始化（step(1) ~ step(3)） <span
-class="math inline">\(\bold{x}_i=\bold{x}_i^{0}\)</span>，<span
-class="math inline">\(\bold{v}_i=\bold{v}_i^0\)</span>，<span
+class="math inline">\(\boldsymbol{x}_i=\boldsymbol{x}_i^{0}\)</span>，<span
+class="math inline">\(\boldsymbol{v}_i=\boldsymbol{v}_i^0\)</span>，<span
 class="math inline">\(w_i=\frac{1}{m_i}\)</span>。然后每个步长 <span
 class="math inline">\(\Delta t\)</span>
 时间内更新一次，计算速度跟位置：</p>
 <ul>
-<li>处理外力，计算预测速度： <span class="math inline">\(\bold{v}_i
-\leftarrow \bold{v}_i+\Delta t w_i
-\bold{f}_{ext}{\bold{x}_i}\)</span></li>
+<li>处理外力，计算预测速度： <span
+class="math inline">\(\boldsymbol{v}_i \leftarrow
+\boldsymbol{v}_i+\Delta t w_i
+\boldsymbol{f}_{ext}{\boldsymbol{x}_i}\)</span></li>
 </ul>
 <blockquote>
 <ol type="1">
-<li>这里的 <span class="math inline">\(\bold{f}_{ext}\)</span>
+<li>这里的 <span class="math inline">\(\boldsymbol{f}_{ext}\)</span>
 包含重力，风力等)</li>
 <li>然后如果有些质点要固定不动，可以将质量设置成无限大，则 <span
 class="math inline">\(w_i\)</span> 为 0 ，质点的位置就不受影响）</li>
 </ol>
 </blockquote>
 <ul>
-<li>处理阻尼： <span class="math inline">\(dampVelocities(\bold{v}_1,
-... , \bold{v}_N)\)</span></li>
-<li>预测下一个位置：<span class="math inline">\(\bold{p}_i \leftarrow
-\bold{x}_i + \Delta t \bold{v}_i\)</span></li>
+<li>处理阻尼： <span
+class="math inline">\(dampVelocities(\boldsymbol{v}_1, ... ,
+\boldsymbol{v}_N)\)</span></li>
+<li>预测下一个位置：<span class="math inline">\(\boldsymbol{p}_i
+\leftarrow \boldsymbol{x}_i + \Delta t \boldsymbol{v}_i\)</span></li>
 </ul>
 <blockquote>
 <p>这里也是用到半隐式法</p>
@@ -3488,14 +3493,15 @@ class="math inline">\(w_i\)</span> 为 0 ，质点的位置就不受影响）</l
 <ul>
 <li>碰撞检测，生成 <span class="math inline">\(M_{coll}\)</span>
 个碰撞约束： <span
-class="math inline">\(generateCollisionConstraints(\bold{x}_i
-\rightarrow \bold{p}_i)\)</span></li>
+class="math inline">\(generateCollisionConstraints(\boldsymbol{x}_i
+\rightarrow \boldsymbol{p}_i)\)</span></li>
 <li>若干次迭代：每次迭代处理一遍约束： <span
 class="math inline">\(projectConstraints(C_1, ... , C_{M+M_{coll}},
-\bold{p}_1, ..., \bold{p}_N)\)</span></li>
-<li>速度、位置更新：<span class="math inline">\(\bold{v}_i \leftarrow
-(\bold{p}_i - \bold{x}_i)/\Delta t\)</span>，<span
-class="math inline">\(\bold{x}_i \leftarrow \bold{p}_i\)</span></li>
+\boldsymbol{p}_1, ..., \boldsymbol{p}_N)\)</span></li>
+<li>速度、位置更新：<span class="math inline">\(\boldsymbol{v}_i
+\leftarrow (\boldsymbol{p}_i - \boldsymbol{x}_i)/\Delta
+t\)</span>，<span class="math inline">\(\boldsymbol{x}_i \leftarrow
+\boldsymbol{p}_i\)</span></li>
 </ul>
 <h3 id="代码解析-810">代码解析 <a
 href="#ref-anchor-8"><sup>8,</sup></a><a
@@ -4483,6 +4489,42 @@ BtnBack 跟 ImageTest，然后每个 Object
       </tags>
   </entry>
   <entry>
+    <title>UE4 Render Pipeline</title>
+    <url>/post/f83cc9a1/</url>
+    <content><![CDATA[<p>终于发奋去研究 UE4
+渲染管线了，下面是从网上搜集到的资料，后续会逐步了解渲染管线各个步骤的技术方案。</p>
+<p>下图的渲染图详细解释在如下链接中 <a
+href="https://www.bilibili.com/video/BV1yb411c7in/">虚幻引擎中文技术直播
+第1期 虚幻引擎4的实时渲染流程</a> <img data-src="/images/ue4_render_pipline/render_1.jpg" alt="render_1" /></p>
+<figure>
+<img data-src="/images/ue4_render_pipline/render_3.jpg" alt="render_2" />
+<figcaption aria-hidden="true">render_2</figcaption>
+</figure>
+<p>下面是官方的完整管线图</p>
+<figure>
+<img data-src="/images/ue4_render_pipline/ue_render.jpg"
+alt="render_pipline" />
+<figcaption aria-hidden="true">render_pipline</figcaption>
+</figure>
+<h2 id="参考">参考</h2>
+<p><a
+href="https://www.cnblogs.com/shiroe/p/15571757.html">代码质疑人生：渲染管线Pipeline</a>
+<a href="https://learn.unrealengine.com/home/dashboard">Unreal Engine
+官网在线课程</a> <a
+href="https://learn.unrealengine.com/home/LearningPath/94219">介绍实时渲染原理</a>
+<a
+href="https://blog.csdn.net/leonwei/article/details/84821849">UE4渲染系统概览：列举了UE4
+渲染类视图跟流程图</a></p>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">]]></content>
+      <categories>
+        <category>UE4</category>
+      </categories>
+      <tags>
+        <tag>UE4</tag>
+        <tag>RenderPipline</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>UE4 反射系统</title>
     <url>/post/6605f9f/</url>
     <content><![CDATA[<h2 id="ue4-反射系统">UE4 反射系统</h2>
@@ -5275,42 +5317,6 @@ UClass<span class="token operator">*</span> <span class="token function">Z_Const
         <tag>C++</tag>
         <tag>UE4</tag>
         <tag>Reflection</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>UE4 Render Pipeline</title>
-    <url>/post/f83cc9a1/</url>
-    <content><![CDATA[<p>终于发奋去研究 UE4
-渲染管线了，下面是从网上搜集到的资料，后续会逐步了解渲染管线各个步骤的技术方案。</p>
-<p>下图的渲染图详细解释在如下链接中 <a
-href="https://www.bilibili.com/video/BV1yb411c7in/">虚幻引擎中文技术直播
-第1期 虚幻引擎4的实时渲染流程</a> <img data-src="/images/ue4_render_pipline/render_1.jpg" alt="render_1" /></p>
-<figure>
-<img data-src="/images/ue4_render_pipline/render_3.jpg" alt="render_2" />
-<figcaption aria-hidden="true">render_2</figcaption>
-</figure>
-<p>下面是官方的完整管线图</p>
-<figure>
-<img data-src="/images/ue4_render_pipline/ue_render.jpg"
-alt="render_pipline" />
-<figcaption aria-hidden="true">render_pipline</figcaption>
-</figure>
-<h2 id="参考">参考</h2>
-<p><a
-href="https://www.cnblogs.com/shiroe/p/15571757.html">代码质疑人生：渲染管线Pipeline</a>
-<a href="https://learn.unrealengine.com/home/dashboard">Unreal Engine
-官网在线课程</a> <a
-href="https://learn.unrealengine.com/home/LearningPath/94219">介绍实时渲染原理</a>
-<a
-href="https://blog.csdn.net/leonwei/article/details/84821849">UE4渲染系统概览：列举了UE4
-渲染类视图跟流程图</a></p>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">]]></content>
-      <categories>
-        <category>UE4</category>
-      </categories>
-      <tags>
-        <tag>UE4</tag>
-        <tag>RenderPipline</tag>
       </tags>
   </entry>
   <entry>
