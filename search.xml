@@ -2856,11 +2856,14 @@ href="#ref-anchor-1"><sup>1</sup></a>
 <h2 id="物理模型">物理模型</h2>
 <h3 id="物理对象">物理对象</h3>
 <p>物理对象包括如下几种：</p>
-<p><strong>Actor - Static</strong> ：静态的物体阻挡 <strong>Actor -
-Dynamic</strong> ：符合动力学原理的 Actor，可以移动的物体
-<strong>Trigger</strong>：触发器 <strong>Actor -
-Kinematic</strong>：特殊的 Dynamic
-actor，根据游戏需要的运动物体，不符合动力学原理的 Actor</p>
+<ul>
+<li><strong>Actor - Static</strong> ：静态的物体阻挡</li>
+<li><strong>Actor - Dynamic</strong> ：符合动力学原理的
+Actor，可以移动的物体</li>
+<li><strong>Trigger</strong>：触发器</li>
+<li><strong>Actor - Kinematic</strong>：特殊的 Dynamic
+actor，根据游戏需要的运动物体，不符合动力学原理的 Actor</li>
+</ul>
 <h3 id="actor-形状">Actor 形状</h3>
 <p>物理中 Actor 形状又如下几种</p>
 <ul>
