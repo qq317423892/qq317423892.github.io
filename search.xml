@@ -798,241 +798,6 @@ Atmospheric Scattering</a></p>
       </tags>
   </entry>
   <entry>
-    <title>第一次使用Github + Hexo搭建博客</title>
-    <url>/post/568ad23c/</url>
-    <content><![CDATA[<p>偶然看到一个大神的文章，讲到怎么使用GitHub跟Hexo搭建博客，便依照大神给的方法尝试了一遍，便有了今天这个博客。大神的<a
-href="https://imzlp.com/posts/58952/">博客链接</a></p>
-<p>环境: Win10</p>
-<h2 id="前期准备">前期准备</h2>
-<h3 id="安装必要工具">安装必要工具</h3>
-<ul>
-<li>node.js</li>
-<li>git</li>
-<li>github账号</li>
-</ul>
-<h3 id="创建自己的github.io">创建自己的github.io</h3>
-<p>登录你注册号的github账号，在账户下创建一个特殊的仓库(repo)，命名是固定的:your_github_id.github.io</p>
-<span id="more"></span>
-<h3 id="生成公私钥">生成公私钥</h3>
-<p>安装好Git软件后，在cmd命令行中生成SSH keys。</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">ssh-keygen -t rsa -C <span class="token string">"emain_address@youremail.com"</span>
-Generating public/private rsa key pair.
-Enter <span class="token function">file</span> <span class="token keyword">in</span> <span class="token function">which</span> to save the key <span class="token punctuation">(</span>C:<span class="token punctuation">\</span>Users<span class="token punctuation">\</span>your_user_directory/.ssh/id_rsa<span class="token punctuation">)</span>::<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-<p>然后系统会要求你输入秘钥名字，按回车就好，接着按照提示输入密码即可。</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">Your identification has been saved <span class="token keyword">in</span> C:<span class="token punctuation">\</span>Users<span class="token punctuation">\</span>your_user_directory/.ssh/id_rsa.
-Your public key has been saved <span class="token keyword">in</span> C:<span class="token punctuation">\</span>Users<span class="token punctuation">\</span>your_user_directory/.ssh/id_rsa.pub.
-The key fingerprint is:
-SHA256:UWMR/4HrfxACapJAMSyi2aCBcsvsAU1VDw1TBtwmE8c emain_address@youremail.com
-The key's randomart image is:
-+---<span class="token punctuation">[</span>RSA <span class="token number">2048</span><span class="token punctuation">]</span>----+
-<span class="token operator">|</span>      .+*.+ .oo. <span class="token operator">|</span>
-<span class="token operator">|</span>       <span class="token builtin class-name">.</span> * <span class="token punctuation">..</span>o.  <span class="token operator">|</span>
-<span class="token operator">|</span>        o oE +o  <span class="token operator">|</span>
-<span class="token operator">|</span>        oo+.+.o  <span class="token operator">|</span>
-<span class="token operator">|</span>       <span class="token assign-left variable">oS</span><span class="token operator">=</span> <span class="token operator">=</span><span class="token punctuation">..</span> <span class="token builtin class-name">.</span> <span class="token operator">|</span>
-<span class="token operator">|</span>      o B o     <span class="token builtin class-name">.</span><span class="token operator">|</span>
-<span class="token operator">|</span>       * o. <span class="token punctuation">..</span>  +<span class="token operator">|</span>
-<span class="token operator">|</span>      <span class="token builtin class-name">.</span> <span class="token punctuation">..</span> <span class="token punctuation">..</span>.oo+<span class="token operator">|</span>
-<span class="token operator">|</span>        <span class="token punctuation">..</span> .o<span class="token operator">==</span><span class="token operator">=</span>B<span class="token operator">|</span>
-+----<span class="token punctuation">[</span>SHA256<span class="token punctuation">]</span>-----+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h3 id="配置ssh-key到github">配置SSH Key到GitHub</h3>
-<ul>
-<li>打开本地
-**C:_user_directory/.ssh/id_rsa.pub**文件，复制文件里的公钥内容。</li>
-<li>登录github系统，点击页面上 左上角个人图标 -&gt; Settings -&gt; SSH
-keys -&gt; ADD SSH Key</li>
-<li>把刚刚复制的密钥复制到Key文本框中，点击add key就ok了</li>
-</ul>
-<p>测试密钥是否能访问(当前目录下的密钥文件：blog_ssh)</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">ssh</span> -i blog_ssh git@github.com<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>如果密钥设置了密码访问，则按照提示输入密码，出现以下提示表示访问成功了。</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">E:<span class="token punctuation">\</span>Blog<span class="token punctuation">\</span>blog<span class="token punctuation">\</span>doc<span class="token operator">></span>ssh -i blog git@github.com
-Enter passphrase <span class="token keyword">for</span> key <span class="token string">'blog'</span><span class="token builtin class-name">:</span>
-PTY allocation request failed on channel <span class="token number">0</span>
-Hi your_github_id<span class="token operator">!</span> You've successfully authenticated, but GitHub does not 
-  provide shell access.
-Connection to github.com closed.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h2 id="hexo使用">Hexo使用</h2>
-<h3 id="安装hexo">安装Hexo</h3>
-<p>在你要创建博客的目录下，鼠标右键，打开 gitbash</p>
-<p><img data-src="/images/hello_world/git_bash.png" width=25% height=25% /></p>
-<p>在打开的MINGW64窗口输入以下指令安装Hexo(先安装了node.js才能使用npm指令)</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> <span class="token function">install</span> -g hexo<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<h3 id="部署hexo">部署Hexo</h3>
-<p>新建一个Blog文件夹，然后在该文件夹打开Git Bash</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">hexo init
-<span class="token function">npm</span> <span class="token function">install</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p>Hexo会在这个目录下自动创建建立博客网站需要的文件。
-然后我们可以通过执行下面指令，预览本地博客，本地地址：<strong>localhost:4000</strong></p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">hexo g
-hexo s<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p>设置部署到Github前，需要先安装部署插件 hexo-deployer-git</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> <span class="token function">install</span> hexo-deployer-git --save<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>修改Blog根目录下的_cofig.yml配置文件。</p>
-<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">deploy</span><span class="token punctuation">:</span>
-  <span class="token key atrule">type</span><span class="token punctuation">:</span> git
-  <span class="token key atrule">repository</span><span class="token punctuation">:</span> git@github.com<span class="token punctuation">:</span>qq317423892/qq317423892.github.io.git
-  <span class="token key atrule">branch</span><span class="token punctuation">:</span> master<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-<p>执行后就可以使用下列指令部署，注意部署会覆盖你之前在版本库中存放的文件，如果有文件不想被覆盖，可以放到Blog/source目录例如:Blog/source/CNAME</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">hexo clean
-hexo g
-hexo d<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-<p>或者使用组合命令</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">hexo clean
-hexo d -g<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<blockquote>
-<p>hexo clean 清理生成的文件 hexo g 或者 hexo generate 可以生成网站文件
-hexo s 或者 hexo server 可以启动本地服务器</p>
-</blockquote>
-<p>注意在gitbash中部署时，要手动添加密钥，可以使用下面指令</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment">#启动ssh服务</span>
-<span class="token builtin class-name">eval</span> <span class="token variable"><span class="token variable">$(</span>ssh-agent -s<span class="token variable">)</span></span>
-
-<span class="token comment"># 添加ssh文件: c:\Users\your_user_name\.ssh\blog_ssh</span>
-ssh-add /c/Users/your_use_name/.ssh/blog_ssh <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h3 id="更换主题next">更换主题NexT</h3>
-<p>在blog目录下拉取Next主题资源</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">git</span> clone https://github.com/iissnan/hexo-theme-next themes/next<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>打开blog跟目录配置文件：_cofig.yml，找到theme选项，改成next</p>
-<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token comment"># Extensions</span>
-<span class="token comment">## Plugins: https://hexo.io/plugins/</span>
-<span class="token comment">## Themes: https://hexo.io/themes/</span>
-<span class="token key atrule">theme</span><span class="token punctuation">:</span> next<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-<p>由于Hexo在5.0版本把swig给删除了，需要自己手动安装:hexo-renderer-swig</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> <span class="token function">install</span> hexo-renderer-swig<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>即可解决下面的渲染报错
-<img data-src="/images/hello_world/next_theme_err.png" width=100% height=100% /></p>
-<h3 id="站点概况">站点概况</h3>
-<p><img data-src="/images/hello_world/site_info.png" width=30% height=30% /></p>
-<p>这里对应根目录下的配置文件：_config.yml</p>
-<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token comment"># Site</span>
-<span class="token key atrule">title</span><span class="token punctuation">:</span> 十三
-<span class="token key atrule">subtitle</span><span class="token punctuation">:</span> <span class="token string">'安心学技术'</span>
-<span class="token key atrule">description</span><span class="token punctuation">:</span> Watch and learn<span class="token punctuation">,</span> your magic is mine<span class="token tag">!</span>
-<span class="token key atrule">keywords</span><span class="token punctuation">:</span> <span class="token string">"Unity, UE4"</span>
-<span class="token key atrule">author</span><span class="token punctuation">:</span> 小贤
-<span class="token key atrule">language</span><span class="token punctuation">:</span> zh<span class="token punctuation">-</span>CN<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p><img data-src="/images/hello_world/site_info_avatar.png" width=30% height=30% /></p>
-<p>这里对应的是next目录下的配置文件:_config.yml 显示头像</p>
-<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token comment"># Sidebar Avatar</span>
-<span class="token comment"># in theme directory(source/images): /images/avatar.gif</span>
-<span class="token comment"># in site  directory(source/uploads): /uploads/avatar.gif</span>
-<span class="token key atrule">avatar</span><span class="token punctuation">:</span> /images/avatar.jpg<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-<h3 id="新增目录">新增目录</h3>
-<p>侧边栏的目录项配置在next主题下的配置文件：_config.yml</p>
-<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">menu</span><span class="token punctuation">:</span>
-  <span class="token key atrule">home</span><span class="token punctuation">:</span> /<span class="token punctuation">|</span><span class="token punctuation">|</span> home
-  <span class="token key atrule">about</span><span class="token punctuation">:</span> /about/<span class="token punctuation">|</span><span class="token punctuation">|</span> user
-  <span class="token key atrule">tags</span><span class="token punctuation">:</span> /tags/<span class="token punctuation">|</span><span class="token punctuation">|</span> tags
-  <span class="token key atrule">categories</span><span class="token punctuation">:</span> /categories/<span class="token punctuation">|</span><span class="token punctuation">|</span> th
-  <span class="token key atrule">archives</span><span class="token punctuation">:</span> /archives/<span class="token punctuation">|</span><span class="token punctuation">|</span> archive
-  <span class="token comment">#schedule: /schedule/ || calendar</span>
-  <span class="token comment">#sitemap: /sitemap.xml || sitemap</span>
-  <span class="token comment">#commonweal: /404/ || heartbeat</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>可以通过下面的指令增加对应的目录，配置文件中的 ||
-前面不要留空格，否则标签页访问会失败</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">hexo new page <span class="token string">"categories"</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<h3 id="新建文章">新建文章</h3>
-<p>新增文章用下面的指令，会在默认的文件夹下新增文章（默认的是:blog/source/_posts），打开对应的路径，可以看到新增的md文件，编辑文章就可以了。</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">hexo new <span class="token string">"test_article"</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>打开md文件，可以设置文章的分类跟标签Tag</p>
-<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token punctuation">---</span>
-<span class="token key atrule">title</span><span class="token punctuation">:</span> Test
-<span class="token key atrule">date</span><span class="token punctuation">:</span> <span class="token datetime number">2021-03-25 12:52:30</span>
-<span class="token key atrule">tags</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>Unity<span class="token punctuation">,</span> C<span class="token comment">#, InjectFix]</span>
-<span class="token key atrule">categories</span><span class="token punctuation">:</span> Unity开发
-<span class="token punctuation">---</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h3 id="设置文章字数">设置文章字数</h3>
-<p>先安装插件</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> i --save hexo-wordcount<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>打开next主题下的配置文件:_config.yml</p>
-<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token comment"># Post wordcount display settings</span>
-<span class="token comment"># Dependencies: https://github.com/willin/hexo-wordcount</span>
-<span class="token key atrule">post_wordcount</span><span class="token punctuation">:</span>
-  <span class="token key atrule">item_text</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
-  <span class="token key atrule">wordcount</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
-  <span class="token key atrule">min2read</span><span class="token punctuation">:</span> <span class="token boolean important">true</span> 
-  <span class="token key atrule">totalcount</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
-  <span class="token key atrule">separated_meta</span><span class="token punctuation">:</span> <span class="token boolean important">true</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<blockquote>
-<p>wordcount:显示字数 min2read: 显示阅读时长 totalcount：博客总字数</p>
-</blockquote>
-<h3 id="设置文章分割全部显示">设置文章分割（全部显示）</h3>
-<p>推荐自己在文章中插入:<font color=Red><strong>&lt;!-- more
---&gt;</strong> </font> ，也可以设置 auto_excerpt，length 表示字数。</p>
-<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token comment"># Automatically Excerpt. Not recommend.</span>
-<span class="token comment"># Please use &lt;!-- more --> in the post to control excerpt accurately.</span>
-<span class="token key atrule">auto_excerpt</span><span class="token punctuation">:</span>
-  <span class="token key atrule">enable</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
-  <span class="token key atrule">length</span><span class="token punctuation">:</span> <span class="token number">150</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h3 id="站内搜索">站内搜索</h3>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> <span class="token function">install</span> hexo-generator-search --save
-<span class="token function">npm</span> <span class="token function">install</span> hexo-generator-searchdb --save<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token comment"># Dependencies: https://github.com/flashlab/hexo-generator-search</span>
-<span class="token key atrule">local_search</span><span class="token punctuation">:</span>
-  <span class="token key atrule">enable</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
-  <span class="token comment"># if auto, trigger search by changing input</span>
-  <span class="token comment"># if manual, trigger search by pressing enter key or search button</span>
-  <span class="token key atrule">trigger</span><span class="token punctuation">:</span> auto
-  <span class="token comment"># show top n results per article, show all results by setting to -1</span>
-  <span class="token key atrule">top_n_per_article</span><span class="token punctuation">:</span> <span class="token number">1</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h3 id="plantuml">plantUML</h3>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> <span class="token function">install</span> hexo-tag-plantuml<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<pre class="line-numbers language-markdown" data-language="markdown"><code class="language-markdown">&#123;% plantuml %&#125;
-title Relationships - Class Diagram
-
-class Dwelling &#123;
-  +Int Windows
-  +void LockTheDoor()
-&#125;
-
-class Apartment
-class House
-class Commune
-class Window
-class Door
-
-Dwelling &lt;|-down- Apartment: Inheritance
-Dwelling &lt;|-down- Commune: Inheritance
-Dwelling &lt;|-down- House: Inheritance
-Dwelling "1" <span class="token italic"><span class="token punctuation">*</span><span class="token content">-up- "many" Window: Composition
-Dwelling "1" </span><span class="token punctuation">*</span></span>-up- "many" Door: Composition
-&#123;% endplantuml %&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>效果如下： <img  data-src=http://www.plantuml.com/plantuml/svg/XP0z2y8m48Rt_8gZanzaS2qkKWSBJY8uXpQqXybTQ5ABgF_TrhQAuCUMbpptt4V0O3Jij541cNo9peE4n2ZlOOsgg9GL8kjZeur1Ak0Y0EOf1JWWvTpuBfuOSzXoTjoNUirSJQRYDXQkdAg2rHI6lE7Qw-6TiBKrZQaNZlrQZH3FhikhRFz8ldGnf5Jg2eEYJ7y01_S_x37E5oXQH32JjPCGMKNdQ9WmxjoEFNP7-q5tAxonTm00></p>
-<h3 id="不算子统计访问量">不算子统计访问量</h3>
-<p>打开 _config.yml，搜索找到 busuanzi_count，把 enable 设置为
-true，并增加如下配置：</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"># Show <span class="token constant">PV</span><span class="token operator">/</span><span class="token constant">UV</span> <span class="token keyword">of</span> the website<span class="token operator">/</span>page <span class="token keyword">with</span> busuanzi<span class="token punctuation">.</span>
-# Get more information on http<span class="token operator">:</span><span class="token operator">/</span><span class="token operator">/</span>ibruce<span class="token punctuation">.</span>info<span class="token operator">/</span><span class="token number">2015</span><span class="token operator">/</span><span class="token number">04</span><span class="token operator">/</span><span class="token number">04</span><span class="token operator">/</span>busuanzi<span class="token operator">/</span>
-<span class="token literal-property property">busuanzi_count</span><span class="token operator">:</span>
-  # count values only <span class="token keyword">if</span> the other configs are <span class="token boolean">false</span>
-  <span class="token literal-property property">enable</span><span class="token operator">:</span> <span class="token boolean">true</span> 
-  <span class="token literal-property property">total_visitors</span><span class="token operator">:</span> <span class="token boolean">true</span>  # 统计访客数
-  <span class="token literal-property property">total_visitors_icon</span><span class="token operator">:</span> user
-  <span class="token literal-property property">total_views</span><span class="token operator">:</span> <span class="token boolean">true</span>     # 统计访问数
-  <span class="token literal-property property">total_views_icon</span><span class="token operator">:</span> eye
-  <span class="token literal-property property">post_views</span><span class="token operator">:</span> <span class="token boolean">true</span>      # 统计文章阅读数
-  <span class="token literal-property property">post_views_icon</span><span class="token operator">:</span> eye<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>在该文件中找到 footer，并在该配置下增加 counter，设置值为 true</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token literal-property property">counter</span><span class="token operator">:</span> <span class="token boolean">true</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>来到
-themes_partials，找到footer.swig文件，打开编辑，在底下添加代码</p>
-<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token punctuation">&#123;</span><span class="token operator">%</span> <span class="token keyword">if</span> theme<span class="token punctuation">.</span>footer<span class="token punctuation">.</span>counter <span class="token operator">%</span><span class="token punctuation">&#125;</span>
-    <span class="token operator">&lt;</span>script <span class="token keyword">async</span> src<span class="token operator">=</span><span class="token string">"//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>script<span class="token operator">></span>
-<span class="token punctuation">&#123;</span><span class="token operator">%</span> endif <span class="token operator">%</span><span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-<p>效果如下：（ps 本地测试数字会很大，可以忽视）</p>
-<p><img data-src="/images/hello_world/busuanzi.png" width=70% height=70% /></p>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">]]></content>
-      <categories>
-        <category>Blog</category>
-        <category>Hexo</category>
-        <category>Github</category>
-      </categories>
-      <tags>
-        <tag>others</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>egret UI 合批</title>
     <url>/post/289143f8/</url>
     <content><![CDATA[<h2 id="图集方案">图集方案</h2>
@@ -1821,6 +1586,241 @@ href="https://bbs.egret.com/thread-43642-1-1.html">4.一个高性能的文本控
       <tags>
         <tag>egret</tag>
         <tag>ui</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>第一次使用Github + Hexo搭建博客</title>
+    <url>/post/568ad23c/</url>
+    <content><![CDATA[<p>偶然看到一个大神的文章，讲到怎么使用GitHub跟Hexo搭建博客，便依照大神给的方法尝试了一遍，便有了今天这个博客。大神的<a
+href="https://imzlp.com/posts/58952/">博客链接</a></p>
+<p>环境: Win10</p>
+<h2 id="前期准备">前期准备</h2>
+<h3 id="安装必要工具">安装必要工具</h3>
+<ul>
+<li>node.js</li>
+<li>git</li>
+<li>github账号</li>
+</ul>
+<h3 id="创建自己的github.io">创建自己的github.io</h3>
+<p>登录你注册号的github账号，在账户下创建一个特殊的仓库(repo)，命名是固定的:your_github_id.github.io</p>
+<span id="more"></span>
+<h3 id="生成公私钥">生成公私钥</h3>
+<p>安装好Git软件后，在cmd命令行中生成SSH keys。</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">ssh-keygen -t rsa -C <span class="token string">"emain_address@youremail.com"</span>
+Generating public/private rsa key pair.
+Enter <span class="token function">file</span> <span class="token keyword">in</span> <span class="token function">which</span> to save the key <span class="token punctuation">(</span>C:<span class="token punctuation">\</span>Users<span class="token punctuation">\</span>your_user_directory/.ssh/id_rsa<span class="token punctuation">)</span>::<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>然后系统会要求你输入秘钥名字，按回车就好，接着按照提示输入密码即可。</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">Your identification has been saved <span class="token keyword">in</span> C:<span class="token punctuation">\</span>Users<span class="token punctuation">\</span>your_user_directory/.ssh/id_rsa.
+Your public key has been saved <span class="token keyword">in</span> C:<span class="token punctuation">\</span>Users<span class="token punctuation">\</span>your_user_directory/.ssh/id_rsa.pub.
+The key fingerprint is:
+SHA256:UWMR/4HrfxACapJAMSyi2aCBcsvsAU1VDw1TBtwmE8c emain_address@youremail.com
+The key's randomart image is:
++---<span class="token punctuation">[</span>RSA <span class="token number">2048</span><span class="token punctuation">]</span>----+
+<span class="token operator">|</span>      .+*.+ .oo. <span class="token operator">|</span>
+<span class="token operator">|</span>       <span class="token builtin class-name">.</span> * <span class="token punctuation">..</span>o.  <span class="token operator">|</span>
+<span class="token operator">|</span>        o oE +o  <span class="token operator">|</span>
+<span class="token operator">|</span>        oo+.+.o  <span class="token operator">|</span>
+<span class="token operator">|</span>       <span class="token assign-left variable">oS</span><span class="token operator">=</span> <span class="token operator">=</span><span class="token punctuation">..</span> <span class="token builtin class-name">.</span> <span class="token operator">|</span>
+<span class="token operator">|</span>      o B o     <span class="token builtin class-name">.</span><span class="token operator">|</span>
+<span class="token operator">|</span>       * o. <span class="token punctuation">..</span>  +<span class="token operator">|</span>
+<span class="token operator">|</span>      <span class="token builtin class-name">.</span> <span class="token punctuation">..</span> <span class="token punctuation">..</span>.oo+<span class="token operator">|</span>
+<span class="token operator">|</span>        <span class="token punctuation">..</span> .o<span class="token operator">==</span><span class="token operator">=</span>B<span class="token operator">|</span>
++----<span class="token punctuation">[</span>SHA256<span class="token punctuation">]</span>-----+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="配置ssh-key到github">配置SSH Key到GitHub</h3>
+<ul>
+<li>打开本地
+**C:_user_directory/.ssh/id_rsa.pub**文件，复制文件里的公钥内容。</li>
+<li>登录github系统，点击页面上 左上角个人图标 -&gt; Settings -&gt; SSH
+keys -&gt; ADD SSH Key</li>
+<li>把刚刚复制的密钥复制到Key文本框中，点击add key就ok了</li>
+</ul>
+<p>测试密钥是否能访问(当前目录下的密钥文件：blog_ssh)</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">ssh</span> -i blog_ssh git@github.com<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>如果密钥设置了密码访问，则按照提示输入密码，出现以下提示表示访问成功了。</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">E:<span class="token punctuation">\</span>Blog<span class="token punctuation">\</span>blog<span class="token punctuation">\</span>doc<span class="token operator">></span>ssh -i blog git@github.com
+Enter passphrase <span class="token keyword">for</span> key <span class="token string">'blog'</span><span class="token builtin class-name">:</span>
+PTY allocation request failed on channel <span class="token number">0</span>
+Hi your_github_id<span class="token operator">!</span> You've successfully authenticated, but GitHub does not 
+  provide shell access.
+Connection to github.com closed.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h2 id="hexo使用">Hexo使用</h2>
+<h3 id="安装hexo">安装Hexo</h3>
+<p>在你要创建博客的目录下，鼠标右键，打开 gitbash</p>
+<p><img data-src="/images/hello_world/git_bash.png" width=25% height=25% /></p>
+<p>在打开的MINGW64窗口输入以下指令安装Hexo(先安装了node.js才能使用npm指令)</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> <span class="token function">install</span> -g hexo<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<h3 id="部署hexo">部署Hexo</h3>
+<p>新建一个Blog文件夹，然后在该文件夹打开Git Bash</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">hexo init
+<span class="token function">npm</span> <span class="token function">install</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>Hexo会在这个目录下自动创建建立博客网站需要的文件。
+然后我们可以通过执行下面指令，预览本地博客，本地地址：<strong>localhost:4000</strong></p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">hexo g
+hexo s<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>设置部署到Github前，需要先安装部署插件 hexo-deployer-git</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> <span class="token function">install</span> hexo-deployer-git --save<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>修改Blog根目录下的_cofig.yml配置文件。</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">deploy</span><span class="token punctuation">:</span>
+  <span class="token key atrule">type</span><span class="token punctuation">:</span> git
+  <span class="token key atrule">repository</span><span class="token punctuation">:</span> git@github.com<span class="token punctuation">:</span>qq317423892/qq317423892.github.io.git
+  <span class="token key atrule">branch</span><span class="token punctuation">:</span> master<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<p>执行后就可以使用下列指令部署，注意部署会覆盖你之前在版本库中存放的文件，如果有文件不想被覆盖，可以放到Blog/source目录例如:Blog/source/CNAME</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">hexo clean
+hexo g
+hexo d<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>或者使用组合命令</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">hexo clean
+hexo d -g<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<blockquote>
+<p>hexo clean 清理生成的文件 hexo g 或者 hexo generate 可以生成网站文件
+hexo s 或者 hexo server 可以启动本地服务器</p>
+</blockquote>
+<p>注意在gitbash中部署时，要手动添加密钥，可以使用下面指令</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment">#启动ssh服务</span>
+<span class="token builtin class-name">eval</span> <span class="token variable"><span class="token variable">$(</span>ssh-agent -s<span class="token variable">)</span></span>
+
+<span class="token comment"># 添加ssh文件: c:\Users\your_user_name\.ssh\blog_ssh</span>
+ssh-add /c/Users/your_use_name/.ssh/blog_ssh <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="更换主题next">更换主题NexT</h3>
+<p>在blog目录下拉取Next主题资源</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">git</span> clone https://github.com/iissnan/hexo-theme-next themes/next<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>打开blog跟目录配置文件：_cofig.yml，找到theme选项，改成next</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token comment"># Extensions</span>
+<span class="token comment">## Plugins: https://hexo.io/plugins/</span>
+<span class="token comment">## Themes: https://hexo.io/themes/</span>
+<span class="token key atrule">theme</span><span class="token punctuation">:</span> next<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<p>由于Hexo在5.0版本把swig给删除了，需要自己手动安装:hexo-renderer-swig</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> <span class="token function">install</span> hexo-renderer-swig<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>即可解决下面的渲染报错
+<img data-src="/images/hello_world/next_theme_err.png" width=100% height=100% /></p>
+<h3 id="站点概况">站点概况</h3>
+<p><img data-src="/images/hello_world/site_info.png" width=30% height=30% /></p>
+<p>这里对应根目录下的配置文件：_config.yml</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token comment"># Site</span>
+<span class="token key atrule">title</span><span class="token punctuation">:</span> 十三
+<span class="token key atrule">subtitle</span><span class="token punctuation">:</span> <span class="token string">'安心学技术'</span>
+<span class="token key atrule">description</span><span class="token punctuation">:</span> Watch and learn<span class="token punctuation">,</span> your magic is mine<span class="token tag">!</span>
+<span class="token key atrule">keywords</span><span class="token punctuation">:</span> <span class="token string">"Unity, UE4"</span>
+<span class="token key atrule">author</span><span class="token punctuation">:</span> 小贤
+<span class="token key atrule">language</span><span class="token punctuation">:</span> zh<span class="token punctuation">-</span>CN<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><img data-src="/images/hello_world/site_info_avatar.png" width=30% height=30% /></p>
+<p>这里对应的是next目录下的配置文件:_config.yml 显示头像</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token comment"># Sidebar Avatar</span>
+<span class="token comment"># in theme directory(source/images): /images/avatar.gif</span>
+<span class="token comment"># in site  directory(source/uploads): /uploads/avatar.gif</span>
+<span class="token key atrule">avatar</span><span class="token punctuation">:</span> /images/avatar.jpg<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="新增目录">新增目录</h3>
+<p>侧边栏的目录项配置在next主题下的配置文件：_config.yml</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">menu</span><span class="token punctuation">:</span>
+  <span class="token key atrule">home</span><span class="token punctuation">:</span> /<span class="token punctuation">|</span><span class="token punctuation">|</span> home
+  <span class="token key atrule">about</span><span class="token punctuation">:</span> /about/<span class="token punctuation">|</span><span class="token punctuation">|</span> user
+  <span class="token key atrule">tags</span><span class="token punctuation">:</span> /tags/<span class="token punctuation">|</span><span class="token punctuation">|</span> tags
+  <span class="token key atrule">categories</span><span class="token punctuation">:</span> /categories/<span class="token punctuation">|</span><span class="token punctuation">|</span> th
+  <span class="token key atrule">archives</span><span class="token punctuation">:</span> /archives/<span class="token punctuation">|</span><span class="token punctuation">|</span> archive
+  <span class="token comment">#schedule: /schedule/ || calendar</span>
+  <span class="token comment">#sitemap: /sitemap.xml || sitemap</span>
+  <span class="token comment">#commonweal: /404/ || heartbeat</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>可以通过下面的指令增加对应的目录，配置文件中的 ||
+前面不要留空格，否则标签页访问会失败</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">hexo new page <span class="token string">"categories"</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<h3 id="新建文章">新建文章</h3>
+<p>新增文章用下面的指令，会在默认的文件夹下新增文章（默认的是:blog/source/_posts），打开对应的路径，可以看到新增的md文件，编辑文章就可以了。</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">hexo new <span class="token string">"test_article"</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>打开md文件，可以设置文章的分类跟标签Tag</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token punctuation">---</span>
+<span class="token key atrule">title</span><span class="token punctuation">:</span> Test
+<span class="token key atrule">date</span><span class="token punctuation">:</span> <span class="token datetime number">2021-03-25 12:52:30</span>
+<span class="token key atrule">tags</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>Unity<span class="token punctuation">,</span> C<span class="token comment">#, InjectFix]</span>
+<span class="token key atrule">categories</span><span class="token punctuation">:</span> Unity开发
+<span class="token punctuation">---</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="设置文章字数">设置文章字数</h3>
+<p>先安装插件</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> i --save hexo-wordcount<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>打开next主题下的配置文件:_config.yml</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token comment"># Post wordcount display settings</span>
+<span class="token comment"># Dependencies: https://github.com/willin/hexo-wordcount</span>
+<span class="token key atrule">post_wordcount</span><span class="token punctuation">:</span>
+  <span class="token key atrule">item_text</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
+  <span class="token key atrule">wordcount</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
+  <span class="token key atrule">min2read</span><span class="token punctuation">:</span> <span class="token boolean important">true</span> 
+  <span class="token key atrule">totalcount</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
+  <span class="token key atrule">separated_meta</span><span class="token punctuation">:</span> <span class="token boolean important">true</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<blockquote>
+<p>wordcount:显示字数 min2read: 显示阅读时长 totalcount：博客总字数</p>
+</blockquote>
+<h3 id="设置文章分割全部显示">设置文章分割（全部显示）</h3>
+<p>推荐自己在文章中插入:<font color=Red><strong>&lt;!-- more
+--&gt;</strong> </font> ，也可以设置 auto_excerpt，length 表示字数。</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token comment"># Automatically Excerpt. Not recommend.</span>
+<span class="token comment"># Please use &lt;!-- more --> in the post to control excerpt accurately.</span>
+<span class="token key atrule">auto_excerpt</span><span class="token punctuation">:</span>
+  <span class="token key atrule">enable</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
+  <span class="token key atrule">length</span><span class="token punctuation">:</span> <span class="token number">150</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="站内搜索">站内搜索</h3>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> <span class="token function">install</span> hexo-generator-search --save
+<span class="token function">npm</span> <span class="token function">install</span> hexo-generator-searchdb --save<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token comment"># Dependencies: https://github.com/flashlab/hexo-generator-search</span>
+<span class="token key atrule">local_search</span><span class="token punctuation">:</span>
+  <span class="token key atrule">enable</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
+  <span class="token comment"># if auto, trigger search by changing input</span>
+  <span class="token comment"># if manual, trigger search by pressing enter key or search button</span>
+  <span class="token key atrule">trigger</span><span class="token punctuation">:</span> auto
+  <span class="token comment"># show top n results per article, show all results by setting to -1</span>
+  <span class="token key atrule">top_n_per_article</span><span class="token punctuation">:</span> <span class="token number">1</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="plantuml">plantUML</h3>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> <span class="token function">install</span> hexo-tag-plantuml<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<pre class="line-numbers language-markdown" data-language="markdown"><code class="language-markdown">&#123;% plantuml %&#125;
+title Relationships - Class Diagram
+
+class Dwelling &#123;
+  +Int Windows
+  +void LockTheDoor()
+&#125;
+
+class Apartment
+class House
+class Commune
+class Window
+class Door
+
+Dwelling &lt;|-down- Apartment: Inheritance
+Dwelling &lt;|-down- Commune: Inheritance
+Dwelling &lt;|-down- House: Inheritance
+Dwelling "1" <span class="token italic"><span class="token punctuation">*</span><span class="token content">-up- "many" Window: Composition
+Dwelling "1" </span><span class="token punctuation">*</span></span>-up- "many" Door: Composition
+&#123;% endplantuml %&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>效果如下： <img  data-src=http://www.plantuml.com/plantuml/svg/XP0z2y8m48Rt_8gZanzaS2qkKWSBJY8uXpQqXybTQ5ABgF_TrhQAuCUMbpptt4V0O3Jij541cNo9peE4n2ZlOOsgg9GL8kjZeur1Ak0Y0EOf1JWWvTpuBfuOSzXoTjoNUirSJQRYDXQkdAg2rHI6lE7Qw-6TiBKrZQaNZlrQZH3FhikhRFz8ldGnf5Jg2eEYJ7y01_S_x37E5oXQH32JjPCGMKNdQ9WmxjoEFNP7-q5tAxonTm00></p>
+<h3 id="不算子统计访问量">不算子统计访问量</h3>
+<p>打开 _config.yml，搜索找到 busuanzi_count，把 enable 设置为
+true，并增加如下配置：</p>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"># Show <span class="token constant">PV</span><span class="token operator">/</span><span class="token constant">UV</span> <span class="token keyword">of</span> the website<span class="token operator">/</span>page <span class="token keyword">with</span> busuanzi<span class="token punctuation">.</span>
+# Get more information on http<span class="token operator">:</span><span class="token operator">/</span><span class="token operator">/</span>ibruce<span class="token punctuation">.</span>info<span class="token operator">/</span><span class="token number">2015</span><span class="token operator">/</span><span class="token number">04</span><span class="token operator">/</span><span class="token number">04</span><span class="token operator">/</span>busuanzi<span class="token operator">/</span>
+<span class="token literal-property property">busuanzi_count</span><span class="token operator">:</span>
+  # count values only <span class="token keyword">if</span> the other configs are <span class="token boolean">false</span>
+  <span class="token literal-property property">enable</span><span class="token operator">:</span> <span class="token boolean">true</span> 
+  <span class="token literal-property property">total_visitors</span><span class="token operator">:</span> <span class="token boolean">true</span>  # 统计访客数
+  <span class="token literal-property property">total_visitors_icon</span><span class="token operator">:</span> user
+  <span class="token literal-property property">total_views</span><span class="token operator">:</span> <span class="token boolean">true</span>     # 统计访问数
+  <span class="token literal-property property">total_views_icon</span><span class="token operator">:</span> eye
+  <span class="token literal-property property">post_views</span><span class="token operator">:</span> <span class="token boolean">true</span>      # 统计文章阅读数
+  <span class="token literal-property property">post_views_icon</span><span class="token operator">:</span> eye<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>在该文件中找到 footer，并在该配置下增加 counter，设置值为 true</p>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token literal-property property">counter</span><span class="token operator">:</span> <span class="token boolean">true</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>来到
+themes_partials，找到footer.swig文件，打开编辑，在底下添加代码</p>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token punctuation">&#123;</span><span class="token operator">%</span> <span class="token keyword">if</span> theme<span class="token punctuation">.</span>footer<span class="token punctuation">.</span>counter <span class="token operator">%</span><span class="token punctuation">&#125;</span>
+    <span class="token operator">&lt;</span>script <span class="token keyword">async</span> src<span class="token operator">=</span><span class="token string">"//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>script<span class="token operator">></span>
+<span class="token punctuation">&#123;</span><span class="token operator">%</span> endif <span class="token operator">%</span><span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>效果如下：（ps 本地测试数字会很大，可以忽视）</p>
+<p><img data-src="/images/hello_world/busuanzi.png" width=70% height=70% /></p>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">]]></content>
+      <categories>
+        <category>Blog</category>
+        <category>Hexo</category>
+        <category>Github</category>
+      </categories>
+      <tags>
+        <tag>others</tag>
       </tags>
   </entry>
   <entry>
@@ -4512,6 +4512,833 @@ fluids</a></p>
       </tags>
   </entry>
   <entry>
+    <title>物理模拟过程简介</title>
+    <url>/post/4dab7192/</url>
+    <content><![CDATA[<h1 id="物理模拟流程">物理模拟流程</h1>
+<p>物理模拟循环主要有三个阶段构成：</p>
+<ul>
+<li>碰撞检测（Collision Detection）</li>
+<li>约束求解（Constraint Solving）</li>
+<li>数值时间积分（Time Integration）</li>
+</ul>
+<div data-align="center">
+<p><img data-src="/images/phy_intro/phy_engine.svg" width="60%" height="60%" /></p>
+</div>
+<h1 id="数值时间积分">数值时间积分</h1>
+<h2 id="欧拉公式">欧拉公式</h2>
+<p>之前 <a href="/post/d6327b48/" title="PBD-Position Based Dynamics">PBD-Position Based Dynamics</a> 中已经介绍过了，这里就不做过多介绍</p>
+<h2 id="韦尔莱verlet积分">韦尔莱（Verlet）积分</h2>
+<p>Verlet 积分法在 wiki 百科中的定义：</p>
+<div class="note success"><p>Verlet
+积分法是经典力学（牛顿力学）中的一种最为普遍的积分方法，被广泛运用在分子运动模拟（Molecular
+Dynamics Simulation），行星运动以及织物变形模拟等领域。Verlet
+算法要解决的问题是，给定粒子 <span class="math inline">\(t\)</span>
+时刻的位置 <span class="math inline">\(x\)</span> 和速度 <span
+class="math inline">\(v\)</span>，得到 <span
+class="math inline">\(t+\Delta t\)</span> 时刻的位置 <span
+class="math inline">\(x(t+\Delta t)\)</span> 和速度 <span
+class="math inline">\(v(t+\Delta
+t)\)</span>。最简单的方法是前向计算（考虑当前和未来）的速度位移公式，也就是欧拉积分法，但精度不够，且不稳定。Verlet
+积分是一种综合过去、现在和未来的计算方法（居中计算），精度为 <span
+class="math inline">\(O(4)\)</span>,
+稳定度好，且计算复杂度不比欧拉积分高多少。</p>
+</div>
+<p>总结一下：</p>
+<ul>
+<li>verlet
+积分与欧拉积分最大的差别就是：欧拉积分考虑当前和下一时刻，verlet
+积分考虑上一时刻，当前，下一时刻</li>
+<li>verlet 积分有着更好的精度，即4阶精度</li>
+<li>verlet 积分和欧拉积分性能差不多</li>
+</ul>
+<h3 id="verlet-主要思路">Verlet 主要思路</h3>
+<p>将 <span class="math inline">\(x(t+\Delta t)\)</span> 和 <span
+class="math inline">\(x(t-\Delta t)\)</span> 进行泰勒展开：</p>
+<p><span class="math display">\[\begin{aligned}
+\boldsymbol{x} (t+\Delta t) &amp;= \boldsymbol{x}(t) + \frac{1}{1!}
+\frac{dx}{dt}\Delta t + \frac{1}{2!} \frac{d^2x}{dt^2}\Delta t^2 +
+\frac{1}{3!} \frac{d^3x}{dt^3}\Delta t^3 + O(\Delta t^4) \\
+&amp;= \boldsymbol{x}(t) +
+\textcolor{SkyBlue}{\boldsymbol{v}{(t)}}\Delta t + \frac{1}{2!}
+\textcolor{SkyBlue}{\boldsymbol{a}} \Delta t^2 + \frac{1}{3!}
+\frac{d^3x}{dt^3}\Delta t^3 + O(\Delta t^4) \\
+\boldsymbol{x} (t-\Delta t) &amp;= \boldsymbol{x}(t) -
+\textcolor{SkyBlue}{\boldsymbol{v}{(t)}}\Delta t + \frac{1}{2!}
+\textcolor{SkyBlue}{\boldsymbol{a}} \Delta t^2 - \frac{1}{3!}
+\frac{d^3x}{dt^3}\Delta t^3 + O(\Delta t^4)
+\end{aligned}\]</span></p>
+<p>两式相加可得 <strong>位置韦尔莱公式</strong>：</p>
+<p><span class="math display">\[
+\boldsymbol{x} (t + \Delta t) = 2\boldsymbol{x}(t) - \boldsymbol{x}
+(t-\Delta t) + \textcolor{SkyBlue}{\boldsymbol{a}} \Delta t^2 + O(\Delta
+t^4)
+\]</span></p>
+<p>两式相减，两边除以 <span class="math inline">\(2\Delta
+t\)</span>，可得 <strong>速度韦尔莱公式</strong>：</p>
+<p><span class="math display">\[
+\boldsymbol{v} (t + \Delta t) = \frac{\boldsymbol{x}(t + \Delta t) -
+\boldsymbol{x} (t-\Delta t)}{2\Delta t} + O(\Delta t^2)
+\]</span></p>
+<p>当然，开始模拟时我们需要知道 <span
+class="math inline">\(\boldsymbol{x}(t-\Delta
+t)\)</span>，这个可以根据之前的泰勒展开得到（虽然这个获取方式精度只有 3
+阶，但是长时间运行后，与总体误差相比还是可以忽略不计的）：</p>
+<p><span class="math display">\[
+\boldsymbol{x} (t-\Delta t) = \boldsymbol{x}(t) -
+\textcolor{SkyBlue}{\boldsymbol{v}{(t)}}\Delta t + \frac{1}{2!}
+\textcolor{SkyBlue}{\boldsymbol{a}} \Delta t^2 + O(\Delta t^3)
+\]</span></p>
+<h1 id="碰撞检查">碰撞检查</h1>
+<p>实际游戏运行过程中，物理模拟可能有很多个物体，如果采用简单粗暴的方法做碰撞检测，复杂度将会是
+<span
+class="math inline">\(O(n^2)\)</span>，因此为了优化效率，一般会将碰撞检测分成两个阶段：</p>
+<ul>
+<li>粗略阶段（Broad Phase）：通过 AABB 检测两个物体是否碰撞</li>
+<li>精确阶段（Narrow
+Phase）：粗略阶段计算碰撞后，精细阶段计算是否碰撞，碰撞点、碰撞方向以及碰撞深度</li>
+</ul>
+<div data-align="center">
+<p><img data-src="/images/phy_intro/collision_detection.png" width="30%" height="30%" /></p>
+</div>
+<p>最后计算得到碰撞结果，进入求解器（Solver）来处理碰撞。</p>
+<h2 id="包围体">包围体</h2>
+<p>包围体：用简单的几何体来标识复杂外形的对象，如下图所示：</p>
+<div data-align="center">
+<p><img data-src="/images/phy_intro/bbox.jpg" width="60%" height="60%" /></p>
+</div>
+<ul>
+<li>Sphere。用球体代表物体，只需要质心和半径就可以表示物体。求交操作简单，准确性较差。</li>
+<li>AABB（axis-aligned bounding box）。AABB
+的特点是包围体的各个面和边都垂直于世界坐标，这个特点带来的好处是求交操作简单。AABB
+只需要两个对角点就可以表示物体。准确性一般。缺点是当实际物体发生旋转时，需要对
+AABB 进行更新操作。</li>
+<li>OBB（oriented bounding box）。与 AABB 相比，OBB
+用最小包围盒代表物体，并且考虑物体的旋转。准确性比 AABB
+好，但是求交操作更复杂。</li>
+</ul>
+<div class="note success"><p>除此之外，游戏中还会用到 <strong>胶囊体（Capsule）</strong>
+来简化人物角色物理模拟。</p>
+</div>
+<h2 id="粗略阶段broad-phase">粗略阶段（Broad Phase）</h2>
+<h3 id="层次包围技术bvh-bounding-volume-hierarchical">层次包围技术（BVH
+Bounding Volume Hierarchical）</h3>
+<p>简单来说，BVH 就是将 BV 用树的方式组织在一起，每个父节点是所有子节点
+BV 的合并，并尽量保持每个节点的BV最小，BVH
+可以非常方便地进行碰撞求交、射线求交。如下图：</p>
+<div data-align="center">
+<p><img data-src="/images/phy_intro/bvh.png" width="60%" height="60%" /></p>
+</div>
+<div class="note success"><p><strong>a</strong> ：根节点<br />
+<strong>b</strong> ：内部节点<br />
+<strong>1 2 3</strong> ：叶子节点</p>
+</div>
+<p>碰撞检测过程：</p>
+<h4 id="碰撞求交">碰撞求交</h4>
+<p>例如检查 3 跟有没有重叠的，先从根节点 a
+开始，根节点总是跟子节点重叠，然后用根节点的子节点检查，最后发现 b
+重叠，继续最终找到 1 跟 3 重叠。</p>
+<h4 id="射线求交">射线求交</h4>
+<p>同样射线求交过程一样，蓝色是检测射线，也是同样的过程</p>
+<div data-align="center">
+<p><img data-src="/images/phy_intro/bvh_line.png" width="50%" height="50%" /></p>
+</div>
+<h3 id="扫描剪除法sweep-and-prune">扫描剪除法（Sweep And Prune）</h3>
+<p>把所有物体的 AABB 投影到对应的坐标轴上，可以得到对应的 AABB
+在对应轴的 AABB 的范围 [min,
+max]，一般情况下如果两个物体不重叠，范围不会重叠，一般来说
+二维判断需要分别映射到 x，y 轴。</p>
+<div data-align="center">
+<p><img data-src="/images/phy_intro/sort_and_sweep.png" width="50%" height="50%" /></p>
+</div>
+<div class="note success"><p>一般来说，对于已经排序好的数组来说，某个物体发生运动，对该物体的范围进行更新，时间效率其实很高。</p>
+</div>
+<h2 id="精确阶段narrow-phase">精确阶段（Narrow Phase）</h2>
+<p>精确阶段需要计算出：</p>
+<ul>
+<li>两个物体是否碰撞（碰撞体 <span
+class="math inline">\(A\)</span>、<span
+class="math inline">\(B\)</span>）</li>
+<li>碰撞点</li>
+<li>碰撞深度（最深穿透点 <span class="math inline">\(P_A\)</span>、<span
+class="math inline">\(P_B\)</span>)</li>
+<li>碰撞法向量（<span class="math inline">\(\vec{n}\)</span>）</li>
+</ul>
+<div data-align="center">
+<p><img data-src="/images/phy_intro/narrow_phase.png" width="40%" height="40%" /></p>
+</div>
+<h3 id="分离轴算法sat-separating-axis-test">分离轴算法（SAT Separating
+Axis Test）</h3>
+<p>原理：两个凸多边形不相交，当且仅当必然存在一条直线，两个凸多边形在这条直线上的投影不相交。或者描述为:两个凸多边形相交，则在所有直线上的投影都是相交的。对于凸多面体也是一样的，只是投影在面上。</p>
+<div data-align="center">
+<p><img data-src="/images/phy_intro/sat.png" width="80%" height="80%" /></p>
+</div>
+<h3 id="gilbert-johnson-keerthi-gjk算法">Gilbert-Johnson-Keerthi
+(GJK)算法</h3>
+<p>如果两个多边形相交，那么这两个多边形构成的闵可夫斯基差集(Minkowski
+Difference)，必然会包含原点。</p>
+<h4 id="闵可夫斯基和集minkowski-sum">闵可夫斯基和集(Minkowski Sum)</h4>
+<p>定义：两个图形 A, B 的闵可夫斯基和</p>
+<p><span class="math display">\[
+A \oplus B = { \vec{a} + \vec{b}; \vec{a} \in A, \vec{b} \in B}
+\]</span></p>
+<div class="note success"><p>两个图形的闵可夫斯基和就是将其中一个图形中所有点到原点的向量，加上另外一个图形中所有的点到原点向量组成想新点集图形</p>
+</div>
+<p>一个三角形跟一个点的闵可夫斯基和集：</p>
+<div data-align="center">
+<p><img data-src="/images/phy_intro/mink_add_0.svg" width="40%" height="40%" /></p>
+</div>
+<div class="note success"><p>如上图：三角形 <span class="math inline">\(B\)</span>
+中的一个点向量加上点 <span class="math inline">\(A\)</span>
+向量后得到新图形中的一个点</p>
+</div>
+<p>一个三角形跟另外一条线段的闵可夫斯基和集：</p>
+<div data-align="center">
+<p><img data-src="/images/phy_intro/mink_add_1.gif" width="40%" height="40%" /></p>
+</div>
+<p>一个三角形跟另外一个三角形的闵可夫斯基和集：</p>
+<div data-align="center">
+<p><img data-src="/images/phy_intro/mink_add_2.gif" width="40%" height="40%" /></p>
+</div>
+<p>可以看出闵可夫斯基和集计算方式就是遍历一个多边形变的点到原点的向量，分别加上另外一个多边形边点到原点的向量所围成的新的多边形：</p>
+<div data-align="center">
+<p><img data-src="/images/phy_intro/mink_add_3.svg" width="40%" height="40%" /></p>
+</div>
+<div class="note success"><p>图中 <span class="math inline">\(B\)</span>
+图形的各个点到原点向量分别加上图形 <span
+class="math inline">\(A\)</span>
+中的点到原点的向量后，分别得到的粉色、蓝色、绿色点，围城的形状还是 <span
+class="math inline">\(A\)</span>
+的样子。而且如果两个多面体都是图多边形，然最后形成的也是凸多边形。</p>
+</div>
+<h4 id="闵可夫斯基差集minkowski-difference">闵可夫斯基差集(Minkowski
+Difference)</h4>
+<p>闵可夫斯基差集定义：</p>
+<p><span class="math display">\[
+A \ominus B = { \vec{a} - \vec{b}; \vec{a} \in A, \vec{b} \in B}
+\]</span></p>
+<p>如下图点集 <span class="math inline">\(B\)</span>
+沿着原点做镜像，可以得到点集 <span
+class="math inline">\(-B\)</span>（黄色三角形）</p>
+<div data-align="center">
+<p><img data-src="/images/phy_intro/mink_diff.png" width="40%" height="40%" /></p>
+</div>
+<p>然后差集公式可以写成：</p>
+<p><span class="math display">\[
+A \ominus B = A \oplus (-B)
+\]</span></p>
+<div data-align="center">
+<p><img data-src="/images/phy_intro/mink_diff_1.png" width="40%" height="40%" /></p>
+</div>
+<p>结论：如果两个点集的闵可夫斯基差集过原点，则表示这两个点集重叠：</p>
+<div data-align="center">
+<p><img data-src="/images/phy_intro/mink_diff_2.png" width="100%" height="100%" /></p>
+</div>
+<div class="note success"><p>如果 <span class="math inline">\(A\)</span> <span
+class="math inline">\(B\)</span>
+中有两个点重叠，那么这两个点向量做减法肯定得出零向量，即过原点。两个向量如果不为零向量，相加相减都不会得出零向量。</p>
+</div>
+<h1 id="约束">约束</h1>
+<h2 id="等式约束">等式约束</h2>
+<p>等式约束的定义如下:</p>
+<p><span class="math display">\[
+C=0
+\]</span></p>
+<p>如果我们要将某个物体坐标顶在某个原点则约束可以写为：</p>
+<p><span class="math display">\[
+\left[
+\begin{matrix}
+    x \\
+    y
+\end{matrix}
+\right] = 0
+\]</span></p>
+<h2 id="不等式约束">不等式约束</h2>
+<p><span class="math display">\[
+C &gt; 0
+\]</span></p>
+<div class="note success"><p>则当 不满足条件 <span class="math inline">\(C \leq 0\)</span>
+的时，我们要是的约束 <span class="math inline">\(C =
+0\)</span>，例如两个物体不能互相穿透，则他们之间的距离要大于
+0，当他们距离小于 0 时，我们需要施加约束使得他们间的距离等于 0。</p>
+</div>
+<h2 id="位置约束跟速度约束">位置约束跟速度约束</h2>
+<p>当约束函数 <span class="math inline">\(C=0\)</span> 中的 <span
+class="math inline">\(C\)</span>
+是一个位置的函数时，我们称之为位置约束，对应的速度约束就是对位置进行微分，得到速度约束。</p>
+<p><span class="math display">\[\begin{aligned}
+    C &amp;= 0 \qquad \dot{C} = 0 \\
+\left[
+\begin{matrix}
+    x \\
+    y
+\end{matrix}
+\right] &amp;= 0 \qquad
+\left[
+\begin{matrix}
+    V_x \\
+    V_y
+\end{matrix}
+\right] = 0
+\end{aligned}\]</span></p>
+<div class="note success"><p>位置约束：会让物体立即满足约束<br />
+速度约束：物体会在约束条件下，慢慢满足约束，达到软性约束效果</p>
+</div>
+<h2 id="实例地面约束">实例：地面约束</h2>
+<p>我们要让物体不会掉到地面以下，只需要满足如下条件：</p>
+<p><span class="math display">\[\begin{aligned}
+y &gt; 0  \qquad 若 \quad y \leq 0 \qquad 则 \qquad y &amp;= 0 \\
+V_y &amp;= 0
+\end{aligned}\]</span></p>
+<p>当一个物体陷入地面时，约束函数 <span class="math inline">\(C\)</span>
+得出的结果不满足约束，计算出的结果其实就是</p>
+<p><span class="math display">\[
+C=误差量= y
+\]</span></p>
+<p>我们可以用这个误差量来修正速度 <span
+class="math inline">\(V_y\)</span>（当 <span
+class="math inline">\(V_y\)</span>不满足约束的时候，增加修正量），于是得出如下：</p>
+<p><span class="math display">\[
+V_y = 0 \rightarrow V_y + \frac{\beta}{\Delta t}y=0  \rightarrow
+V_y=-\frac{\beta}{\Delta t}y
+\]</span></p>
+<div class="note success"><p>Baumgarte stabilization 邦加特修正<br />
+<span class="math inline">\(\beta \in [0, 1]\)</span> ：<span
+class="math inline">\(\beta = 1\)</span>
+时，下一次积分计算速度位置时，就会完全修正误差，介于 <span
+class="math inline">\((0,1)\)</span> 则会慢慢修正位置误差，<span
+class="math inline">\(\beta = 0\)</span> 表示不修正<br />
+<span class="math inline">\(y\)</span> 误差项 （<span
+class="math inline">\(y = 0\)</span>表示没有误差，此时满足约束）<br />
+<span class="math inline">\(\Delta t\)</span> 时间</p>
+</div>
+<p>代码实现 <a href="#ref-anchor-4"><sup>4</sup></a>：</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token class-name"><span class="token keyword">float</span></span> dt <span class="token operator">=</span> Time<span class="token punctuation">.</span>deltaTime<span class="token punctuation">;</span>
+<span class="token class-name"><span class="token keyword">float</span></span> y <span class="token operator">=</span> Ball<span class="token punctuation">.</span>transform<span class="token punctuation">.</span>position<span class="token punctuation">.</span>y<span class="token punctuation">;</span>
+
+vy <span class="token operator">+=</span> Gravity <span class="token operator">*</span> dt<span class="token punctuation">;</span>
+
+<span class="token keyword">if</span><span class="token punctuation">(</span>y <span class="token operator">&lt;=</span> <span class="token number">0.0f</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+    vy <span class="token operator">=</span> <span class="token operator">-</span><span class="token punctuation">(</span>Beta <span class="token operator">/</span> dt<span class="token punctuation">)</span> <span class="token operator">*</span> y<span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+
+y <span class="token operator">+=</span> vy <span class="token operator">*</span> dt<span class="token punctuation">;</span>
+
+<span class="token class-name">Vector3</span> pos <span class="token operator">=</span> Ball<span class="token punctuation">.</span>transform<span class="token punctuation">.</span>position<span class="token punctuation">;</span>
+pos<span class="token punctuation">.</span>y <span class="token operator">=</span> y<span class="token punctuation">;</span>
+Ball<span class="token punctuation">.</span>transform<span class="token punctuation">.</span>position <span class="token operator">=</span> pos<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>效果如下，当球掉落到地下后，会慢慢恢复上来：</p>
+<div data-align="center">
+<p><img data-src="/images/phy_intro/ground_c.gif" width="40%" height="40%" /></p>
+</div>
+<h2 id="一般形式">一般形式</h2>
+<p>速度约束的一般形式可以写成（引入雅可比矩阵：Jacobian）：</p>
+<p><span class="math display">\[
+[J_{v_1} \quad J_{V_2}]\left[
+\begin{matrix}
+    V_x \\
+    V_y
+\end{matrix}
+\right] + b= 0
+\]</span></p>
+<p><span class="math display">\[
+JV + b =0
+\]</span></p>
+<div class="note success"><p>只考虑线性速度情况，一般来说二维约束包含三个自由度：两个线速度 <span
+class="math inline">\(V_x\)</span>、<span
+class="math inline">\(V_y\)</span> 以及一个角速度 <span
+class="math inline">\(\omega\)</span>，三维的约束包含六个自由度：线性速度
+<span class="math inline">\(V_x\)</span>、<span
+class="math inline">\(V_y\)</span>、<span
+class="math inline">\(V_z\)</span> 角速度 <span
+class="math inline">\(\omega_{x}\)</span>、<span
+class="math inline">\(\omega_{y}\)</span>、<span
+class="math inline">\(\omega_{z}\)</span></p>
+</div>
+<h2 id="地面约束一般形式">地面约束一般形式</h2>
+<p>将之前的雅克比矩阵一般形式带入地面约束。</p>
+<p><span class="math display">\[\begin{aligned}
+JV + b = 0 &amp;\qquad V_y + \frac{\beta}{\Delta t}y = 0 \\
+J = [0 \quad 1] &amp;\qquad b = \frac{\beta}{\Delta t}y
+\end{aligned}\]</span></p>
+<div class="note success"><p>J : 雅克比矩阵<br />
+b ：修正项</p>
+</div>
+<h3 id="速度约束解析">速度约束解析</h3>
+<p>当前速度 <span class="math inline">\(V_1\)</span>
+约束不满足的时候，我们需要计算修正速度 <span
+class="math inline">\(V_2\)</span>，于是有如下公式：</p>
+<p><span class="math display">\[\begin{aligned}
+MV &amp;= \boldsymbol{L}\lambda \\
+M(V_2 - V_1) &amp;= \boldsymbol{L}\lambda
+\end{aligned}\]</span></p>
+<div class="note success"><p><span class="math inline">\(\boldsymbol{L}\)</span>：冲量方向<br />
+<span class="math inline">\(\lambda\)</span>：冲量大小<br />
+<span class="math inline">\(M=\left[\begin{matrix}  m \quad 0 \\  0
+\quad m \end{matrix} \right]\)</span>：质量矩阵</p>
+</div>
+<p>现在要求出 <span class="math inline">\(\boldsymbol{L}\)</span> 跟
+<span class="math inline">\(\lambda\)</span>。这里 <span
+class="math inline">\(\boldsymbol{L}=J^T\)</span>，后面解释来源。带入可以直接得出：</p>
+<p><span class="math display">\[
+V_2 = V_1 + M^{-1}J^T\lambda
+\]</span></p>
+<p>因为 <span class="math inline">\(V_2\)</span>
+是修正后的速度，会满足约束，因此有：</p>
+<p><span class="math display">\[\begin{aligned}
+JV_2 + b &amp;= 0 \\
+J(V_1 + M^{-1}J^T\lambda) + b &amp;= 0    \leftarrow (代入 V_2)
+\end{aligned}\]</span></p>
+<p>整理得出公式：</p>
+<p><span class="math display">\[\begin{aligned}
+(JM^{-1}J^T)\lambda = -(JV_1 + b) \\
+\lambda = \frac{-(JV_1 + b)}{(JM^{-1}J^T)}
+\end{aligned}\]</span></p>
+<p>一般来说会把分母项整理成一个形式，叫有效质量：</p>
+<p><span class="math display">\[
+M_{eff} = (JM^{-1}J^T)^{-1}
+\]</span></p>
+<p>最后 <span class="math inline">\(\lambda\)</span>
+会变成（拉格朗日乘数，也是修正 <span class="math inline">\(V\)</span>
+的冲量大小）：</p>
+<p><span class="math display">\[
+\lambda = M_{eff}[-(JV_1 + b)]
+\]</span></p>
+<p>现在解释下 <span
+class="math inline">\(\boldsymbol{L}\)</span>，假设我们这里 <span
+class="math inline">\(V\)</span> 是一个三维向量，则：</p>
+<p><span class="math display">\[\begin{aligned}
+JV + b &amp;= 0 （雅克比参数展开）\\
+ax + by + cz + d &amp;= 0  \rightarrow 平面方程
+\end{aligned}\]</span></p>
+<div class="note success"><p>关于 <span class="math inline">\(\boldsymbol{L}=J^T\)</span>
+当一个点不在平面上时，带入这个等式，结果不等于
+0，即不符合约束，如果要让这个点满足约束，最快的方向就是平面的法线向量
+<span class="math inline">\(\boldsymbol{n}=(a, b,
+c)\)</span>，也就是分别对函数求不同维度（x，y，z）的一阶导，就是
+J，因此修正的冲量方向跟法相量平行。<br />
+<span class="math inline">\(M(V_2 - V_1) =
+\boldsymbol{L}\lambda\)</span> 公式中 <span
+class="math inline">\(M\)</span> 是 <span class="math inline">\(2 *
+2\)</span> 维，速度是 <span class="math inline">\(2 * 1\)</span>
+维，因此最后得出的 <span class="math inline">\(\boldsymbol{L}\)</span>
+是 <span class="math inline">\(2 * 1\)</span> 维，而 <span
+class="math inline">\(J\)</span> 是 <span class="math inline">\(1 *
+2\)</span>维，因此得出 <span
+class="math inline">\(\boldsymbol{L}=J^T\)</span></p>
+</div>
+<p>打个比方：当前的位置是黑点，<span class="math inline">\(C_1\)</span>
+和 <span class="math inline">\(C_2\)</span>
+是需要满足的两个平面约束，当前点不满足这两个约束，因此需要依次使用这两个约束对位置做修正：</p>
+<div data-align="center">
+<p><img data-src="/images/phy_intro/plant_c.png" width="40%" height="40%" /></p>
+</div>
+<h3 id="应用一般形式">应用一般形式</h3>
+<p>将速度的一般形式应用到地面约束：</p>
+<p><span class="math display">\[\begin{aligned}
+JV + b &amp; = 0 \\
+V_y + \frac{\beta}{\Delta t}y &amp;= 0 \\
+[0 \quad 1]\left [\begin{matrix}
+    V_x \\
+    V_y
+\end{matrix}
+\right] + \frac{\beta}{\Delta t}y &amp;= 0
+\end{aligned}\]</span></p>
+<p>推算可得：</p>
+<p><span class="math display">\[\begin{aligned}
+J &amp;= [0 \quad 1] \\
+b &amp;= \frac{\beta}{\Delta t}y \\
+\lambda &amp;= \frac{-(JV_1 + b)}{(JM^{-1}J^T)} = M(-V_{y1} -
+\frac{\beta}{\Delta t}y) \\
+\Delta V &amp;= M^{-1}J^T\lambda=-V_{y1}-\frac{\beta}{\Delta t}y
+\end{aligned}\]</span></p>
+<div class="note success"><p><span class="math inline">\(V_{y1}\)</span>：是 <span
+class="math inline">\(V_y\)</span> 一开始的速度</p>
+</div>
+<h2 id="多重约束">多重约束</h2>
+<p>之前有提到如果有两个约束，需要用迭代的方式交替修正位置，从而解出满足两个约束的共同解，如果不用迭代的方式，那就需要用到多重约束，先看二维的情况：</p>
+<p><span class="math display">\[\begin{split}
+J_1V + b_1 = 0 \\
+J2V + b_2 = 0 \\
+\quad \\
+JV + b = 0 \\
+\quad \\
+J = \left[\begin{matrix}
+    J_1 \\
+    J_2
+\end{matrix}\right] \quad b = \left[\begin{matrix}
+    b1 \\
+    b2
+\end{matrix}\right]
+\end{split}\]</span></p>
+<div class="note success"><p><span class="math inline">\(J\)</span> 现在是一个 <span
+class="math inline">\(2 * 2\)</span> 矩阵</p>
+</div>
+<p>因此之前求解得到的 <span class="math inline">\(\lambda\)</span>
+分母不再是标量，需要改写成：</p>
+<p><span class="math display">\[\begin{aligned}
+\lambda &amp;= \frac{-(JV_1 + b)}{(JM^{-1}J^T)} \downarrow \\
+\lambda &amp;= (JM^{-1}J^T)^{-1}[-(JV + b)] \\
+V_2 &amp;= V_1 + M^{-1}J^T\lambda
+\end{aligned}\]</span></p>
+<h2 id="点约束">点约束</h2>
+<p>如果我们要将某个物体固定在某个点，则位置约束跟速度约束如下：</p>
+<p><span class="math display">\[
+C: \left[\begin{matrix}
+    x-P_x \\
+    y - P_y
+\end{matrix}\right] = 0 \\
+\quad \\
+\dot{C}: \left[\begin{matrix}
+    V_x \\
+    V_y
+\end{matrix}\right] = 0
+\]</span></p>
+<p>依次得出：</p>
+<p><span class="math display">\[
+JV + b = 0 \\
+J = \left[\begin{matrix}
+    1 \quad 0 \\
+    0 \quad 1
+\end{matrix}\right] \\
+\quad \\
+b = \frac{\beta}{\Delta t}C=\frac{\beta}{\Delta t}\left[\begin{matrix}
+    x - P_x \\
+    y - P_y
+\end{matrix}\right]
+\]</span></p>
+<div class="note success"><p><span
+class="math inline">\(C\)</span>：之前提到过，一开始如果不满足约束，则约束得出的结果就是需要修正的量</p>
+</div>
+<p>根据上面得出的结论，最终算出：</p>
+<p><span class="math display">\[\begin{aligned}
+\lambda &amp;= (JM^{-1}J^T)^{-1}[-(JV + b)] \\
+\qquad \\
+V_2 &amp;= V_1 + M^{-1}J^T\lambda \\
+\Delta V &amp;= M^{-1}J^T\lambda = \frac{-\beta}{\Delta
+t}\left[\begin{matrix}
+    x - P_x \\
+    y - P_y
+\end{matrix}\right]
+\end{aligned}
+\]</span></p>
+<blockquote>
+<p>当 <span class="math inline">\(\beta = 1\)</span>
+时，下一次积分会立即修正，而当 <span class="math inline">\(\beta \in (0,
+1)\)</span>，则会慢慢修正</p>
+</blockquote>
+<p>代码实现：</p>
+<pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp"><span class="token comment">// P 是移动物体</span>
+<span class="token comment">// Ball 是跟随物体，会跟随 P 移动，即位置固定成 P 的位置</span>
+
+<span class="token class-name"><span class="token keyword">float</span></span> dt <span class="token operator">=</span> Time<span class="token punctuation">.</span>deltaTime<span class="token punctuation">;</span>
+<span class="token class-name">Vector3</span> c <span class="token operator">=</span> Ball<span class="token punctuation">.</span>transform<span class="token punctuation">.</span>position <span class="token operator">-</span> P<span class="token punctuation">.</span>transform<span class="token punctuation">.</span>position<span class="token punctuation">;</span>
+
+v <span class="token operator">+=</span> <span class="token punctuation">(</span><span class="token operator">-</span>Beta <span class="token operator">/</span> dt<span class="token punctuation">)</span> <span class="token operator">*</span> c<span class="token punctuation">;</span>
+<span class="token comment">// 阻尼消耗</span>
+v <span class="token operator">*=</span> <span class="token number">0.9f</span><span class="token punctuation">;</span>
+Ball<span class="token punctuation">.</span>transform<span class="token punctuation">.</span>position <span class="token operator">+=</span> v<span class="token operator">*</span>dt<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>代码效果如下：</p>
+<div data-align="center">
+<p><img data-src="/images/phy_intro/position_show.gif" width="40%" height="40%" /></p>
+</div>
+<h2 id="旋转跟转动惯量">旋转跟转动惯量</h2>
+<p>之前考虑的都是二维的情况，现在加入旋转，自由度由两个变成三个:</p>
+<p><span class="math display">\[
+\left[\begin{matrix}
+    x \\
+    y
+\end{matrix}
+\right] \rightarrow \left[\begin{matrix}
+    x \\
+    y \\
+    a \\
+\end{matrix}\right] \\
+\qquad \\
+V = \left[\begin{matrix}
+    V_x \\
+    V_y
+\end{matrix}
+\right] \rightarrow \left[\begin{matrix}
+    V_x \\
+    V_y \\
+    \omega \\
+\end{matrix}\right] \\
+\qquad \\
+M = \left[\begin{matrix}
+    m \quad 0 \\
+    0 \quad m
+\end{matrix}
+\right] \rightarrow \left[\begin{matrix}
+    m \quad 0 \quad 0 \\
+    0 \quad m \quad 0 \\
+    0 \quad 0 \quad \boldsymbol{I} \\
+\end{matrix}\right] \\
+\]</span></p>
+<p>最终的求解形式不变</p>
+<p><span class="math display">\[\begin{aligned}
+JV &amp;+ b = 0 \\
+\lambda &amp;= (JM^{-1}J^T)^{-1}[-(JV + b)]
+\end{aligned}
+\]</span></p>
+<div class="note success"><p><span class="math inline">\(\boldsymbol{I}\)</span>
+是二维的转动惯量</p>
+</div>
+<h2 id="旋转约束">旋转约束</h2>
+<p>现在看下旋转约束：</p>
+<p><span class="math display">\[
+C: a - \theta = 0 \\
+\dot{C}: \omega = 0
+\]</span></p>
+<p>套用一般形式：</p>
+<p><span class="math display">\[\begin{aligned}
+JV &amp;+ b = 0 \\
+J &amp;= [0 \quad 0 \quad 1] \\
+b &amp;= \frac{\beta}{\Delta t}C = \frac{\beta}{\Delta
+t}\left[\begin{matrix}
+    0 \\
+    0 \\
+    a - \theta
+\end{matrix}\right]
+\end{aligned}\]</span></p>
+<p>最后算出结果（<span class="math inline">\(\lambda\)</span> 跟 <span
+class="math inline">\(V_2\)</span> 的形式都没变化，只是最后的结果 <span
+class="math inline">\(\Delta V\)</span> 不一样）：</p>
+<p><span class="math display">\[\begin{aligned}
+\lambda &amp;= (JM^{-1}J^T)^{-1}[-(JV + b)] \\
+\qquad \\
+V_2 &amp;= V_1 + M^{-1}J^T\lambda \\
+\Delta V &amp;= M^{-1}J^T\lambda = \frac{-\beta}{\Delta
+t}\left[\begin{matrix}
+    0 \\
+    0 \\
+    a - \theta
+\end{matrix}\right]
+\end{aligned}
+\]</span></p>
+<h2 id="晋升到-3d-约束">晋升到 3D 约束</h2>
+<p><span class="math display">\[
+JV + b = 0 \quad V = \left[\begin{matrix}
+    V_x \\
+    V_y \\
+    V_z \\
+    \omega_x \\
+    \omega_y \\
+    \omega_z
+\end{matrix}\right] \quad M = \begin{pmatrix}\begin{matrix}
+    m&amp;0&amp;0\\
+    0&amp;m&amp;0\\
+    0&amp;0&amp;m
+\end{matrix} &amp; \begin{matrix}
+    0&amp;0&amp;0\\
+    0&amp;0&amp;0\\
+    0&amp;0&amp;0
+\end{matrix} \\ \begin{matrix}
+    0&amp;0&amp;0\\
+    0&amp;0&amp;0\\
+    0&amp;0&amp;0
+\end{matrix} &amp; \boxed{\boldsymbol{I}}
+\end{pmatrix} \quad M^{-1} = \begin{pmatrix}\begin{matrix}
+    \frac{1}{m}&amp;0&amp;0\\
+    0&amp;\frac{1}{m}&amp;0\\
+    0&amp;0&amp;\frac{1}{m}
+\end{matrix} &amp; \begin{matrix}
+    0&amp;0&amp;0\\
+    0&amp;0&amp;0\\
+    0&amp;0&amp;0
+\end{matrix} \\ \begin{matrix}
+    0&amp;0&amp;0\\
+    0&amp;0&amp;0\\
+    0&amp;0&amp;0
+\end{matrix} &amp; \boxed{\boldsymbol{I^{-1}}}
+\end{pmatrix}
+\]</span></p>
+<div class="note success"><p><span class="math inline">\(V_x\)</span>、<span
+class="math inline">\(V_y\)</span>、<span
+class="math inline">\(V_z\)</span> 是线性速度的分量，<span
+class="math inline">\(\omega\)</span> 是一个三维向量 <span
+class="math inline">\(\omega_x\)</span>、<span
+class="math inline">\(\omega_y\)</span>、<span
+class="math inline">\(\omega_z\)</span>
+是它的分量，方向是角速度的旋转轴向，长度是角速度的大小 \
+形状不同的物体转动惯量 <span class="math inline">\(I\)</span>
+不一样，具体参考<a href="#ref-anchor-5"><sup>5</sup></a></p>
+</div>
+<h2 id="点约束-旋转">点约束 + 旋转</h2>
+<p>最后一个例子：正方体一个角钉在空间中的某个点（将<span
+class="math inline">\(X\)</span> 沿着向量 <span
+class="math inline">\(\boldsymbol{R}\)</span> 移动就能打到 <span
+class="math inline">\(P\)</span> 点）</p>
+<div data-align="center">
+<p><img data-src="/images/phy_intro/3d_c.svg" width="30%" height="30%" /></p>
+</div>
+<p><span class="math display">\[
+C:(X + \boldsymbol{R}) - P = 0 \\
+\qquad \\
+\dot{C} = \left[\begin{matrix}
+    V_x \\
+    V_y \\
+    V_z
+\end{matrix}\right] + \left[\begin{matrix}
+    \omega_x \\
+    \omega_y \\
+    \omega_z
+\end{matrix}\right] \times \left[\begin{matrix}
+    R_x \\
+    R_y \\
+    R_z
+\end{matrix}\right] = \left[\begin{matrix}
+    0 \\
+    0 \\
+    0
+\end{matrix}\right]
+\]</span></p>
+<div class="note success"><p><span class="math inline">\(X\)</span>：立方体位置<br />
+<span
+class="math inline">\(\boldsymbol{R}\)</span>：中心到角落的向量<br />
+<span class="math inline">\(P\)</span>：空间定住的点<br />
+做微分后，<span class="math inline">\(P\)</span> 常数项，微分后为 <span
+class="math inline">\(0\)</span><br />
+刚体速度公 <span class="math inline">\(\dot{C}\)</span> 式查阅 <a
+href="#ref-anchor-7"><sup>7</sup></a></p>
+</div>
+<p>带入一般方程（将 <span class="math inline">\(\dot{C}\)</span>
+写成雅克比矩阵形式）：</p>
+<p><span class="math display">\[\begin{aligned}
+    JV &amp;+ b = 0 \\
+    J &amp;= \left[\begin{matrix}
+        1 &amp; 0 &amp; 0 &amp; 0 &amp; R_z &amp; -R_y \\
+        0 &amp; 1 &amp; 0 &amp; -R_z &amp; 0 &amp; R_x \\
+        0 &amp; 0 &amp; 1 &amp;R_y &amp; -R_x &amp; 0
+      \end{matrix}\right] \\
+      \qquad \\
+      &amp;= [E \quad S] \\
+      \qquad \\
+    E &amp;= \left[\begin{matrix}
+        1 &amp; 0 &amp; 0 \\
+        0 &amp; 1 &amp; 0 \\
+        0 &amp; 0 &amp; 1
+    \end{matrix}\right] \\
+    \qquad \\
+    S &amp;= \left[\begin{matrix}
+        0 &amp; R_z &amp; -R_y \\
+        -R_z &amp; 0 &amp; R_x \\
+        R_y &amp; -R_x &amp; 0
+    \end{matrix}\right]
+\end{aligned}
+\]</span></p>
+<div class="note success"><p>对照 <span class="math inline">\(\dot{C}\)</span> 的形式，既可以知道
+<span class="math inline">\(J\)</span> 是一个 <span
+class="math inline">\(3 * 6\)</span> 的矩阵，速度 <span
+class="math inline">\(V\)</span> 是一个 <span class="math inline">\(6 *
+1\)</span> 的矩阵，<span class="math inline">\(JV\)</span></p>
+</div>
+<p>开始推导过程：</p>
+<p><span class="math display">\[\begin{aligned}
+b &amp;= \frac{\beta}{\Delta t} C \\
+C &amp;= (X + \boldsymbol{R}) - P \\
+M &amp;= \left[\begin{matrix}
+    mE &amp; 0\\
+    0 &amp; 1
+\end{matrix}\right] \\
+\qquad \\
+\lambda &amp;= (JM^{-1}J^T)^{-1}[-(JV + b)] \\
+&amp;= \left([E \quad S] \left[\begin{matrix}
+    \frac{1}{m}E &amp; 0 \\
+    0 &amp; \boldsymbol{I}^{-1}
+\end{matrix}\right] \left[\begin{matrix}
+    E \\
+    S^T
+\end{matrix}\right]\right)^{-1} [-(JV+b)] \\
+&amp;= (\frac{1}{m}E+S\boldsymbol{I}^{-1}S^T)^{-1}[-(JV+b)] \\
+\qquad \\
+\Delta V &amp;= M^{-1}J^T\lambda=\left[\begin{matrix}
+    \frac{1}{m}\lambda \\
+    \quad \\
+    \boldsymbol{I}^{-1}S^T\lambda
+\end{matrix}\right]
+\end{aligned}\]</span></p>
+<p>代码实现以及注释：</p>
+<div data-align="center">
+<p><img data-src="/images/phy_intro/point_c_show.png" width="100%" height="100%" /></p>
+</div>
+<div class="note success"><p><span class="math inline">\(a\)</span>：是角速度</p>
+</div>
+<p>运行效果：</p>
+<div data-align="center">
+<p><img data-src="/images/phy_intro/point_show_f.gif" width="40%" height="40%" /></p>
+</div>
+<h1 id="参考资料">参考资料</h1>
+<div id="ref-anchor-1">
+
+</div>
+<p><a
+href="https://zhuanlan.zhihu.com/p/62356261">1.UE4物理模块（三）---碰撞查询（下）SAP/MBP/BVH算法简介</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/423120746">2.
+从零手写游戏引擎21：物理引擎基础</a></p>
+<p><a
+href="https://www.youtube.com/watch?v=5zxaToMXidg">3.游戏物理约束Part 1
+- 约束基础</a></p>
+<div id="ref-anchor-4">
+
+</div>
+<p><a
+href="https://github.com/TheAllenChou/unity-physics-constraints">4.周明伦-游戏物理约束</a></p>
+<div id="ref-anchor-5">
+
+</div>
+<p><a
+href="https://zh.m.wikipedia.org/zh/%E8%BD%89%E5%8B%95%E6%85%A3%E9%87%8F%E5%88%97%E8%A1%A8">5.常用转动惯量列表</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/143003234">6.游戏物理引擎(四)
+约束</a></p>
+<div id="ref-anchor-7">
+
+</div>
+<p><a
+href="https://zh.wikipedia.org/zh-sg/%E8%A7%92%E9%80%9F%E5%BA%A6">7.刚体角速度</a></p>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">]]></content>
+      <categories>
+        <category>物理</category>
+        <category>约束</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>UE4 Render Pipeline</title>
+    <url>/post/f83cc9a1/</url>
+    <content><![CDATA[<p>终于发奋去研究 UE4
+渲染管线了，下面是从网上搜集到的资料，后续会逐步了解渲染管线各个步骤的技术方案。</p>
+<p>下图的渲染图详细解释在如下链接中 <a
+href="https://www.bilibili.com/video/BV1yb411c7in/">虚幻引擎中文技术直播
+第1期 虚幻引擎4的实时渲染流程</a> <img data-src="/images/ue4_render_pipline/render_1.jpg" alt="render_1" /></p>
+<figure>
+<img data-src="/images/ue4_render_pipline/render_3.jpg" alt="render_2" />
+<figcaption aria-hidden="true">render_2</figcaption>
+</figure>
+<p>下面是官方的完整管线图</p>
+<figure>
+<img data-src="/images/ue4_render_pipline/ue_render.jpg"
+alt="render_pipline" />
+<figcaption aria-hidden="true">render_pipline</figcaption>
+</figure>
+<h2 id="参考">参考</h2>
+<p><a
+href="https://www.cnblogs.com/shiroe/p/15571757.html">代码质疑人生：渲染管线Pipeline</a>
+<a href="https://learn.unrealengine.com/home/dashboard">Unreal Engine
+官网在线课程</a> <a
+href="https://learn.unrealengine.com/home/LearningPath/94219">介绍实时渲染原理</a>
+<a
+href="https://blog.csdn.net/leonwei/article/details/84821849">UE4渲染系统概览：列举了UE4
+渲染类视图跟流程图</a></p>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">]]></content>
+      <categories>
+        <category>UE4</category>
+      </categories>
+      <tags>
+        <tag>UE4</tag>
+        <tag>RenderPipline</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>UE4 GC原理</title>
     <url>/post/b90b4535/</url>
     <content><![CDATA[<h2 id="uobject概况">UObject概况</h2>
@@ -5282,42 +6109,6 @@ BtnBack 跟 ImageTest，然后每个 Object
         <tag>C++</tag>
         <tag>UE4</tag>
         <tag>GC</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>UE4 Render Pipeline</title>
-    <url>/post/f83cc9a1/</url>
-    <content><![CDATA[<p>终于发奋去研究 UE4
-渲染管线了，下面是从网上搜集到的资料，后续会逐步了解渲染管线各个步骤的技术方案。</p>
-<p>下图的渲染图详细解释在如下链接中 <a
-href="https://www.bilibili.com/video/BV1yb411c7in/">虚幻引擎中文技术直播
-第1期 虚幻引擎4的实时渲染流程</a> <img data-src="/images/ue4_render_pipline/render_1.jpg" alt="render_1" /></p>
-<figure>
-<img data-src="/images/ue4_render_pipline/render_3.jpg" alt="render_2" />
-<figcaption aria-hidden="true">render_2</figcaption>
-</figure>
-<p>下面是官方的完整管线图</p>
-<figure>
-<img data-src="/images/ue4_render_pipline/ue_render.jpg"
-alt="render_pipline" />
-<figcaption aria-hidden="true">render_pipline</figcaption>
-</figure>
-<h2 id="参考">参考</h2>
-<p><a
-href="https://www.cnblogs.com/shiroe/p/15571757.html">代码质疑人生：渲染管线Pipeline</a>
-<a href="https://learn.unrealengine.com/home/dashboard">Unreal Engine
-官网在线课程</a> <a
-href="https://learn.unrealengine.com/home/LearningPath/94219">介绍实时渲染原理</a>
-<a
-href="https://blog.csdn.net/leonwei/article/details/84821849">UE4渲染系统概览：列举了UE4
-渲染类视图跟流程图</a></p>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">]]></content>
-      <categories>
-        <category>UE4</category>
-      </categories>
-      <tags>
-        <tag>UE4</tag>
-        <tag>RenderPipline</tag>
       </tags>
   </entry>
   <entry>
@@ -7879,168 +8670,6 @@ FSlateRenderBatch<span class="token operator">&amp;</span> <span class="token cl
       </tags>
   </entry>
   <entry>
-    <title>Hexo + Github 网站添加谷歌跟百度收录</title>
-    <url>/post/fe9b04dd/</url>
-    <content><![CDATA[<h2 id="写在前面">写在前面</h2>
-<p>Github 上利用 Hexo 建立的博客是无法被搜索引擎搜索到的。Github
-本身也不会将信息提交给引擎。所以，为了让博客信息被检索到，我们需要手动将博客网站提交给搜索引擎并验证，实际上就是验证网站是我们自己的。对于
-hexo 博客来说，如果你是部署在 GitHub
-Pages，那么你是无法被百度收录的，因为 GitHub
-禁止了百度爬虫。（不过这里可以介绍下我使用百度站长工具的辛酸泪）</p>
-<p>查看自己博客有没有被搜索引擎收录可以在搜索引擎中输入
-<strong>site:www.your_website</strong> 来查看是否收录</p>
-<div data-align="center">
-<p><img data-src="/images/web_sitemap/site_search_google.png" width="50%" height="50%" /></p>
-</div>
-<div data-align="center">
-<p><img data-src="/images/web_sitemap/site_search_baidu.png" width="50%" height="50%" /></p>
-</div>
-<p><a
-href="https://www.google.com/webmasters/tools/home?hl=zh-CN">Google
-引擎验证申请地址</a></p>
-<p><a href="https://ziyuan.baidu.com/linksubmit/url">百度
-引擎验证申请地址</a></p>
-<p><a href="https://www.bing.com/webmasters/">Bing 站长工具</a></p>
-<h2 id="sitemap">sitemap</h2>
-<p>首先要生成博客的 sitemap，需要安装两个插件</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> <span class="token function">install</span> hexo-generator-sitemap --save
-<span class="token function">npm</span> <span class="token function">install</span> hexo-generator-baidu-sitemap --save<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p>然后打开博客根目录配置文件 _config.yml，增加如下几行配置：</p>
-<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token comment"># 谷歌、百度站点地图生成</span>
-<span class="token key atrule">Plugins</span><span class="token punctuation">:</span>
-<span class="token punctuation">-</span> hexo<span class="token punctuation">-</span>generator<span class="token punctuation">-</span>baidu<span class="token punctuation">-</span>sitemap
-<span class="token punctuation">-</span> hexo<span class="token punctuation">-</span>generator<span class="token punctuation">-</span>sitemap
-
-<span class="token key atrule">baidusitemap</span><span class="token punctuation">:</span>
-    <span class="token key atrule">path</span><span class="token punctuation">:</span> baidusitemap.xml
-<span class="token key atrule">sitemap</span><span class="token punctuation">:</span>
-    <span class="token key atrule">path</span><span class="token punctuation">:</span> sitemap.xml<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>接着打开 NexT 主题配置文件，找到 menu 中的 sitemap</p>
-<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">menu</span><span class="token punctuation">:</span>
-  <span class="token key atrule">sitemap</span><span class="token punctuation">:</span> /sitemap.xml <span class="token punctuation">|</span><span class="token punctuation">|</span> sitemap<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p>修改本地化文件 themes/next/languages/zh-Hans.yml，添加字段：</p>
-<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">menu</span><span class="token punctuation">:</span>
-  <span class="token key atrule">sitemap</span><span class="token punctuation">:</span> 站点地图<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<div data-align="left">
-<p><img data-src="/images/web_sitemap/next_sitemap.png" width="25%" height="25%" /></p>
-</div>
-<p>安装完插件后，每次生成时，会自动创建 baidusitemap.xml 和
-sitemap.xml</p>
-<div data-align="center">
-<p><img data-src="/images/web_sitemap/site_export.png" width="70%" height="70%" /></p>
-</div>
-<h2 id="谷歌收录">谷歌收录</h2>
-<p>谷歌收录比较顺利，直接进入 <a
-href="https://search.google.com/search-console">Google Search
-Console</a>，用谷歌账号登陆，直接选择 Domain
-方式，把你的域名地址填入：</p>
-<div data-align="center">
-<p><img data-src="/images/web_sitemap/google_add_web.png" width="50%" height="50%" /></p>
-</div>
-<p>这时候谷歌会让你验证域名是否属于你，因为我之前已经验证过，这里使用个假域名来测试，复制下面这长串的信息，在你的域名解析服务中增加一行</p>
-<div data-align="center">
-<p><img data-src="/images/web_sitemap/google_key.png" width="50%" height="50%" /></p>
-</div>
-<p>打开你的域名解析，我这里用的是腾讯云：</p>
-<ul>
-<li>主机记录 ： *</li>
-<li>记录类型 ： TXT</li>
-<li>主机记录 ： 刚刚复制的长串</li>
-</ul>
-<div data-align="center">
-<p><img data-src="/images/web_sitemap/google_add_txt.png" width="70%" height="70%" /></p>
-</div>
-<p>添加完后，过一会再使用 Google Search Console
-工具完成验证。验证成功后，找到 Sitemaps 入口</p>
-<div data-align="center">
-<p><img data-src="/images/web_sitemap/google_add_sitemap.png" width="25%" height="25%" /></p>
-</div>
-<p>然后输入你的 sitemap 地址，就可以完成：</p>
-<div data-align="center">
-<p><img data-src="/images/web_sitemap/google_add_sitemap_ok.png" width="70%" height="70%" /></p>
-</div>
-<p>然后就可以用这个工具来查看你网址通过谷歌搜索的点击次数了。</p>
-<h2 id="百度收录">百度收录</h2>
-<p>百度收录比较坑，这里介绍下我的踩坑经历，首先你需要登陆百度账号，找到<a
-href="https://ziyuan.baidu.com/">站长工具</a>。</p>
-<div data-align="center">
-<p><img data-src="/images/web_sitemap/baidu_web_index.png" width="80%" height="80%" /></p>
-</div>
-<p>输入你的网址，这里需要旋转网站协议 http/https，因为我验证过了，这里用
-github.io 的网址测试：</p>
-<div data-align="center">
-<p><img data-src="/images/web_sitemap/baidu_add_web_url.png" width="80%" height="80%" /></p>
-</div>
-<p>选完站点领域后，进入验证环节：</p>
-<div data-align="center">
-<p><img data-src="/images/web_sitemap/baidu_web_key.png" width="80%" height="80%" /></p>
-</div>
-<h3 id="文件验证">文件验证</h3>
-<p>这个很简单，直接点击<strong>下载验证文件</strong>，然后将文件放到你博客的
-Source 根目录，部署的时候，就会一键部署了，但是百度这里会提示 301
-报错</p>
-<div class="note info"><p><strong>注意：</strong></p>
-<p>1.检查自己的网站是否加密了？采用https访问，并且http访问全部自动跳转https，这就属于加密，而且出现了跳转问题，所以这时候采用文件验证、html标签验证均会出现301跳转问题。</p>
-<p>2.技术会有某某端口禁止百度抓取，当用户访问此网站时，某端口拒绝后会自动跳转另一端口允许用户访问，所以当你把验证文件放在根目录时，就会出现此类情况。</p>
-</div>
-<h3 id="html-标签验证">HTML 标签验证</h3>
-<p>这里要感谢 NexT 的作者 <a
-href="https://github.com/iissnan">iissnan</a>，预留了验证模板，在主题
-NexT 目录找到 <strong>baidu_site_verification</strong> 对应的文件</p>
-<div class="note info"><p><strong>注意：</strong></p>
-<p>旧版的 NexT 在 themes/next/layout/_partials/head.swig，新版位置是
-themes/next/layout/_partials/head/head.njk</p>
-</div>
-<pre class="line-numbers language-django" data-language="django"><code class="language-django"><span class="token django language-django"><span class="token delimiter punctuation">&#123;%-</span> <span class="token tag keyword">if</span> <span class="token variable">theme</span><span class="token punctuation">.</span><span class="token variable">yandex_site_verification</span> <span class="token delimiter punctuation">%&#125;</span></span>
-  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>meta</span> <span class="token attr-name">name</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>yandex-verification<span class="token punctuation">"</span></span> <span class="token attr-name">content</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span><span class="token django language-django"><span class="token delimiter punctuation">&#123;&#123;</span> <span class="token variable">theme</span><span class="token punctuation">.</span><span class="token variable">yandex_site_verification</span> <span class="token delimiter punctuation">&#125;&#125;</span></span><span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
-<span class="token django language-django"><span class="token delimiter punctuation">&#123;%-</span> <span class="token tag keyword">endif</span> <span class="token delimiter punctuation">%&#125;</span></span>
-
-<span class="token django language-django"><span class="token delimiter punctuation">&#123;%-</span> <span class="token tag keyword">if</span> <span class="token variable">theme</span><span class="token punctuation">.</span><span class="token variable">baidu_site_verification</span> <span class="token delimiter punctuation">%&#125;</span></span>
-  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>meta</span> <span class="token attr-name">name</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>baidu-site-verification<span class="token punctuation">"</span></span> <span class="token attr-name">content</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>code-XXXXXXX<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
-<span class="token django language-django"><span class="token delimiter punctuation">&#123;%-</span> <span class="token tag keyword">endif</span> <span class="token delimiter punctuation">%&#125;</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>同时，记得修改主题目录配置文件 **themes/next/_config.yml**，将
-baidu_site_verification 设置为 true</p>
-<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token comment"># Baidu Webmaster tools verification.</span>
-<span class="token comment"># See: https://ziyuan.baidu.com/site</span>
-<span class="token key atrule">baidu_site_verification</span><span class="token punctuation">:</span> <span class="token boolean important">true</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-<p>结局跟文件验证一样：301</p>
-<h3 id="cname-验证">CNAME 验证</h3>
-<p>这个其实是我一开始就尝试过的方式，但是一直提示 DNS
-解析不到，我是按着百度提示配置的，将百度站点工具给的key，用 CNAME
-的方式添加到域名解析服务中：</p>
-<pre class="line-numbers language-none"><code class="language-none">code-XXXXXXX.xianlong.site<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>这里用测试网址来说明百度的验证 Key</p>
-<div data-align="center">
-<p><img data-src="/images/web_sitemap/baidu_code.png" width="60%" height="60%" /></p>
-</div>
-<p>因为其他大佬使用的是阿里云部署的域名解析，域名后缀解析服务器自带，只需要填写域名前的字段
-code-XXXXXXX</p>
-<div data-align="center">
-<p><img data-src="/images/web_sitemap/baidu_add_key.png" width="40%" height="40%" /></p>
-</div>
-<p>结果就是这里卡了很久，后面我将域名去掉后配置上去，立马成功了，在这个测试例子中，请使用
-<font color=Red><strong>code-fFLAOWlTNn</strong></font>，切记配置的时候主机记录不需要域名后缀部分，坑爹的百度。</p>
-<h3 id="上传-sitemap">上传 Sitemap</h3>
-<p>接下来就简单了，验证成功后，进入站点管理平台提交 Sitemap 吧</p>
-<div data-align="center">
-<p><img data-src="/images/web_sitemap/baidu_add_sitemap.png" width="70%" height="70%" /></p>
-</div>
-<p>最后可以通过 <a href="https://tool.chinaz.com/baidu/">站长工具</a>
-查询收录情况。</p>
-<h2 id="bing-收录">Bing 收录</h2>
-<p>Bing 收录配置也比较简单，使用微软账号登陆后，可以直接从 Google
-中导入你的网站，非常好用，收录也比较快。</p>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">]]></content>
-      <categories>
-        <category>Blog</category>
-        <category>Hexo</category>
-        <category>Github</category>
-      </categories>
-      <tags>
-        <tag>others</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>UnrealEnginPython踩坑记录</title>
     <url>/post/637d361d/</url>
     <content><![CDATA[<p>最近项目换成了UE4，脚本用到的是python预研，用到的插件是<a
@@ -8260,6 +8889,168 @@ NewSlot <span class="token operator">=</span> Parent<span class="token operator"
       <tags>
         <tag>UE4</tag>
         <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hexo + Github 网站添加谷歌跟百度收录</title>
+    <url>/post/fe9b04dd/</url>
+    <content><![CDATA[<h2 id="写在前面">写在前面</h2>
+<p>Github 上利用 Hexo 建立的博客是无法被搜索引擎搜索到的。Github
+本身也不会将信息提交给引擎。所以，为了让博客信息被检索到，我们需要手动将博客网站提交给搜索引擎并验证，实际上就是验证网站是我们自己的。对于
+hexo 博客来说，如果你是部署在 GitHub
+Pages，那么你是无法被百度收录的，因为 GitHub
+禁止了百度爬虫。（不过这里可以介绍下我使用百度站长工具的辛酸泪）</p>
+<p>查看自己博客有没有被搜索引擎收录可以在搜索引擎中输入
+<strong>site:www.your_website</strong> 来查看是否收录</p>
+<div data-align="center">
+<p><img data-src="/images/web_sitemap/site_search_google.png" width="50%" height="50%" /></p>
+</div>
+<div data-align="center">
+<p><img data-src="/images/web_sitemap/site_search_baidu.png" width="50%" height="50%" /></p>
+</div>
+<p><a
+href="https://www.google.com/webmasters/tools/home?hl=zh-CN">Google
+引擎验证申请地址</a></p>
+<p><a href="https://ziyuan.baidu.com/linksubmit/url">百度
+引擎验证申请地址</a></p>
+<p><a href="https://www.bing.com/webmasters/">Bing 站长工具</a></p>
+<h2 id="sitemap">sitemap</h2>
+<p>首先要生成博客的 sitemap，需要安装两个插件</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> <span class="token function">install</span> hexo-generator-sitemap --save
+<span class="token function">npm</span> <span class="token function">install</span> hexo-generator-baidu-sitemap --save<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>然后打开博客根目录配置文件 _config.yml，增加如下几行配置：</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token comment"># 谷歌、百度站点地图生成</span>
+<span class="token key atrule">Plugins</span><span class="token punctuation">:</span>
+<span class="token punctuation">-</span> hexo<span class="token punctuation">-</span>generator<span class="token punctuation">-</span>baidu<span class="token punctuation">-</span>sitemap
+<span class="token punctuation">-</span> hexo<span class="token punctuation">-</span>generator<span class="token punctuation">-</span>sitemap
+
+<span class="token key atrule">baidusitemap</span><span class="token punctuation">:</span>
+    <span class="token key atrule">path</span><span class="token punctuation">:</span> baidusitemap.xml
+<span class="token key atrule">sitemap</span><span class="token punctuation">:</span>
+    <span class="token key atrule">path</span><span class="token punctuation">:</span> sitemap.xml<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>接着打开 NexT 主题配置文件，找到 menu 中的 sitemap</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">menu</span><span class="token punctuation">:</span>
+  <span class="token key atrule">sitemap</span><span class="token punctuation">:</span> /sitemap.xml <span class="token punctuation">|</span><span class="token punctuation">|</span> sitemap<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>修改本地化文件 themes/next/languages/zh-Hans.yml，添加字段：</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">menu</span><span class="token punctuation">:</span>
+  <span class="token key atrule">sitemap</span><span class="token punctuation">:</span> 站点地图<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<div data-align="left">
+<p><img data-src="/images/web_sitemap/next_sitemap.png" width="25%" height="25%" /></p>
+</div>
+<p>安装完插件后，每次生成时，会自动创建 baidusitemap.xml 和
+sitemap.xml</p>
+<div data-align="center">
+<p><img data-src="/images/web_sitemap/site_export.png" width="70%" height="70%" /></p>
+</div>
+<h2 id="谷歌收录">谷歌收录</h2>
+<p>谷歌收录比较顺利，直接进入 <a
+href="https://search.google.com/search-console">Google Search
+Console</a>，用谷歌账号登陆，直接选择 Domain
+方式，把你的域名地址填入：</p>
+<div data-align="center">
+<p><img data-src="/images/web_sitemap/google_add_web.png" width="50%" height="50%" /></p>
+</div>
+<p>这时候谷歌会让你验证域名是否属于你，因为我之前已经验证过，这里使用个假域名来测试，复制下面这长串的信息，在你的域名解析服务中增加一行</p>
+<div data-align="center">
+<p><img data-src="/images/web_sitemap/google_key.png" width="50%" height="50%" /></p>
+</div>
+<p>打开你的域名解析，我这里用的是腾讯云：</p>
+<ul>
+<li>主机记录 ： *</li>
+<li>记录类型 ： TXT</li>
+<li>主机记录 ： 刚刚复制的长串</li>
+</ul>
+<div data-align="center">
+<p><img data-src="/images/web_sitemap/google_add_txt.png" width="70%" height="70%" /></p>
+</div>
+<p>添加完后，过一会再使用 Google Search Console
+工具完成验证。验证成功后，找到 Sitemaps 入口</p>
+<div data-align="center">
+<p><img data-src="/images/web_sitemap/google_add_sitemap.png" width="25%" height="25%" /></p>
+</div>
+<p>然后输入你的 sitemap 地址，就可以完成：</p>
+<div data-align="center">
+<p><img data-src="/images/web_sitemap/google_add_sitemap_ok.png" width="70%" height="70%" /></p>
+</div>
+<p>然后就可以用这个工具来查看你网址通过谷歌搜索的点击次数了。</p>
+<h2 id="百度收录">百度收录</h2>
+<p>百度收录比较坑，这里介绍下我的踩坑经历，首先你需要登陆百度账号，找到<a
+href="https://ziyuan.baidu.com/">站长工具</a>。</p>
+<div data-align="center">
+<p><img data-src="/images/web_sitemap/baidu_web_index.png" width="80%" height="80%" /></p>
+</div>
+<p>输入你的网址，这里需要旋转网站协议 http/https，因为我验证过了，这里用
+github.io 的网址测试：</p>
+<div data-align="center">
+<p><img data-src="/images/web_sitemap/baidu_add_web_url.png" width="80%" height="80%" /></p>
+</div>
+<p>选完站点领域后，进入验证环节：</p>
+<div data-align="center">
+<p><img data-src="/images/web_sitemap/baidu_web_key.png" width="80%" height="80%" /></p>
+</div>
+<h3 id="文件验证">文件验证</h3>
+<p>这个很简单，直接点击<strong>下载验证文件</strong>，然后将文件放到你博客的
+Source 根目录，部署的时候，就会一键部署了，但是百度这里会提示 301
+报错</p>
+<div class="note info"><p><strong>注意：</strong></p>
+<p>1.检查自己的网站是否加密了？采用https访问，并且http访问全部自动跳转https，这就属于加密，而且出现了跳转问题，所以这时候采用文件验证、html标签验证均会出现301跳转问题。</p>
+<p>2.技术会有某某端口禁止百度抓取，当用户访问此网站时，某端口拒绝后会自动跳转另一端口允许用户访问，所以当你把验证文件放在根目录时，就会出现此类情况。</p>
+</div>
+<h3 id="html-标签验证">HTML 标签验证</h3>
+<p>这里要感谢 NexT 的作者 <a
+href="https://github.com/iissnan">iissnan</a>，预留了验证模板，在主题
+NexT 目录找到 <strong>baidu_site_verification</strong> 对应的文件</p>
+<div class="note info"><p><strong>注意：</strong></p>
+<p>旧版的 NexT 在 themes/next/layout/_partials/head.swig，新版位置是
+themes/next/layout/_partials/head/head.njk</p>
+</div>
+<pre class="line-numbers language-django" data-language="django"><code class="language-django"><span class="token django language-django"><span class="token delimiter punctuation">&#123;%-</span> <span class="token tag keyword">if</span> <span class="token variable">theme</span><span class="token punctuation">.</span><span class="token variable">yandex_site_verification</span> <span class="token delimiter punctuation">%&#125;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>meta</span> <span class="token attr-name">name</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>yandex-verification<span class="token punctuation">"</span></span> <span class="token attr-name">content</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span><span class="token django language-django"><span class="token delimiter punctuation">&#123;&#123;</span> <span class="token variable">theme</span><span class="token punctuation">.</span><span class="token variable">yandex_site_verification</span> <span class="token delimiter punctuation">&#125;&#125;</span></span><span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+<span class="token django language-django"><span class="token delimiter punctuation">&#123;%-</span> <span class="token tag keyword">endif</span> <span class="token delimiter punctuation">%&#125;</span></span>
+
+<span class="token django language-django"><span class="token delimiter punctuation">&#123;%-</span> <span class="token tag keyword">if</span> <span class="token variable">theme</span><span class="token punctuation">.</span><span class="token variable">baidu_site_verification</span> <span class="token delimiter punctuation">%&#125;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>meta</span> <span class="token attr-name">name</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>baidu-site-verification<span class="token punctuation">"</span></span> <span class="token attr-name">content</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>code-XXXXXXX<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+<span class="token django language-django"><span class="token delimiter punctuation">&#123;%-</span> <span class="token tag keyword">endif</span> <span class="token delimiter punctuation">%&#125;</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>同时，记得修改主题目录配置文件 **themes/next/_config.yml**，将
+baidu_site_verification 设置为 true</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token comment"># Baidu Webmaster tools verification.</span>
+<span class="token comment"># See: https://ziyuan.baidu.com/site</span>
+<span class="token key atrule">baidu_site_verification</span><span class="token punctuation">:</span> <span class="token boolean important">true</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>结局跟文件验证一样：301</p>
+<h3 id="cname-验证">CNAME 验证</h3>
+<p>这个其实是我一开始就尝试过的方式，但是一直提示 DNS
+解析不到，我是按着百度提示配置的，将百度站点工具给的key，用 CNAME
+的方式添加到域名解析服务中：</p>
+<pre class="line-numbers language-none"><code class="language-none">code-XXXXXXX.xianlong.site<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>这里用测试网址来说明百度的验证 Key</p>
+<div data-align="center">
+<p><img data-src="/images/web_sitemap/baidu_code.png" width="60%" height="60%" /></p>
+</div>
+<p>因为其他大佬使用的是阿里云部署的域名解析，域名后缀解析服务器自带，只需要填写域名前的字段
+code-XXXXXXX</p>
+<div data-align="center">
+<p><img data-src="/images/web_sitemap/baidu_add_key.png" width="40%" height="40%" /></p>
+</div>
+<p>结果就是这里卡了很久，后面我将域名去掉后配置上去，立马成功了，在这个测试例子中，请使用
+<font color=Red><strong>code-fFLAOWlTNn</strong></font>，切记配置的时候主机记录不需要域名后缀部分，坑爹的百度。</p>
+<h3 id="上传-sitemap">上传 Sitemap</h3>
+<p>接下来就简单了，验证成功后，进入站点管理平台提交 Sitemap 吧</p>
+<div data-align="center">
+<p><img data-src="/images/web_sitemap/baidu_add_sitemap.png" width="70%" height="70%" /></p>
+</div>
+<p>最后可以通过 <a href="https://tool.chinaz.com/baidu/">站长工具</a>
+查询收录情况。</p>
+<h2 id="bing-收录">Bing 收录</h2>
+<p>Bing 收录配置也比较简单，使用微软账号登陆后，可以直接从 Google
+中导入你的网站，非常好用，收录也比较快。</p>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">]]></content>
+      <categories>
+        <category>Blog</category>
+        <category>Hexo</category>
+        <category>Github</category>
+      </categories>
+      <tags>
+        <tag>others</tag>
       </tags>
   </entry>
 </search>
