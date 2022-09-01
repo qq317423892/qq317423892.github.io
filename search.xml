@@ -4681,7 +4681,7 @@ Difference)，必然会包含原点。</p>
 <p><span class="math display">\[
 A \oplus B = { \vec{a} + \vec{b}; \vec{a} \in A, \vec{b} \in B}
 \]</span></p>
-<div class="note success"><p>两个图形的闵可夫斯基和就是将其中一个图形中所有点到原点的向量，加上另外一个图形中所有的点到原点向量组成想新点集图形</p>
+<div class="note success"><p>两个图形的闵可夫斯基和就是将其中一个图形中所有点到原点的向量，加上另外一个图形中所有的点到原点向量组成新点集图形</p>
 </div>
 <p>一个三角形跟一个点的闵可夫斯基和集：</p>
 <div data-align="center">
