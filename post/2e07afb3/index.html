@@ -1,364 +1,4 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#e7ddc8" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#181c27" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 5.4.2">
-
-<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-<link rel="preconnect" href="null//null" crossorigin>
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="apple-touch-icon" sizes="180x180" href="/./images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/./images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/./images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/./images/safari-pinned-tab-next.svg" color="#e7ddc8">
-
-<link rel="stylesheet" href="/css/main.css">
-
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=LXGW:300,300italic,400,400italic,700,700italic%7CNoto+Serif+SC:300,300italic,400,400italic,700,700italic%7CLong+Cang:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
-
-<script class="next-config" data-name="main" type="application/json">{"hostname":"www.xianlongok.site","root":"/","images":"/blog/images/","scheme":"Gemini","darkmode":true,"version":"8.11.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":null,"post_body":null,"coll_header":null,"sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
-
-    <meta name="description" content="1.UMG类视图 UMG 控件跟Unity UGUI不太一样，不是所有的控件节点，都能拥有子节点，为了区分这三种控件，整理了下他们基类：   * UWidget : 所有UMG 控件的公共基类，不提供增加子节点功能  * UPanelWidget : 提供了增加子节点功能，可以有多个子节点  * UContentWidget : 继承于UPanelWidget ，是 UPanelWidget的一种">
-<meta property="og:type" content="article">
-<meta property="og:title" content="UMG源码笔记2-渲染过程">
-<meta property="og:url" content="https://www.xianlongok.site/post/2e07afb3/index.html">
-<meta property="og:site_name" content="十三">
-<meta property="og:description" content="1.UMG类视图 UMG 控件跟Unity UGUI不太一样，不是所有的控件节点，都能拥有子节点，为了区分这三种控件，整理了下他们基类：   * UWidget : 所有UMG 控件的公共基类，不提供增加子节点功能  * UPanelWidget : 提供了增加子节点功能，可以有多个子节点  * UContentWidget : 继承于UPanelWidget ，是 UPanelWidget的一种">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://www.xianlongok.site/images/umg_render/umg_class.png">
-<meta property="og:image" content="https://www.xianlongok.site/images/umg_render/slate_class.png">
-<meta property="article:published_time" content="2021-06-17T02:27:11.000Z">
-<meta property="article:modified_time" content="2022-05-14T03:20:32.321Z">
-<meta property="article:author" content="小贤">
-<meta property="article:tag" content="C++">
-<meta property="article:tag" content="UE4">
-<meta property="article:tag" content="UMG">
-<meta property="article:tag" content="Slate">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://www.xianlongok.site/images/umg_render/umg_class.png">
-
-
-<link rel="canonical" href="https://www.xianlongok.site/post/2e07afb3/">
-
-
-
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://www.xianlongok.site/post/2e07afb3/","path":"post/2e07afb3/","title":"UMG源码笔记2-渲染过程"}</script>
-
-<script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>UMG源码笔记2-渲染过程 | 十三</title>
-  
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-228435313-1"></script>
-  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-228435313-1","only_pageview":false}</script>
-  <script src="/js/third-party/analytics/google-analytics.js"></script>
-
-
-
-
-<link rel="dns-prefetch" href="https://waline-comment-nfec4vcyk-qq317423892.vercel.app/">
-  <noscript>
-    <link rel="stylesheet" href="/css/noscript.css">
-  </noscript>
-</head>
-
-<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
-  <div class="headband"></div>
-
-  <main class="main">
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏" role="button">
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <i class="logo-line"></i>
-      <p class="site-title">十三</p>
-      <i class="logo-line"></i>
-    </a>
-      <p class="site-subtitle" itemprop="description">安心学技术</p>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-        <i class="fa fa-search fa-fw fa-lg"></i>
-    </div>
-  </div>
-</div>
-
-
-
-<nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fas fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fas fa-splotch fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fas fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-tools"><a href="/tools/" rel="section"><i class="fas fa-wrench fa-fw"></i>工具</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fas fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fas fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fas fa-book fa-fw"></i>留言板</a></li>
-      <li class="menu-item menu-item-search">
-        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
-        </a>
-      </li>
-  </ul>
-</nav>
-
-
-
-  <div class="search-pop-overlay">
-    <div class="popup search-popup"><div class="search-header">
-  <span class="search-icon">
-    <i class="fa fa-search"></i>
-  </span>
-  <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off" maxlength="80"
-           placeholder="搜索..." spellcheck="false"
-           type="search" class="search-input">
-  </div>
-  <span class="popup-btn-close" role="button">
-    <i class="fa fa-times-circle"></i>
-  </span>
-</div>
-<div class="search-result-container no-result">
-  <div class="search-result-icon">
-    <i class="fa fa-spinner fa-pulse fa-5x"></i>
-  </div>
-</div>
-
-    </div>
-  </div>
-
-</div>
-        
-  
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-
-  <aside class="sidebar">
-
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
-      <ul class="sidebar-nav">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <div class="sidebar-panel-container">
-        <!--noindex-->
-        <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#umg%E7%B1%BB%E8%A7%86%E5%9B%BE"><span class="nav-number">1.</span> <span class="nav-text">1.UMG类视图</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#slate%E6%8E%A7%E4%BB%B6%E7%B1%BB%E8%A7%86%E5%9B%BE"><span class="nav-number">1.1.</span> <span class="nav-text">1.3 Slate控件类视图</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">
-
-</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#umg%E6%B8%B2%E6%9F%93%E6%B5%81%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">2 UMG渲染流程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#fslateapplication-%E6%B8%B2%E6%9F%93"><span class="nav-number">3.1.</span> <span class="nav-text">2.1 FSlateApplication 渲染</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#swindow-%E6%B8%B2%E6%9F%93"><span class="nav-number">3.2.</span> <span class="nav-text">2.2 SWindow 渲染</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9C%9F%E6%AD%A3%E7%9A%84render"><span class="nav-number">3.3.</span> <span class="nav-text">2.3 真正的Render</span></a></li></ol></li></ol></div>
-        </div>
-        <!--/noindex-->
-
-        <div class="site-overview-wrap sidebar-panel">
-          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="小贤"
-      src="/images/avatar.jpg">
-  <p class="site-author-name" itemprop="name">小贤</p>
-  <div class="site-description" itemprop="description">Watch and learn, your magic is mine!</div>
-</div>
-<div class="site-state-wrap site-overview-item animated">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-        <a href="/archives/">
-          <span class="site-state-item-count">20</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-          <a href="/categories/">
-        <span class="site-state-item-count">19</span>
-        <span class="site-state-item-name">分类</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-          <a href="/tags/">
-        <span class="site-state-item-count">22</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author site-overview-item animated">
-      <span class="links-of-author-item">
-        <a href="https://github.com/qq317423892" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qq317423892" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="mailto:xianlongok@163.com" title="E-Mail → mailto:xianlongok@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
-      </span>
-  </div>
-
-
-  <div class="links-of-blogroll site-overview-item animated">
-    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
-      Links
-    </div>
-    <ul class="links-of-blogroll-list">
-        <li class="links-of-blogroll-item">
-          <a href="https://scorpioq.github.io/" title="https:&#x2F;&#x2F;scorpioq.github.io&#x2F;" rel="noopener" target="_blank">ScorpioQ</a>
-        </li>
-        <li class="links-of-blogroll-item">
-          <a href="https://www.xygblog.com/" title="https:&#x2F;&#x2F;www.xygblog.com&#x2F;" rel="noopener" target="_blank">邪妖怪のBlog</a>
-        </li>
-    </ul>
-  </div>
-
-        </div>
-      </div>
-        <div class="back-to-top animated" role="button" aria-label="返回顶部">
-          <i class="fa fa-arrow-up"></i>
-          <span>0%</span>
-        </div>
-    </div>
-  </aside>
-  <div class="sidebar-dimmer"></div>
-
-
-    </header>
-
-    
-  <div class="reading-progress-bar"></div>
-
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
-
-
-    <div class="main-inner post posts-expand">
-
-
-  
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://www.xianlongok.site/post/2e07afb3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="小贤">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="十三">
-      <meta itemprop="description" content="Watch and learn, your magic is mine!">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="UMG源码笔记2-渲染过程 | 十三">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          UMG源码笔记2-渲染过程
-        </h1>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-06-17 10:27:11" itemprop="dateCreated datePublished" datetime="2021-06-17T10:27:11+08:00">2021-06-17</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/UE4/" itemprop="url" rel="index"><span itemprop="name">UE4</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/UE4/SlateUI/" itemprop="url" rel="index"><span itemprop="name">SlateUI</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/UE4/SlateUI/UMG/" itemprop="url" rel="index"><span itemprop="name">UMG</span></a>
-        </span>
-    </span>
-
-  
-    <span id="/post/2e07afb3/" class="post-meta-item leancloud_visitors" data-flag-title="UMG源码笔记2-渲染过程" title="阅读次数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-eye"></i>
-      </span>
-      <span class="post-meta-item-text">阅读次数：</span>
-      <span class="leancloud-visitors-count"></span>
-    </span>
-  
-  <span class="post-meta-item">
-    
-    <span class="post-meta-item-icon">
-      <i class="far fa-comment"></i>
-    </span>
-    <span class="post-meta-item-text">Waline：</span>
-  
-    <a title="waline" href="/post/2e07afb3/#waline" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" data-path="/post/2e07afb3/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>20k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>18 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-        <h1 id="umg类视图">1.UMG类视图</h1>
-<p>UMG 控件跟Unity
-UGUI不太一样，不是所有的控件节点，都能拥有子节点，为了区分这三种控件，整理了下他们基类：</p>
-<ul>
-<li><strong>UWidget</strong> : 所有UMG
-控件的公共基类，不提供增加子节点功能</li>
-<li><strong>UPanelWidget</strong> :
-提供了增加子节点功能，可以有多个子节点</li>
-<li><strong>UContentWidget</strong> : 继承于
-<strong>UPanelWidget</strong> ，是 <strong>UPanelWidget</strong>
-的一种特例，只能有一个子节点</li>
-</ul>
-<p>UMG常用控件的继承关系如下图所示:</p>
-<p><img data-src="/images/umg_render/umg_class.png" width=70% height=70% align="center"/></p>
-<p><strong>UPanelWidget</strong> 实现了可以增加节点的功能
-<strong>AddChild</strong>
-，然后提供了是否可以增加多个子节点的标记为，</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp">UPanelSlot<span class="token operator">*</span> <span class="token class-name">UPanelWidget</span><span class="token double-colon punctuation">::</span><span class="token function">AddChild</span><span class="token punctuation">(</span>UWidget<span class="token operator">*</span> Content<span class="token punctuation">)</span>
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><meta name="theme-color" content="#e7ddc8" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#181c27" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 5.4.2"><link rel="preconnect" href="https://fonts.googleapis.com" crossorigin><link rel="preconnect" href="null//null" crossorigin><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="apple-touch-icon" sizes="180x180" href="/./images/apple-touch-icon-next.png"><link rel="icon" type="image/png" sizes="32x32" href="/./images/favicon-32x32-next.png"><link rel="icon" type="image/png" sizes="16x16" href="/./images/favicon-16x16-next.png"><link rel="mask-icon" href="/./images/safari-pinned-tab-next.svg" color="#e7ddc8"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=LXGW:300,300italic,400,400italic,700,700italic%7CNoto+Serif+SC:300,300italic,400,400italic,700,700italic%7CLong+Cang:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous"><script class="next-config" data-name="main" type="application/json">{"hostname":"www.xianlongok.site","root":"/","images":"/blog/images/","scheme":"Gemini","darkmode":true,"version":"8.11.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":null,"post_body":null,"coll_header":null,"sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script><meta name="description" content="1.UMG类视图 UMG 控件跟Unity UGUI不太一样，不是所有的控件节点，都能拥有子节点，为了区分这三种控件，整理了下他们基类：   * UWidget : 所有UMG 控件的公共基类，不提供增加子节点功能  * UPanelWidget : 提供了增加子节点功能，可以有多个子节点  * UContentWidget : 继承于UPanelWidget ，是 UPanelWidget的一种"><meta property="og:type" content="article"><meta property="og:title" content="UMG源码笔记2-渲染过程"><meta property="og:url" content="https://www.xianlongok.site/post/2e07afb3/index.html"><meta property="og:site_name" content="十三"><meta property="og:description" content="1.UMG类视图 UMG 控件跟Unity UGUI不太一样，不是所有的控件节点，都能拥有子节点，为了区分这三种控件，整理了下他们基类：   * UWidget : 所有UMG 控件的公共基类，不提供增加子节点功能  * UPanelWidget : 提供了增加子节点功能，可以有多个子节点  * UContentWidget : 继承于UPanelWidget ，是 UPanelWidget的一种"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://www.xianlongok.site/images/umg_render/umg_class.png"><meta property="og:image" content="https://www.xianlongok.site/images/umg_render/slate_class.png"><meta property="article:published_time" content="2021-06-17T02:27:11.000Z"><meta property="article:modified_time" content="2022-05-14T03:20:32.321Z"><meta property="article:author" content="小贤"><meta property="article:tag" content="C++"><meta property="article:tag" content="UE4"><meta property="article:tag" content="UMG"><meta property="article:tag" content="Slate"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.xianlongok.site/images/umg_render/umg_class.png"><link rel="canonical" href="https://www.xianlongok.site/post/2e07afb3/"><script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://www.xianlongok.site/post/2e07afb3/","path":"post/2e07afb3/","title":"UMG源码笔记2-渲染过程"}</script><script class="next-config" data-name="calendar" type="application/json">""</script><title>UMG源码笔记2-渲染过程 | 十三</title><script async src="https://www.googletagmanager.com/gtag/js?id=UA-228435313-1"></script><script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-228435313-1","only_pageview":false}</script><script src="/js/third-party/analytics/google-analytics.js"></script><link rel="dns-prefetch" href="https://waline-comment-nfec4vcyk-qq317423892.vercel.app/"><noscript><link rel="stylesheet" href="/css/noscript.css"></noscript></head><body itemscope itemtype="http://schema.org/WebPage" class="use-motion"><div class="headband"></div><main class="main"><header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-container"><div class="site-nav-toggle"><div class="toggle" aria-label="切换导航栏" role="button"><span class="toggle-line"></span> <span class="toggle-line"></span> <span class="toggle-line"></span></div></div><div class="site-meta"><a href="/" class="brand" rel="start"><i class="logo-line"></i><p class="site-title">十三</p><i class="logo-line"></i></a><p class="site-subtitle" itemprop="description">安心学技术</p></div><div class="site-nav-right"><div class="toggle popup-trigger"><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class="site-nav"><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fas fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fas fa-splotch fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fas fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-tools"><a href="/tools/" rel="section"><i class="fas fa-wrench fa-fw"></i>工具</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fas fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fas fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fas fa-book fa-fw"></i>留言板</a></li><li class="menu-item menu-item-novelai"><a href="/NovelAI/" rel="section"><i class="fas fa-tachometer fa-fw"></i>NovelAI</a></li><li class="menu-item menu-item-search"><a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索</a></li></ul></nav><div class="search-pop-overlay"><div class="popup search-popup"><div class="search-header"><span class="search-icon"><i class="fa fa-search"></i></span><div class="search-input-container"><input autocomplete="off" autocapitalize="off" maxlength="80" placeholder="搜索..." spellcheck="false" type="search" class="search-input"></div><span class="popup-btn-close" role="button"><i class="fa fa-times-circle"></i></span></div><div class="search-result-container no-result"><div class="search-result-icon"><i class="fa fa-spinner fa-pulse fa-5x"></i></div></div></div></div></div><div class="toggle sidebar-toggle" role="button"><span class="toggle-line"></span> <span class="toggle-line"></span> <span class="toggle-line"></span></div><aside class="sidebar"><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class="sidebar-nav"><li class="sidebar-nav-toc">文章目录</li><li class="sidebar-nav-overview">站点概览</li></ul><div class="sidebar-panel-container"><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#umg%E7%B1%BB%E8%A7%86%E5%9B%BE"><span class="nav-number">1.</span> <span class="nav-text">1.UMG类视图</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#slate%E6%8E%A7%E4%BB%B6%E7%B1%BB%E8%A7%86%E5%9B%BE"><span class="nav-number">1.1.</span> <span class="nav-text">1.3 Slate控件类视图</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text"></span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#umg%E6%B8%B2%E6%9F%93%E6%B5%81%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">2 UMG渲染流程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#fslateapplication-%E6%B8%B2%E6%9F%93"><span class="nav-number">3.1.</span> <span class="nav-text">2.1 FSlateApplication 渲染</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#swindow-%E6%B8%B2%E6%9F%93"><span class="nav-number">3.2.</span> <span class="nav-text">2.2 SWindow 渲染</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9C%9F%E6%AD%A3%E7%9A%84render"><span class="nav-number">3.3.</span> <span class="nav-text">2.3 真正的Render</span></a></li></ol></li></ol></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person"><img class="site-author-image" itemprop="image" alt="小贤" src="/images/avatar.jpg"><p class="site-author-name" itemprop="name">小贤</p><div class="site-description" itemprop="description">Watch and learn, your magic is mine!</div></div><div class="site-state-wrap site-overview-item animated"><nav class="site-state"><div class="site-state-item site-state-posts"><a href="/archives/"><span class="site-state-item-count">20</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"><a href="/categories/"><span class="site-state-item-count">19</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"><a href="/tags/"><span class="site-state-item-count">22</span> <span class="site-state-item-name">标签</span></a></div></nav></div><div class="links-of-author site-overview-item animated"><span class="links-of-author-item"><a href="https://github.com/qq317423892" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qq317423892" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a> </span><span class="links-of-author-item"><a href="mailto:xianlongok@163.com" title="E-Mail → mailto:xianlongok@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i></a></span></div><div class="links-of-blogroll site-overview-item animated"><div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i> Links</div><ul class="links-of-blogroll-list"><li class="links-of-blogroll-item"><a href="https://scorpioq.github.io/" title="https:&#x2F;&#x2F;scorpioq.github.io&#x2F;" rel="noopener" target="_blank">ScorpioQ</a></li><li class="links-of-blogroll-item"><a href="https://www.xygblog.com/" title="https:&#x2F;&#x2F;www.xygblog.com&#x2F;" rel="noopener" target="_blank">邪妖怪のBlog</a></li></ul></div></div></div><div class="back-to-top animated" role="button" aria-label="返回顶部"><i class="fa fa-arrow-up"></i> <span>0%</span></div></div></aside><div class="sidebar-dimmer"></div></header><div class="reading-progress-bar"></div><noscript><div class="noscript-warning">Theme NexT works best with JavaScript enabled</div></noscript><div class="main-inner post posts-expand"><div class="post-block"><article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN"><link itemprop="mainEntityOfPage" href="https://www.xianlongok.site/post/2e07afb3/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="/images/avatar.jpg"><meta itemprop="name" content="小贤"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="十三"><meta itemprop="description" content="Watch and learn, your magic is mine!"></span><span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork"><meta itemprop="name" content="UMG源码笔记2-渲染过程 | 十三"><meta itemprop="description" content=""></span><header class="post-header"><h1 class="post-title" itemprop="name headline">UMG源码笔记2-渲染过程</h1><div class="post-meta-container"><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-calendar"></i> </span><span class="post-meta-item-text">发表于</span> <time title="创建时间：2021-06-17 10:27:11" itemprop="dateCreated datePublished" datetime="2021-06-17T10:27:11+08:00">2021-06-17</time> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-folder"></i> </span><span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/UE4/" itemprop="url" rel="index"><span itemprop="name">UE4</span></a> </span>， <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/UE4/SlateUI/" itemprop="url" rel="index"><span itemprop="name">SlateUI</span></a> </span>， <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/UE4/SlateUI/UMG/" itemprop="url" rel="index"><span itemprop="name">UMG</span></a> </span></span><span id="/post/2e07afb3/" class="post-meta-item leancloud_visitors" data-flag-title="UMG源码笔记2-渲染过程" title="阅读次数"><span class="post-meta-item-icon"><i class="far fa-eye"></i> </span><span class="post-meta-item-text">阅读次数：</span> <span class="leancloud-visitors-count"></span> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-comment"></i> </span><span class="post-meta-item-text">Waline：</span> <a title="waline" href="/post/2e07afb3/#waline" itemprop="discussionUrl"><span class="post-comments-count waline-comment-count" data-path="/post/2e07afb3/" itemprop="commentCount"></span> </a></span><span class="post-meta-break"></span> <span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="far fa-file-word"></i> </span><span class="post-meta-item-text">本文字数：</span> <span>20k</span> </span><span class="post-meta-item" title="阅读时长"><span class="post-meta-item-icon"><i class="far fa-clock"></i> </span><span class="post-meta-item-text">阅读时长 &asymp;</span> <span>18 分钟</span></span></div></div></header><div class="post-body" itemprop="articleBody"><h1 id="umg类视图">1.UMG类视图</h1><p>UMG 控件跟Unity UGUI不太一样，不是所有的控件节点，都能拥有子节点，为了区分这三种控件，整理了下他们基类：</p><ul><li><strong>UWidget</strong> : 所有UMG 控件的公共基类，不提供增加子节点功能</li><li><strong>UPanelWidget</strong> : 提供了增加子节点功能，可以有多个子节点</li><li><strong>UContentWidget</strong> : 继承于 <strong>UPanelWidget</strong> ，是 <strong>UPanelWidget</strong> 的一种特例，只能有一个子节点</li></ul><p>UMG常用控件的继承关系如下图所示:</p><p><img data-src="/images/umg_render/umg_class.png" width="70%" height="70%" align="center"></p><p><strong>UPanelWidget</strong> 实现了可以增加节点的功能 <strong>AddChild</strong> ，然后提供了是否可以增加多个子节点的标记为，</p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp">UPanelSlot<span class="token operator">*</span> <span class="token class-name">UPanelWidget</span><span class="token double-colon punctuation">::</span><span class="token function">AddChild</span><span class="token punctuation">(</span>UWidget<span class="token operator">*</span> Content<span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
     <span class="token keyword">if</span> <span class="token punctuation">(</span> Content <span class="token operator">==</span> <span class="token keyword">nullptr</span> <span class="token punctuation">)</span>
     <span class="token punctuation">&#123;</span>
@@ -397,82 +37,11 @@ UGUI不太一样，不是所有的控件节点，都能拥有子节点，为了�
     <span class="token function">InvalidateLayoutAndVolatility</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 
     <span class="token keyword">return</span> PanelSlot<span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p><strong>UContentWidget</strong> 的实现是将
-<strong>bCanHaveMultipleChildren</strong> 设置 <strong>false</strong>
-，达到只有一个子节点的功能。</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token class-name">UContentWidget</span><span class="token double-colon punctuation">::</span><span class="token function">UContentWidget</span><span class="token punctuation">(</span><span class="token keyword">const</span> FObjectInitializer<span class="token operator">&amp;</span> ObjectInitializer<span class="token punctuation">)</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p><strong>UContentWidget</strong> 的实现是将 <strong>bCanHaveMultipleChildren</strong> 设置 <strong>false</strong> ，达到只有一个子节点的功能。</p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token class-name">UContentWidget</span><span class="token double-colon punctuation">::</span><span class="token function">UContentWidget</span><span class="token punctuation">(</span><span class="token keyword">const</span> FObjectInitializer<span class="token operator">&amp;</span> ObjectInitializer<span class="token punctuation">)</span>
     <span class="token operator">:</span> <span class="token function">Super</span><span class="token punctuation">(</span>ObjectInitializer<span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
     bCanHaveMultipleChildren <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>其中， <strong>GetSlotClass</strong> 返回对应控件的
-<strong>Slot</strong> 的类型，下面的表格里给出了对应控件的
-<strong>Slot</strong> 类型，即 <strong>GetSlotClass</strong> 返回的
-<strong>Slot</strong> 的类型。创建后的 <strong>Slot</strong>
-对象会分别指向父节点跟子节点。</p>
-<table>
-<thead>
-<tr class="header">
-<th>控件</th>
-<th>Slot类</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>UWidget/UPanelWidget/UCheckBox/URetainerBox</td>
-<td>UPanelSlot</td>
-</tr>
-<tr class="even">
-<td>USafeZone</td>
-<td>USafeZoneSlot</td>
-</tr>
-<tr class="odd">
-<td>USizeBox</td>
-<td>USizeBoxSlot</td>
-</tr>
-<tr class="even">
-<td>UBorder</td>
-<td>UBorderSlot</td>
-</tr>
-<tr class="odd">
-<td>UButton</td>
-<td>UButtonSlot</td>
-</tr>
-<tr class="even">
-<td>UCanvasPanel</td>
-<td>UCanvasPanelSlot</td>
-</tr>
-<tr class="odd">
-<td>UHorizontalBox</td>
-<td>UHorizontalBoxSlot</td>
-</tr>
-<tr class="even">
-<td>UOverlay</td>
-<td>UOverlaySlot</td>
-</tr>
-<tr class="odd">
-<td>UScrollBox</td>
-<td>UScrollBoxSlot</td>
-</tr>
-<tr class="even">
-<td>UGridPanel</td>
-<td>UGridSlot</td>
-</tr>
-</tbody>
-</table>
-<h2 id="slate控件类视图">1.3 Slate控件类视图</h2>
-<p><strong>Slate</strong> 中基础类是 <strong>SWidget</strong>
-，这是个抽象类，不能实例化，此外还有三个继承 <strong>SWidget</strong>
-的基础类，其他控件都是这个三个类的子类型。 * <strong>SPanel</strong> :
-有多个子节点，本身是个抽象类，子类需要定义子节点组织方式 *
-<strong>SLeafWidget</strong> : 没有子节点，抽象类，子节点需要重写
-<strong>Paint</strong> 方法 * <strong>SCompoundWidget</strong> :
-可以有一个子节点</p>
-<h1>
-<img data-src="/images/umg_render/slate_class.png" width=100% height=100% align="center"/>
-</h1>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">class</span> <span class="token class-name">SCompoundWidget</span> <span class="token operator">:</span> <span class="token base-clause"><span class="token keyword">public</span> <span class="token class-name">SWidget</span></span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>其中， <strong>GetSlotClass</strong> 返回对应控件的 <strong>Slot</strong> 的类型，下面的表格里给出了对应控件的 <strong>Slot</strong> 类型，即 <strong>GetSlotClass</strong> 返回的 <strong>Slot</strong> 的类型。创建后的 <strong>Slot</strong> 对象会分别指向父节点跟子节点。</p><table><thead><tr class="header"><th>控件</th><th>Slot类</th></tr></thead><tbody><tr class="odd"><td>UWidget/UPanelWidget/UCheckBox/URetainerBox</td><td>UPanelSlot</td></tr><tr class="even"><td>USafeZone</td><td>USafeZoneSlot</td></tr><tr class="odd"><td>USizeBox</td><td>USizeBoxSlot</td></tr><tr class="even"><td>UBorder</td><td>UBorderSlot</td></tr><tr class="odd"><td>UButton</td><td>UButtonSlot</td></tr><tr class="even"><td>UCanvasPanel</td><td>UCanvasPanelSlot</td></tr><tr class="odd"><td>UHorizontalBox</td><td>UHorizontalBoxSlot</td></tr><tr class="even"><td>UOverlay</td><td>UOverlaySlot</td></tr><tr class="odd"><td>UScrollBox</td><td>UScrollBoxSlot</td></tr><tr class="even"><td>UGridPanel</td><td>UGridSlot</td></tr></tbody></table><h2 id="slate控件类视图">1.3 Slate控件类视图</h2><p><strong>Slate</strong> 中基础类是 <strong>SWidget</strong> ，这是个抽象类，不能实例化，此外还有三个继承 <strong>SWidget</strong> 的基础类，其他控件都是这个三个类的子类型。 * <strong>SPanel</strong> : 有多个子节点，本身是个抽象类，子类需要定义子节点组织方式 * <strong>SLeafWidget</strong> : 没有子节点，抽象类，子节点需要重写 <strong>Paint</strong> 方法 * <strong>SCompoundWidget</strong> : 可以有一个子节点</p><h1><img data-src="/images/umg_render/slate_class.png" width="100%" height="100%" align="center"></h1><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">class</span> <span class="token class-name">SCompoundWidget</span> <span class="token operator">:</span> <span class="token base-clause"><span class="token keyword">public</span> <span class="token class-name">SWidget</span></span>
 <span class="token punctuation">&#123;</span>
     FSimpleSlot ChildSlot<span class="token punctuation">;</span>
 <span class="token punctuation">&#125;</span>
@@ -486,20 +55,7 @@ UGUI不太一样，不是所有的控件节点，都能拥有子节点，为了�
 <span class="token keyword">class</span> <span class="token class-name">TPanelChildren</span> <span class="token operator">:</span> <span class="token base-clause"><span class="token keyword">public</span> <span class="token class-name">FChildren</span><span class="token punctuation">,</span> <span class="token keyword">private</span> <span class="token class-name">TIndirectArray</span><span class="token operator">&lt;</span> <span class="token class-name">SlotType</span> <span class="token operator">></span></span>
 <span class="token punctuation">&#123;</span>
 <span class="token punctuation">&#125;</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<blockquote>
-<p><strong>TPanelChildren<FSlot></strong> : 实际上是一个
-<strong>Array&lt;SWidget*&gt;</strong> <strong>FSimpleSlot</strong> :
-持有一个 <strong>SWidget*</strong></p>
-</blockquote>
-<h1 id="umg渲染流程">2 UMG渲染流程</h1>
-<p>渲染一个SImage的调用栈如下：</p>
-<img  data-src=http://www.plantuml.com/plantuml/svg/ZLDTQy8m57tlhmW-RGF_G1y4TOu9oiGF9WoHp5pRO7OZITHjltwtJUhQhav37vfppxdVkNkuP-rsvsc0YKGOQRsFuxdSxA8Cd2dkeBlVAxdXJcgyQkgYU3Jyz2f50ivU87e62dt2IvI9aKV2VfasablMQZ6N0aQCJjl897NjpXiBnyTa4oxH5HXR_HkUiksdKWbJyybctavvPDxyfSBmReTuv4gAtEzKQnVuTRYYhBgUANsQS9TwIcxDgWZM0bqkb_4BLY2VG5RAGC4784d6V0Sz_Lbb-6Y1CvAMU5qX5YXHEabPVeE8G5dmgcmarD9SEGKKO5RigNG3KvjU9TRqUTX4i-impO8z1QiFPWDZZZp9k8izDGlcyEaE1hfESGktkLvxS9uQu29NrBQaiYbKU6Y43NiHhZtkDcdckSJu8x-ew7FwRT3z8od8GtHWaAkRHFJHU8FXkg9FFIdcbeDHhZaFEuZ3-tdF6EpFMTNQBp6PQ7fANt7SEz3BEQEzmtOBfg7wFFGZTvmM54nIJWWQw4sHIbjke-W7>
-<h2 id="fslateapplication-渲染">2.1 FSlateApplication 渲染</h2>
-<p>首先介绍下几个关键的类 * UGameEngine : 全局对象
-<strong>GEngine</strong> 类 * FSlateApplication :
-单例，游戏窗口类负责渲染 <strong>Slate</strong></p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">// 全局单例</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><blockquote><p><strong>TPanelChildren<fslot></fslot></strong>: 实际上是一个 <strong>Array&lt;SWidget*&gt;</strong> <strong>FSimpleSlot</strong> : 持有一个 <strong>SWidget*</strong></p></blockquote><h1 id="umg渲染流程">2 UMG渲染流程</h1><p>渲染一个SImage的调用栈如下：</p><img data-src="http://www.plantuml.com/plantuml/svg/ZLDTQy8m57tlhmW-RGF_G1y4TOu9oiGF9WoHp5pRO7OZITHjltwtJUhQhav37vfppxdVkNkuP-rsvsc0YKGOQRsFuxdSxA8Cd2dkeBlVAxdXJcgyQkgYU3Jyz2f50ivU87e62dt2IvI9aKV2VfasablMQZ6N0aQCJjl897NjpXiBnyTa4oxH5HXR_HkUiksdKWbJyybctavvPDxyfSBmReTuv4gAtEzKQnVuTRYYhBgUANsQS9TwIcxDgWZM0bqkb_4BLY2VG5RAGC4784d6V0Sz_Lbb-6Y1CvAMU5qX5YXHEabPVeE8G5dmgcmarD9SEGKKO5RigNG3KvjU9TRqUTX4i-impO8z1QiFPWDZZZp9k8izDGlcyEaE1hfESGktkLvxS9uQu29NrBQaiYbKU6Y43NiHhZtkDcdckSJu8x-ew7FwRT3z8od8GtHWaAkRHFJHU8FXkg9FFIdcbeDHhZaFEuZ3-tdF6EpFMTNQBp6PQ7fANt7SEz3BEQEzmtOBfg7wFFGZTvmM54nIJWWQw4sHIbjke-W7"><h2 id="fslateapplication-渲染">2.1 FSlateApplication 渲染</h2><p>首先介绍下几个关键的类 * UGameEngine : 全局对象 <strong>GEngine</strong> 类 * FSlateApplication : 单例，游戏窗口类负责渲染 <strong>Slate</strong></p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">// 全局单例</span>
 <span class="token keyword">class</span> <span class="token class-name">UGameEngine</span>
 <span class="token punctuation">&#123;</span>
     <span class="token comment">// 游戏窗口句柄</span>
@@ -532,10 +88,7 @@ UGUI不太一样，不是所有的控件节点，都能拥有子节点，为了�
     <span class="token keyword">void</span> <span class="token function">Initialize</span><span class="token punctuation">(</span><span class="token punctuation">(</span>FSlateRenderer<span class="token operator">&amp;</span> InSlateRenderer<span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token keyword">void</span> <span class="token function">PassPreLoadScreenWindowBackToGame</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">&#125;</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p><strong>FSlateApplication</strong> 是一个单例类，会在
-<strong>FEngineLoop::PreInit</strong> 调用时创建：</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">/// 1</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p><strong>FSlateApplication</strong> 是一个单例类，会在 <strong>FEngineLoop::PreInit</strong> 调用时创建：</p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">/// 1</span>
 int32 <span class="token class-name">FEngineLoop</span><span class="token double-colon punctuation">::</span><span class="token function">PreInit</span><span class="token punctuation">(</span><span class="token keyword">const</span> TCHAR<span class="token operator">*</span> CmdLine<span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
     <span class="token keyword">const</span> int32 rv1 <span class="token operator">=</span> <span class="token function">PreInitPreStartupScreen</span><span class="token punctuation">(</span>CmdLine<span class="token punctuation">)</span><span class="token punctuation">;</span>
@@ -546,11 +99,7 @@ int32 <span class="token class-name">FEngineLoop</span><span class="token double
 <span class="token punctuation">&#123;</span>
     <span class="token comment">// ...</span>
     <span class="token class-name">FSlateApplication</span><span class="token double-colon punctuation">::</span><span class="token function">Create</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>创建完 <strong>FSlateApplication</strong> 后，接下来会在
-<strong>FEngineLoop::PreInitPreStartUpScreen</strong> 函数中调用
-<strong>UGameEngine::CreateGameWindow()</strong> 创建游戏窗口</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">/// 1</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>创建完 <strong>FSlateApplication</strong> 后，接下来会在 <strong>FEngineLoop::PreInitPreStartUpScreen</strong> 函数中调用 <strong>UGameEngine::CreateGameWindow()</strong> 创建游戏窗口</p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">/// 1</span>
 TSharedRef<span class="token operator">&lt;</span>SWindow<span class="token operator">></span> <span class="token class-name">UGameEngine</span><span class="token double-colon punctuation">::</span><span class="token function">CreateGameWindow</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
     TSharedRef<span class="token operator">&lt;</span>SWindow<span class="token operator">></span> Window <span class="token operator">=</span> <span class="token function">SNew</span><span class="token punctuation">(</span>SWindow<span class="token punctuation">)</span><span class="token punctuation">;</span>
@@ -573,21 +122,14 @@ TSharedRef<span class="token operator">&lt;</span>SWindow<span class="token oper
 <span class="token keyword">void</span> <span class="token class-name">FPreLoadScreenManager</span><span class="token double-colon punctuation">::</span><span class="token function">PassPreLoadScreenWindowBackToGame</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">const</span>
 <span class="token punctuation">&#123;</span>
     GameEngine<span class="token operator">-></span>GameViewportWindow <span class="token operator">=</span> MainWindow<span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>创建的 <strong>SWindow</strong>会加到
-<strong>FSlateApplication</strong> 的 <strong>SlateWindown</strong>
-队列:</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp">TSharedRef<span class="token operator">&lt;</span>SWindow<span class="token operator">></span> <span class="token class-name">FSlateApplication</span><span class="token double-colon punctuation">::</span><span class="token function">AddWindow</span><span class="token punctuation">(</span> TSharedRef<span class="token operator">&lt;</span>SWindow<span class="token operator">></span> InSlateWindow<span class="token punctuation">,</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>创建的 <strong>SWindow</strong>会加到 <strong>FSlateApplication</strong> 的 <strong>SlateWindown</strong> 队列:</p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp">TSharedRef<span class="token operator">&lt;</span>SWindow<span class="token operator">></span> <span class="token class-name">FSlateApplication</span><span class="token double-colon punctuation">::</span><span class="token function">AddWindow</span><span class="token punctuation">(</span> TSharedRef<span class="token operator">&lt;</span>SWindow<span class="token operator">></span> InSlateWindow<span class="token punctuation">,</span>
  <span class="token keyword">const</span> <span class="token keyword">bool</span> bShowImmediately <span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
     
     <span class="token class-name">FSlateWindowHelper</span><span class="token double-colon punctuation">::</span><span class="token function">ArrangeWindowToFront</span><span class="token punctuation">(</span>SlateWindows<span class="token punctuation">,</span> InSlateWindow<span class="token punctuation">)</span><span class="token punctuation">;</span>
     
     <span class="token keyword">return</span> InSlateWindow<span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>渲染时，会遍历 <strong>SlateWindows</strong> 列表，依次渲染每个
-<strong>Window</strong></p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">/// 1</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>渲染时，会遍历 <strong>SlateWindows</strong> 列表，依次渲染每个 <strong>Window</strong></p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">/// 1</span>
 <span class="token keyword">void</span> <span class="token class-name">FSlateApplication</span><span class="token double-colon punctuation">::</span><span class="token function">PrivateDrawWindows</span><span class="token punctuation">(</span> TSharedPtr<span class="token operator">&lt;</span>SWindow<span class="token operator">></span> DrawOnlyThisWindow <span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
     <span class="token keyword">for</span><span class="token punctuation">(</span> TArray<span class="token operator">&lt;</span> TSharedRef<span class="token operator">&lt;</span>SWindow<span class="token operator">></span> <span class="token operator">></span><span class="token double-colon punctuation">::</span>TConstIterator <span class="token function">CurrentWindowIt</span><span class="token punctuation">(</span> SlateWindows <span class="token punctuation">)</span><span class="token punctuation">;</span> 
@@ -612,10 +154,7 @@ TSharedRef<span class="token operator">&lt;</span>SWindow<span class="token oper
         WindowElementList<span class="token punctuation">,</span>
         <span class="token function">FWidgetStyle</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
         WindowToDraw<span class="token operator">-></span><span class="token function">IsEnabled</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p><strong>UGameEngine</strong> 初始化时，还会创建
-<strong>UGameViewportClient</strong></p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">void</span> <span class="token class-name">UGameEngine</span><span class="token double-colon punctuation">::</span><span class="token function">Init</span><span class="token punctuation">(</span>IEngineLoop<span class="token operator">*</span> InEngineLoop<span class="token punctuation">)</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p><strong>UGameEngine</strong> 初始化时，还会创建 <strong>UGameViewportClient</strong></p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">void</span> <span class="token class-name">UGameEngine</span><span class="token double-colon punctuation">::</span><span class="token function">Init</span><span class="token punctuation">(</span>IEngineLoop<span class="token operator">*</span> InEngineLoop<span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
     <span class="token keyword">if</span><span class="token punctuation">(</span>GIsClient<span class="token punctuation">)</span>
     <span class="token punctuation">&#123;</span>
@@ -624,20 +163,14 @@ TSharedRef<span class="token operator">&lt;</span>SWindow<span class="token oper
         GameViewport <span class="token operator">=</span> ViewportClient<span class="token punctuation">;</span>
         GameInstance<span class="token operator">-></span><span class="token function">GetWorldContext</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">-></span>GameViewport <span class="token operator">=</span> ViewportClient<span class="token punctuation">;</span>
     <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<!-- 游戏中打开的界面**UUserWidget**，都会调用**widiget::AddToViewport()**，将自己挂到**UGameViewportClient**上 -->
-<h2 id="swindow-渲染">2.2 SWindow 渲染</h2>
-<p><strong>SWindow</strong> 类的组成 <pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">class</span> <span class="token class-name">SLATECORE_API</span> SWindow <span class="token operator">:</span> <span class="token keyword">public</span> SCompoundWidget<span class="token punctuation">,</span> <span class="token keyword">public</span> FSlateInvalidationRoot
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><h2 id="swindow-渲染">2.2 SWindow 渲染</h2><p><strong>SWindow</strong> 类的组成<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">class</span> <span class="token class-name">SLATECORE_API</span> SWindow <span class="token operator">:</span> <span class="token keyword">public</span> SCompoundWidget<span class="token punctuation">,</span> <span class="token keyword">public</span> FSlateInvalidationRoot
 <span class="token punctuation">&#123;</span>
     <span class="token comment">/// Slate 事件检测加速类</span>
     TUniquePtr<span class="token operator">&lt;</span>FHittestGrid<span class="token operator">></span> HittestGrid<span class="token punctuation">;</span>
     SVerticalBox<span class="token double-colon punctuation">::</span>FSlot<span class="token operator">*</span> ContentSlot<span class="token punctuation">;</span>
     TWeakPtr<span class="token operator">&lt;</span>SWindow<span class="token operator">></span> ParentWindowPtr<span class="token punctuation">;</span>
     TArray<span class="token operator">&lt;</span> TSharedRef<span class="token operator">&lt;</span>SWindow<span class="token operator">></span> <span class="token operator">></span> ChildWindows<span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
-<p><strong>SWindow</strong>在初始化时，会在 ChildSlot里增加几个
-<strong>SOverlay</strong></p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">void</span> <span class="token class-name">SWindow</span><span class="token double-colon punctuation">::</span><span class="token function">ConstructWindowInternals</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p><p><strong>SWindow</strong>在初始化时，会在 ChildSlot里增加几个 <strong>SOverlay</strong></p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">void</span> <span class="token class-name">SWindow</span><span class="token double-colon punctuation">::</span><span class="token function">ConstructWindowInternals</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
     <span class="token keyword">this</span><span class="token operator">-></span>ChildSlot
     <span class="token punctuation">[</span>
@@ -661,10 +194,7 @@ TSharedRef<span class="token operator">&lt;</span>SWindow<span class="token oper
             WindowOutline<span class="token punctuation">.</span><span class="token function">ToSharedRef</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
         <span class="token punctuation">]</span>
     <span class="token punctuation">]</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>渲染时，从 <strong>SlateApplication</strong> 对象调用
-<strong>SWindow</strong> 的 <strong>PaintWindow</strong> 方法</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">/// 1</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>渲染时，从 <strong>SlateApplication</strong> 对象调用 <strong>SWindow</strong> 的 <strong>PaintWindow</strong> 方法</p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">/// 1</span>
 int32 <span class="token class-name">SWindow</span><span class="token double-colon punctuation">::</span><span class="token function">PaintWindow</span><span class="token punctuation">(</span> <span class="token keyword">double</span> CurrentTime<span class="token punctuation">,</span> <span class="token keyword">float</span> DeltaTime<span class="token punctuation">,</span> 
     FSlateWindowElementList<span class="token operator">&amp;</span> OutDrawElements<span class="token punctuation">,</span> <span class="token keyword">const</span> FWidgetStyle<span class="token operator">&amp;</span> InWidgetStyle<span class="token punctuation">,</span> 
     <span class="token keyword">bool</span> bParentEnabled <span class="token punctuation">)</span>
@@ -715,10 +245,7 @@ int32 <span class="token class-name">SWindow</span><span class="token double-col
         OutDrawElements<span class="token punctuation">,</span> LayerId<span class="token punctuation">,</span> InWidgetStyle<span class="token punctuation">,</span> bParentEnabled<span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token keyword">return</span> MaxLayer<span class="token punctuation">;</span>
 <span class="token punctuation">&#125;</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>不同的节点的<strong>OnPaint</strong>函数实现不一样
-<strong>SCompoundWidget</strong>只有一个子节点，直接调用子节点的Paint函数</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp">int32 <span class="token class-name">SCompoundWidget</span><span class="token double-colon punctuation">::</span><span class="token function">OnPaint</span><span class="token punctuation">(</span> <span class="token keyword">const</span> FPaintArgs<span class="token operator">&amp;</span> Args<span class="token punctuation">,</span> <span class="token keyword">const</span> FGeometry<span class="token operator">&amp;</span> AllottedGeometry<span class="token punctuation">,</span> 
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>不同的节点的<strong>OnPaint</strong>函数实现不一样 <strong>SCompoundWidget</strong>只有一个子节点，直接调用子节点的Paint函数</p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp">int32 <span class="token class-name">SCompoundWidget</span><span class="token double-colon punctuation">::</span><span class="token function">OnPaint</span><span class="token punctuation">(</span> <span class="token keyword">const</span> FPaintArgs<span class="token operator">&amp;</span> Args<span class="token punctuation">,</span> <span class="token keyword">const</span> FGeometry<span class="token operator">&amp;</span> AllottedGeometry<span class="token punctuation">,</span> 
     <span class="token keyword">const</span> FSlateRect<span class="token operator">&amp;</span> MyCullingRect<span class="token punctuation">,</span> FSlateWindowElementList<span class="token operator">&amp;</span> OutDrawElements<span class="token punctuation">,</span> int32 LayerId<span class="token punctuation">,</span> 
     <span class="token keyword">const</span> FWidgetStyle<span class="token operator">&amp;</span> InWidgetStyle<span class="token punctuation">,</span> <span class="token keyword">bool</span> bParentEnabled <span class="token punctuation">)</span> <span class="token keyword">const</span>
 <span class="token punctuation">&#123;</span>
@@ -735,9 +262,7 @@ int32 <span class="token class-name">SWindow</span><span class="token double-col
         <span class="token punctuation">&#125;</span>
         <span class="token keyword">return</span> Layer<span class="token punctuation">;</span>
     <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p><strong>SPanel</strong> 有多个子节点，渲染接口如下：</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">for</span> <span class="token punctuation">(</span>int32 ChildIndex <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> ChildIndex <span class="token operator">&lt;</span> ArrangedChildren<span class="token punctuation">.</span><span class="token function">Num</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token operator">++</span>ChildIndex<span class="token punctuation">)</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p><strong>SPanel</strong> 有多个子节点，渲染接口如下：</p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">for</span> <span class="token punctuation">(</span>int32 ChildIndex <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> ChildIndex <span class="token operator">&lt;</span> ArrangedChildren<span class="token punctuation">.</span><span class="token function">Num</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token operator">++</span>ChildIndex<span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
     <span class="token keyword">const</span> FArrangedWidget<span class="token operator">&amp;</span> CurWidget <span class="token operator">=</span> ArrangedChildren<span class="token punctuation">[</span>ChildIndex<span class="token punctuation">]</span><span class="token punctuation">;</span>
 
@@ -749,9 +274,7 @@ int32 <span class="token class-name">SWindow</span><span class="token double-col
 
         MaxLayerId <span class="token operator">=</span> <span class="token class-name">FMath</span><span class="token double-colon punctuation">::</span><span class="token function">Max</span><span class="token punctuation">(</span>MaxLayerId<span class="token punctuation">,</span> CurWidgetsMaxLayerId<span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>最终渲染到可渲染的子节点上，例如<strong>SImage</strong></p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">/// 1</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>最终渲染到可渲染的子节点上，例如<strong>SImage</strong></p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">/// 1</span>
 int32 <span class="token class-name">SImage</span><span class="token double-colon punctuation">::</span><span class="token function">OnPaint</span><span class="token punctuation">(</span> <span class="token keyword">const</span> FPaintArgs<span class="token operator">&amp;</span> Args<span class="token punctuation">,</span> <span class="token keyword">const</span> FGeometry<span class="token operator">&amp;</span> AllottedGeometry<span class="token punctuation">,</span> 
     <span class="token keyword">const</span> FSlateRect<span class="token operator">&amp;</span> MyCullingRect<span class="token punctuation">,</span> FSlateWindowElementList<span class="token operator">&amp;</span> OutDrawElements<span class="token punctuation">,</span> 
     int32 LayerId<span class="token punctuation">,</span> <span class="token keyword">const</span> FWidgetStyle<span class="token operator">&amp;</span> InWidgetStyle<span class="token punctuation">,</span> <span class="token keyword">bool</span> bParentEnabled <span class="token punctuation">)</span> <span class="token keyword">const</span>
@@ -814,12 +337,7 @@ FSlateDrawElement<span class="token operator">&amp;</span> <span class="token cl
     Element<span class="token punctuation">.</span><span class="token function">Init</span><span class="token punctuation">(</span>ElementList<span class="token punctuation">,</span> ElementType<span class="token punctuation">,</span> InLayer<span class="token punctuation">,</span> PaintGeometry<span class="token punctuation">,</span> InDrawEffects<span class="token punctuation">)</span><span class="token punctuation">;</span>
 
     <span class="token keyword">return</span> Element<span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>在<strong>SlateApplication</strong>中的<strong>Renderer</strong>中有专门的渲染buff<strong>DrawBuffer</strong>，调用完OnPaint后都会将自己的渲染数据<strong>Element</strong>添加到
-<strong>ElementListd</strong>队列中，给后面合批准备数据。</p>
-<h2 id="真正的render">2.3 真正的Render</h2>
-<p>下面进入真正的渲染流程了</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">/// 1</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>在<strong>SlateApplication</strong>中的<strong>Renderer</strong>中有专门的渲染buff<strong>DrawBuffer</strong>，调用完OnPaint后都会将自己的渲染数据<strong>Element</strong>添加到 <strong>ElementListd</strong>队列中，给后面合批准备数据。</p><h2 id="真正的render">2.3 真正的Render</h2><p>下面进入真正的渲染流程了</p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">/// 1</span>
 <span class="token keyword">void</span> <span class="token class-name">FSlateApplication</span><span class="token double-colon punctuation">::</span><span class="token function">PrivateDrawWindows</span><span class="token punctuation">(</span> TSharedPtr<span class="token operator">&lt;</span>SWindow<span class="token operator">></span> DrawOnlyThisWindow <span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
     <span class="token comment">/// 这是上面说的，依次 Paint 每个 SWindow  </span>
@@ -1158,164 +676,4 @@ FSlateRenderBatch<span class="token operator">&amp;</span> <span class="token cl
             RenderBatch<span class="token punctuation">.</span>NumVertices<span class="token punctuation">,</span> RenderBatch<span class="token punctuation">.</span>IndexOffset<span class="token punctuation">,</span> PrimitiveCount<span class="token punctuation">,</span> 
             RenderBatch<span class="token punctuation">.</span>InstanceCount<span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>至此，就完成了Slate的渲染了。</p>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-<div class="license">
-  <div class="license-title">UMG源码笔记2-渲染过程</div>
-  <div class="license-link">
-    <a href="https://www.xianlongok.site/post/2e07afb3/">https://www.xianlongok.site/post/2e07afb3/</a>
-  </div>
-  <div class="license-meta">
-    <div class="license-meta-item">
-      <div class="license-meta-title">本文作者</div>
-      <div class="license-meta-text">
-          小贤
-      </div>
-    </div>
-      <div class="license-meta-item">
-        <div class="license-meta-title">发布于</div>
-        <div class="license-meta-text">
-          2021-06-17
-        </div>
-      </div>
-      <div class="license-meta-item">
-        <div class="license-meta-title">更新于</div>
-        <div class="license-meta-text">
-          2022-05-14
-        </div>
-      </div>
-    <div class="license-meta-item">
-      <div class="license-meta-title">许可协议</div>
-      <div class="license-meta-text">
-          <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank">CC BY-NC-SA 4.0</a>
-        
-      </div>
-    </div>
-  </div>
-  <div class="license-statement">
-      转载或引用本文时，请遵守上述许可协议，注明出处、不得用于商业用途！
-    
-  </div>
-</div>
-
-
-
-          <div class="post-tags">
-              <a href="/tags/C/" rel="tag"><i class="fa fa-tag"></i> C++</a>
-              <a href="/tags/UE4/" rel="tag"><i class="fa fa-tag"></i> UE4</a>
-              <a href="/tags/UMG/" rel="tag"><i class="fa fa-tag"></i> UMG</a>
-              <a href="/tags/Slate/" rel="tag"><i class="fa fa-tag"></i> Slate</a>
-          </div>
-
-        
-
-          <div class="post-nav">
-            <div class="post-nav-item">
-                <a href="/post/75d9be60/" rel="prev" title="UE4 static 变量 GC 导致闪退问题">
-                  <i class="fa fa-chevron-left"></i> UE4 static 变量 GC 导致闪退问题
-                </a>
-            </div>
-            <div class="post-nav-item">
-                <a href="/post/8d8c27a4/" rel="next" title="UMG源码笔记">
-                  UMG源码笔记 <i class="fa fa-chevron-right"></i>
-                </a>
-            </div>
-          </div>
-    </footer>
-  </article>
-</div>
-
-
-
-
-
-
-    <div class="comments" id="waline"></div>
-</div>
-  </main>
-
-  <footer class="footer">
-    <div class="footer-inner">
-
-
-<div class="copyright">
-  &copy; 2021 – 
-  <span itemprop="copyrightYear">2023</span>
-  <span class="with-love">
-    <i class="fas fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">小贤</span>
-</div>
-<div class="wordcount">
-  <span class="post-meta-item">
-    <span class="post-meta-item-icon">
-      <i class="fa fa-chart-line"></i>
-    </span>
-    <span title="站点总字数">227k</span>
-  </span>
-  <span class="post-meta-item">
-    <span class="post-meta-item-icon">
-      <i class="fa fa-coffee"></i>
-    </span>
-    <span title="站点阅读时长">3:26</span>
-  </span>
-</div><div class="powered">  
-    <a href="https://dlzhang.com" rel="noopener" target="_blank">小贤</a>使用 <a href="https://hexo.io" rel="noopener" target="_blank">Hexo</a> <a href="https://theme-next.js.org" rel="noopener" target="_blank">NexT</a> 设计搭建
-</div>
-
-    </div>
-  </footer>
-
-  
-  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
-
-  
-<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
-<script src="/js/third-party/search/local-search.js"></script>
-
-
-
-  <script src="/js/third-party/fancybox.js"></script>
-
-
-  
-
-
-  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"dkLUcqHORjRdwQiwRPJMs00N-gzGzoHsz","app_key":"EhWnaex3YyY7bQysJ2SFnukE","server_url":null,"security":false}</script>
-  <script src="/js/third-party/statistics/lean-analytics.js"></script>
-
-
-  
-
-  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
-<script src="/js/third-party/math/mathjax.js"></script>
-
-
-<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-CN","enable":true,"serverURL":"https://waline-comment-nfec4vcyk-qq317423892.vercel.app/","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"libUrl":"https://unpkg.com/@waline/client@v2/dist/waline.js","login":"disable","meta":["nick","mail","link"],"requiredMeta":["nick","mail"],"pageSize":5,"dark":"auto","emoji":false,"locale":{"placeholder":"请正确填写邮箱方便查收回复，评论通过审核才会显示。","admin":"站长","nick":"名称*","mail":"邮箱*","link":"网址"},"el":"#waline","comment":true,"path":"/post/2e07afb3/"}</script>
-<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
-<script>
-document.addEventListener('page:loaded', () => {
-  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
-    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
-  ).then(() => 
-    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
-  );
-});
-</script>
-
-<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false}});</script></body>
-</html>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>至此，就完成了Slate的渲染了。</p><script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css"></div><footer class="post-footer"><div class="license"><div class="license-title">UMG源码笔记2-渲染过程</div><div class="license-link"><a href="https://www.xianlongok.site/post/2e07afb3/">https://www.xianlongok.site/post/2e07afb3/</a></div><div class="license-meta"><div class="license-meta-item"><div class="license-meta-title">本文作者</div><div class="license-meta-text">小贤</div></div><div class="license-meta-item"><div class="license-meta-title">发布于</div><div class="license-meta-text">2021-06-17</div></div><div class="license-meta-item"><div class="license-meta-title">更新于</div><div class="license-meta-text">2022-05-14</div></div><div class="license-meta-item"><div class="license-meta-title">许可协议</div><div class="license-meta-text"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank">CC BY-NC-SA 4.0</a></div></div></div><div class="license-statement">转载或引用本文时，请遵守上述许可协议，注明出处、不得用于商业用途！</div></div><div class="post-tags"><a href="/tags/C/" rel="tag"><i class="fa fa-tag"></i> C++</a> <a href="/tags/UE4/" rel="tag"><i class="fa fa-tag"></i> UE4</a> <a href="/tags/UMG/" rel="tag"><i class="fa fa-tag"></i> UMG</a> <a href="/tags/Slate/" rel="tag"><i class="fa fa-tag"></i> Slate</a></div><div class="post-nav"><div class="post-nav-item"><a href="/post/75d9be60/" rel="prev" title="UE4 static 变量 GC 导致闪退问题"><i class="fa fa-chevron-left"></i> UE4 static 变量 GC 导致闪退问题</a></div><div class="post-nav-item"><a href="/post/8d8c27a4/" rel="next" title="UMG源码笔记">UMG源码笔记 <i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div class="comments" id="waline"></div></div></main><footer class="footer"><div class="footer-inner"><div class="copyright">&copy; 2021 – <span itemprop="copyrightYear">2023</span> <span class="with-love"><i class="fas fa-heart"></i> </span><span class="author" itemprop="copyrightHolder">小贤</span></div><div class="wordcount"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-chart-line"></i> </span><span title="站点总字数">227k</span> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-coffee"></i> </span><span title="站点阅读时长">3:26</span></span></div><div class="powered"><a href="https://dlzhang.com" rel="noopener" target="_blank">小贤</a>使用 <a href="https://hexo.io" rel="noopener" target="_blank">Hexo</a> <a href="https://theme-next.js.org" rel="noopener" target="_blank">NexT</a> 设计搭建</div></div></footer><script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script><script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script><script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script><script src="/js/third-party/search/local-search.js"></script><script src="/js/third-party/fancybox.js"></script><script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"dkLUcqHORjRdwQiwRPJMs00N-gzGzoHsz","app_key":"EhWnaex3YyY7bQysJ2SFnukE","server_url":null,"security":false}</script><script src="/js/third-party/statistics/lean-analytics.js"></script><script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script><script src="/js/third-party/math/mathjax.js"></script><script class="next-config" data-name="waline" type="application/json">{"lang":"zh-CN","enable":true,"serverURL":"https://waline-comment-nfec4vcyk-qq317423892.vercel.app/","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"libUrl":"https://unpkg.com/@waline/client@v2/dist/waline.js","login":"disable","meta":["nick","mail","link"],"requiredMeta":["nick","mail"],"pageSize":5,"dark":"auto","emoji":false,"locale":{"placeholder":"请正确填写邮箱方便查收回复，评论通过审核才会显示。","admin":"站长","nick":"名称*","mail":"邮箱*","link":"网址"},"el":"#waline","comment":true,"path":"/post/2e07afb3/"}</script><link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css"><script>document.addEventListener("page:loaded",()=>{NexT.utils.loadComments(CONFIG.waline.el).then(()=>NexT.utils.getScript(CONFIG.waline.libUrl,{condition:window.Waline})).then(()=>Waline.init(Object.assign({},CONFIG.waline,{el:document.querySelector(CONFIG.waline.el)})))})</script><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false}});</script></body></html>

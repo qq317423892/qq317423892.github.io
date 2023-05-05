@@ -1,356 +1,7 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#e7ddc8" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#181c27" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 5.4.2">
-
-<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-<link rel="preconnect" href="null//null" crossorigin>
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="apple-touch-icon" sizes="180x180" href="/./images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/./images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/./images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/./images/safari-pinned-tab-next.svg" color="#e7ddc8">
-
-<link rel="stylesheet" href="/css/main.css">
-
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=LXGW:300,300italic,400,400italic,700,700italic%7CNoto+Serif+SC:300,300italic,400,400italic,700,700italic%7CLong+Cang:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
-
-<script class="next-config" data-name="main" type="application/json">{"hostname":"www.xianlongok.site","root":"/","images":"/blog/images/","scheme":"Gemini","darkmode":true,"version":"8.11.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":null,"post_body":null,"coll_header":null,"sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
-
-    <meta name="description" content="最近项目换成了UE4，脚本用到的是python预研，用到的插件是UnrealEnginePython，在使用这个插件的过程中踩到几个坑，在这里mark下。  1. 自动导出接口参数不匹配 这个bug是同事遇到的，报错的情况很诡异，报错log如下：  LogPython: Error xxx&#x2F;xxx&#x2F;xxx.py:27 RuntimeWarning: tp_compare didn&#39;t return">
-<meta property="og:type" content="article">
-<meta property="og:title" content="UnrealEnginPython踩坑记录">
-<meta property="og:url" content="https://www.xianlongok.site/post/637d361d/index.html">
-<meta property="og:site_name" content="十三">
-<meta property="og:description" content="最近项目换成了UE4，脚本用到的是python预研，用到的插件是UnrealEnginePython，在使用这个插件的过程中踩到几个坑，在这里mark下。  1. 自动导出接口参数不匹配 这个bug是同事遇到的，报错的情况很诡异，报错log如下：  LogPython: Error xxx&#x2F;xxx&#x2F;xxx.py:27 RuntimeWarning: tp_compare didn&#39;t return">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://www.xianlongok.site/images/unreal_python_bug/python_stack.png">
-<meta property="og:image" content="https://www.xianlongok.site/images/unreal_python_bug/text_error.png">
-<meta property="article:published_time" content="2021-04-22T00:46:07.000Z">
-<meta property="article:modified_time" content="2022-05-14T03:20:32.321Z">
-<meta property="article:author" content="小贤">
-<meta property="article:tag" content="UE4">
-<meta property="article:tag" content="Python">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://www.xianlongok.site/images/unreal_python_bug/python_stack.png">
-
-
-<link rel="canonical" href="https://www.xianlongok.site/post/637d361d/">
-
-
-
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://www.xianlongok.site/post/637d361d/","path":"post/637d361d/","title":"UnrealEnginPython踩坑记录"}</script>
-
-<script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>UnrealEnginPython踩坑记录 | 十三</title>
-  
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-228435313-1"></script>
-  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-228435313-1","only_pageview":false}</script>
-  <script src="/js/third-party/analytics/google-analytics.js"></script>
-
-
-
-
-<link rel="dns-prefetch" href="https://waline-comment-nfec4vcyk-qq317423892.vercel.app/">
-  <noscript>
-    <link rel="stylesheet" href="/css/noscript.css">
-  </noscript>
-</head>
-
-<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
-  <div class="headband"></div>
-
-  <main class="main">
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏" role="button">
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <i class="logo-line"></i>
-      <p class="site-title">十三</p>
-      <i class="logo-line"></i>
-    </a>
-      <p class="site-subtitle" itemprop="description">安心学技术</p>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-        <i class="fa fa-search fa-fw fa-lg"></i>
-    </div>
-  </div>
-</div>
-
-
-
-<nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fas fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fas fa-splotch fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fas fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-tools"><a href="/tools/" rel="section"><i class="fas fa-wrench fa-fw"></i>工具</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fas fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fas fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fas fa-book fa-fw"></i>留言板</a></li>
-      <li class="menu-item menu-item-search">
-        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
-        </a>
-      </li>
-  </ul>
-</nav>
-
-
-
-  <div class="search-pop-overlay">
-    <div class="popup search-popup"><div class="search-header">
-  <span class="search-icon">
-    <i class="fa fa-search"></i>
-  </span>
-  <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off" maxlength="80"
-           placeholder="搜索..." spellcheck="false"
-           type="search" class="search-input">
-  </div>
-  <span class="popup-btn-close" role="button">
-    <i class="fa fa-times-circle"></i>
-  </span>
-</div>
-<div class="search-result-container no-result">
-  <div class="search-result-icon">
-    <i class="fa fa-spinner fa-pulse fa-5x"></i>
-  </div>
-</div>
-
-    </div>
-  </div>
-
-</div>
-        
-  
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-
-  <aside class="sidebar">
-
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
-      <ul class="sidebar-nav">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <div class="sidebar-panel-container">
-        <!--noindex-->
-        <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E5%AF%BC%E5%87%BA%E6%8E%A5%E5%8F%A3%E5%8F%82%E6%95%B0%E4%B8%8D%E5%8C%B9%E9%85%8D"><span class="nav-number">1.</span> <span class="nav-text">1. 自动导出接口参数不匹配</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ue4%E5%BC%95%E6%93%8E%E4%BB%A3%E7%A0%81%E7%9A%84%E5%9D%91"><span class="nav-number">2.</span> <span class="nav-text">2.UE4引擎代码的坑</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#unreal-c%E4%B8%8D%E5%85%81%E8%AE%B8%E6%8C%87%E9%92%88%E6%8C%87%E5%90%91%E4%B8%8D%E5%AE%8C%E6%95%B4%E7%9A%84%E7%B1%BB%E7%B1%BB%E5%9E%8B%E8%B8%A9%E5%9D%91"><span class="nav-number">3.</span> <span class="nav-text">3. Unreal
-C++不允许指针指向不完整的类类型（踩坑）</span></a></li></ol></div>
-        </div>
-        <!--/noindex-->
-
-        <div class="site-overview-wrap sidebar-panel">
-          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="小贤"
-      src="/images/avatar.jpg">
-  <p class="site-author-name" itemprop="name">小贤</p>
-  <div class="site-description" itemprop="description">Watch and learn, your magic is mine!</div>
-</div>
-<div class="site-state-wrap site-overview-item animated">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-        <a href="/archives/">
-          <span class="site-state-item-count">20</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-          <a href="/categories/">
-        <span class="site-state-item-count">19</span>
-        <span class="site-state-item-name">分类</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-          <a href="/tags/">
-        <span class="site-state-item-count">22</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author site-overview-item animated">
-      <span class="links-of-author-item">
-        <a href="https://github.com/qq317423892" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qq317423892" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="mailto:xianlongok@163.com" title="E-Mail → mailto:xianlongok@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
-      </span>
-  </div>
-
-
-  <div class="links-of-blogroll site-overview-item animated">
-    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
-      Links
-    </div>
-    <ul class="links-of-blogroll-list">
-        <li class="links-of-blogroll-item">
-          <a href="https://scorpioq.github.io/" title="https:&#x2F;&#x2F;scorpioq.github.io&#x2F;" rel="noopener" target="_blank">ScorpioQ</a>
-        </li>
-        <li class="links-of-blogroll-item">
-          <a href="https://www.xygblog.com/" title="https:&#x2F;&#x2F;www.xygblog.com&#x2F;" rel="noopener" target="_blank">邪妖怪のBlog</a>
-        </li>
-    </ul>
-  </div>
-
-        </div>
-      </div>
-        <div class="back-to-top animated" role="button" aria-label="返回顶部">
-          <i class="fa fa-arrow-up"></i>
-          <span>0%</span>
-        </div>
-    </div>
-  </aside>
-  <div class="sidebar-dimmer"></div>
-
-
-    </header>
-
-    
-  <div class="reading-progress-bar"></div>
-
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
-
-
-    <div class="main-inner post posts-expand">
-
-
-  
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://www.xianlongok.site/post/637d361d/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="小贤">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="十三">
-      <meta itemprop="description" content="Watch and learn, your magic is mine!">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="UnrealEnginPython踩坑记录 | 十三">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          UnrealEnginPython踩坑记录
-        </h1>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-04-22 08:46:07" itemprop="dateCreated datePublished" datetime="2021-04-22T08:46:07+08:00">2021-04-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/UE4/" itemprop="url" rel="index"><span itemprop="name">UE4</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/UE4/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
-        </span>
-    </span>
-
-  
-    <span id="/post/637d361d/" class="post-meta-item leancloud_visitors" data-flag-title="UnrealEnginPython踩坑记录" title="阅读次数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-eye"></i>
-      </span>
-      <span class="post-meta-item-text">阅读次数：</span>
-      <span class="leancloud-visitors-count"></span>
-    </span>
-  
-  <span class="post-meta-item">
-    
-    <span class="post-meta-item-icon">
-      <i class="far fa-comment"></i>
-    </span>
-    <span class="post-meta-item-text">Waline：</span>
-  
-    <a title="waline" href="/post/637d361d/#waline" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" data-path="/post/637d361d/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>6.6k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>6 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-        <p>最近项目换成了UE4，脚本用到的是python预研，用到的插件是<a
-target="_blank" rel="noopener" href="https://github.com/20tab/UnrealEnginePython">UnrealEnginePython</a>，在使用这个插件的过程中踩到几个坑，在这里mark下。</p>
-<h2 id="自动导出接口参数不匹配">1. 自动导出接口参数不匹配</h2>
-<p>这个bug是同事遇到的，报错的情况很诡异，报错log如下：</p>
-<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog">LogPython<span class="token punctuation">:</span> Error xxx<span class="token operator">/</span>xxx<span class="token operator">/</span>xxx<span class="token punctuation">.</span>py<span class="token punctuation">:</span><span class="token number">27</span> RuntimeWarning<span class="token punctuation">:</span> tp_compare didn't <span class="token keyword">return</span> <span class="token operator">-</span><span class="token number">1</span> <span class="token keyword">or</span> <span class="token operator">-</span><span class="token number">2</span> <span class="token keyword">for</span> exception
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><meta name="theme-color" content="#e7ddc8" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#181c27" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 5.4.2"><link rel="preconnect" href="https://fonts.googleapis.com" crossorigin><link rel="preconnect" href="null//null" crossorigin><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="apple-touch-icon" sizes="180x180" href="/./images/apple-touch-icon-next.png"><link rel="icon" type="image/png" sizes="32x32" href="/./images/favicon-32x32-next.png"><link rel="icon" type="image/png" sizes="16x16" href="/./images/favicon-16x16-next.png"><link rel="mask-icon" href="/./images/safari-pinned-tab-next.svg" color="#e7ddc8"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=LXGW:300,300italic,400,400italic,700,700italic%7CNoto+Serif+SC:300,300italic,400,400italic,700,700italic%7CLong+Cang:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous"><script class="next-config" data-name="main" type="application/json">{"hostname":"www.xianlongok.site","root":"/","images":"/blog/images/","scheme":"Gemini","darkmode":true,"version":"8.11.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":null,"post_body":null,"coll_header":null,"sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script><meta name="description" content="最近项目换成了UE4，脚本用到的是python预研，用到的插件是UnrealEnginePython，在使用这个插件的过程中踩到几个坑，在这里mark下。  1. 自动导出接口参数不匹配 这个bug是同事遇到的，报错的情况很诡异，报错log如下：  LogPython: Error xxx&#x2F;xxx&#x2F;xxx.py:27 RuntimeWarning: tp_compare didn&#39;t return"><meta property="og:type" content="article"><meta property="og:title" content="UnrealEnginPython踩坑记录"><meta property="og:url" content="https://www.xianlongok.site/post/637d361d/index.html"><meta property="og:site_name" content="十三"><meta property="og:description" content="最近项目换成了UE4，脚本用到的是python预研，用到的插件是UnrealEnginePython，在使用这个插件的过程中踩到几个坑，在这里mark下。  1. 自动导出接口参数不匹配 这个bug是同事遇到的，报错的情况很诡异，报错log如下：  LogPython: Error xxx&#x2F;xxx&#x2F;xxx.py:27 RuntimeWarning: tp_compare didn&#39;t return"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://www.xianlongok.site/images/unreal_python_bug/python_stack.png"><meta property="og:image" content="https://www.xianlongok.site/images/unreal_python_bug/text_error.png"><meta property="article:published_time" content="2021-04-22T00:46:07.000Z"><meta property="article:modified_time" content="2022-05-14T03:20:32.321Z"><meta property="article:author" content="小贤"><meta property="article:tag" content="UE4"><meta property="article:tag" content="Python"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.xianlongok.site/images/unreal_python_bug/python_stack.png"><link rel="canonical" href="https://www.xianlongok.site/post/637d361d/"><script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://www.xianlongok.site/post/637d361d/","path":"post/637d361d/","title":"UnrealEnginPython踩坑记录"}</script><script class="next-config" data-name="calendar" type="application/json">""</script><title>UnrealEnginPython踩坑记录 | 十三</title><script async src="https://www.googletagmanager.com/gtag/js?id=UA-228435313-1"></script><script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-228435313-1","only_pageview":false}</script><script src="/js/third-party/analytics/google-analytics.js"></script><link rel="dns-prefetch" href="https://waline-comment-nfec4vcyk-qq317423892.vercel.app/"><noscript><link rel="stylesheet" href="/css/noscript.css"></noscript></head><body itemscope itemtype="http://schema.org/WebPage" class="use-motion"><div class="headband"></div><main class="main"><header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-container"><div class="site-nav-toggle"><div class="toggle" aria-label="切换导航栏" role="button"><span class="toggle-line"></span> <span class="toggle-line"></span> <span class="toggle-line"></span></div></div><div class="site-meta"><a href="/" class="brand" rel="start"><i class="logo-line"></i><p class="site-title">十三</p><i class="logo-line"></i></a><p class="site-subtitle" itemprop="description">安心学技术</p></div><div class="site-nav-right"><div class="toggle popup-trigger"><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class="site-nav"><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fas fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fas fa-splotch fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fas fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-tools"><a href="/tools/" rel="section"><i class="fas fa-wrench fa-fw"></i>工具</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fas fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fas fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fas fa-book fa-fw"></i>留言板</a></li><li class="menu-item menu-item-novelai"><a href="/NovelAI/" rel="section"><i class="fas fa-tachometer fa-fw"></i>NovelAI</a></li><li class="menu-item menu-item-search"><a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索</a></li></ul></nav><div class="search-pop-overlay"><div class="popup search-popup"><div class="search-header"><span class="search-icon"><i class="fa fa-search"></i></span><div class="search-input-container"><input autocomplete="off" autocapitalize="off" maxlength="80" placeholder="搜索..." spellcheck="false" type="search" class="search-input"></div><span class="popup-btn-close" role="button"><i class="fa fa-times-circle"></i></span></div><div class="search-result-container no-result"><div class="search-result-icon"><i class="fa fa-spinner fa-pulse fa-5x"></i></div></div></div></div></div><div class="toggle sidebar-toggle" role="button"><span class="toggle-line"></span> <span class="toggle-line"></span> <span class="toggle-line"></span></div><aside class="sidebar"><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class="sidebar-nav"><li class="sidebar-nav-toc">文章目录</li><li class="sidebar-nav-overview">站点概览</li></ul><div class="sidebar-panel-container"><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E5%AF%BC%E5%87%BA%E6%8E%A5%E5%8F%A3%E5%8F%82%E6%95%B0%E4%B8%8D%E5%8C%B9%E9%85%8D"><span class="nav-number">1.</span> <span class="nav-text">1. 自动导出接口参数不匹配</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ue4%E5%BC%95%E6%93%8E%E4%BB%A3%E7%A0%81%E7%9A%84%E5%9D%91"><span class="nav-number">2.</span> <span class="nav-text">2.UE4引擎代码的坑</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#unreal-c%E4%B8%8D%E5%85%81%E8%AE%B8%E6%8C%87%E9%92%88%E6%8C%87%E5%90%91%E4%B8%8D%E5%AE%8C%E6%95%B4%E7%9A%84%E7%B1%BB%E7%B1%BB%E5%9E%8B%E8%B8%A9%E5%9D%91"><span class="nav-number">3.</span> <span class="nav-text">3. Unreal C++不允许指针指向不完整的类类型（踩坑）</span></a></li></ol></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person"><img class="site-author-image" itemprop="image" alt="小贤" src="/images/avatar.jpg"><p class="site-author-name" itemprop="name">小贤</p><div class="site-description" itemprop="description">Watch and learn, your magic is mine!</div></div><div class="site-state-wrap site-overview-item animated"><nav class="site-state"><div class="site-state-item site-state-posts"><a href="/archives/"><span class="site-state-item-count">20</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"><a href="/categories/"><span class="site-state-item-count">19</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"><a href="/tags/"><span class="site-state-item-count">22</span> <span class="site-state-item-name">标签</span></a></div></nav></div><div class="links-of-author site-overview-item animated"><span class="links-of-author-item"><a href="https://github.com/qq317423892" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qq317423892" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a> </span><span class="links-of-author-item"><a href="mailto:xianlongok@163.com" title="E-Mail → mailto:xianlongok@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i></a></span></div><div class="links-of-blogroll site-overview-item animated"><div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i> Links</div><ul class="links-of-blogroll-list"><li class="links-of-blogroll-item"><a href="https://scorpioq.github.io/" title="https:&#x2F;&#x2F;scorpioq.github.io&#x2F;" rel="noopener" target="_blank">ScorpioQ</a></li><li class="links-of-blogroll-item"><a href="https://www.xygblog.com/" title="https:&#x2F;&#x2F;www.xygblog.com&#x2F;" rel="noopener" target="_blank">邪妖怪のBlog</a></li></ul></div></div></div><div class="back-to-top animated" role="button" aria-label="返回顶部"><i class="fa fa-arrow-up"></i> <span>0%</span></div></div></aside><div class="sidebar-dimmer"></div></header><div class="reading-progress-bar"></div><noscript><div class="noscript-warning">Theme NexT works best with JavaScript enabled</div></noscript><div class="main-inner post posts-expand"><div class="post-block"><article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN"><link itemprop="mainEntityOfPage" href="https://www.xianlongok.site/post/637d361d/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="/images/avatar.jpg"><meta itemprop="name" content="小贤"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="十三"><meta itemprop="description" content="Watch and learn, your magic is mine!"></span><span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork"><meta itemprop="name" content="UnrealEnginPython踩坑记录 | 十三"><meta itemprop="description" content=""></span><header class="post-header"><h1 class="post-title" itemprop="name headline">UnrealEnginPython踩坑记录</h1><div class="post-meta-container"><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-calendar"></i> </span><span class="post-meta-item-text">发表于</span> <time title="创建时间：2021-04-22 08:46:07" itemprop="dateCreated datePublished" datetime="2021-04-22T08:46:07+08:00">2021-04-22</time> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-folder"></i> </span><span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/UE4/" itemprop="url" rel="index"><span itemprop="name">UE4</span></a> </span>， <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/UE4/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a> </span></span><span id="/post/637d361d/" class="post-meta-item leancloud_visitors" data-flag-title="UnrealEnginPython踩坑记录" title="阅读次数"><span class="post-meta-item-icon"><i class="far fa-eye"></i> </span><span class="post-meta-item-text">阅读次数：</span> <span class="leancloud-visitors-count"></span> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-comment"></i> </span><span class="post-meta-item-text">Waline：</span> <a title="waline" href="/post/637d361d/#waline" itemprop="discussionUrl"><span class="post-comments-count waline-comment-count" data-path="/post/637d361d/" itemprop="commentCount"></span> </a></span><span class="post-meta-break"></span> <span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="far fa-file-word"></i> </span><span class="post-meta-item-text">本文字数：</span> <span>6.6k</span> </span><span class="post-meta-item" title="阅读时长"><span class="post-meta-item-icon"><i class="far fa-clock"></i> </span><span class="post-meta-item-text">阅读时长 &asymp;</span> <span>6 分钟</span></span></div></div></header><div class="post-body" itemprop="articleBody"><p>最近项目换成了UE4，脚本用到的是python预研，用到的插件是<a target="_blank" rel="noopener" href="https://github.com/20tab/UnrealEnginePython">UnrealEnginePython</a>，在使用这个插件的过程中踩到几个坑，在这里mark下。</p><h2 id="自动导出接口参数不匹配">1. 自动导出接口参数不匹配</h2><p>这个bug是同事遇到的，报错的情况很诡异，报错log如下：</p><pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog">LogPython<span class="token punctuation">:</span> Error xxx<span class="token operator">/</span>xxx<span class="token operator">/</span>xxx<span class="token punctuation">.</span>py<span class="token punctuation">:</span><span class="token number">27</span> RuntimeWarning<span class="token punctuation">:</span> tp_compare didn't <span class="token keyword">return</span> <span class="token operator">-</span><span class="token number">1</span> <span class="token keyword">or</span> <span class="token operator">-</span><span class="token number">2</span> <span class="token keyword">for</span> exception
   ue<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"this is a test log"</span> <span class="token operator">+</span> <span class="token function">str</span><span class="token punctuation">(</span>test_dict<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token number">10000</span><span class="token punctuation">,</span> None<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
 LogPython<span class="token punctuation">:</span> Error argument must be <span class="token keyword">string</span><span class="token punctuation">,</span> <span class="token keyword">not</span> <span class="token keyword">int</span>
-<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-<span id="more"></span>
-<p>初看这个报错，就找到对应行，结果发现，只是一个对python
-dict的取值操作，调用的也是dict类型提供的标准函数。最近项目在折腾python版本的问题，以为是同事修改了python底层C++代码，导致的报错。跟同事py了很久，也没找到头绪，在UnrealEnginePython提供的python
-console命令，直接调用这个dict可以正常取值，而且尝试打印这个get函数的地址，代码逻辑输出的地址跟在python
-console里输出的是一样的。到这里就陷入了思考了。</p>
-<p>中午干饭回来，继续盯log，我偶然发现了个警告</p>
-<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog">LogTemp<span class="token punctuation">:</span> Warning<span class="token punctuation">:</span> argument is <span class="token keyword">not</span> a FText<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>便在工程里搜索了下，全局只有一个地方打印了这个日志。</p>
-<pre class="line-numbers language-C++" data-language="C++"><code class="language-C++">template&lt;&gt; FText get_value(PyObject* py_object)
+<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre><span id="more"></span><p>初看这个报错，就找到对应行，结果发现，只是一个对python dict的取值操作，调用的也是dict类型提供的标准函数。最近项目在折腾python版本的问题，以为是同事修改了python底层C++代码，导致的报错。跟同事py了很久，也没找到头绪，在UnrealEnginePython提供的python console命令，直接调用这个dict可以正常取值，而且尝试打印这个get函数的地址，代码逻辑输出的地址跟在python console里输出的是一样的。到这里就陷入了思考了。</p><p>中午干饭回来，继续盯log，我偶然发现了个警告</p><pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog">LogTemp<span class="token punctuation">:</span> Warning<span class="token punctuation">:</span> argument is <span class="token keyword">not</span> a FText<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre><p>便在工程里搜索了下，全局只有一个地方打印了这个日志。</p><pre class="line-numbers language-C++" data-language="C++"><code class="language-C++">template&lt;&gt; FText get_value(PyObject* py_object)
 &#123;
     char *str;
     
@@ -358,14 +9,7 @@ console里输出的是一样的。到这里就陷入了思考了。</p>
         UE_LOG(LogTemp, Error, TEXT(&quot;argument is not a FText&quot;));
     
     return FText::FromString(FString(UTF8_TO_TCHAR(str)));
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>然后我断点调试跟踪堆栈发现调用关系如下：</p>
-<p><img data-src="/images/unreal_python_bug/python_stack.png" width=50% height=50% align="center"/></p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token function">EXPORT_UOBJECT_FUNC</span><span class="token punctuation">(</span><span class="token string">"set_text"</span><span class="token punctuation">,</span><span class="token operator">&amp;</span>UTextBlock<span class="token double-colon punctuation">::</span>SetText<span class="token punctuation">)</span><span class="token punctuation">,</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>UTextBlock::SetText 函数声明如下</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">virtual</span> <span class="token keyword">void</span> <span class="token function">SetText</span><span class="token punctuation">(</span>FText InText<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p><strong>EXPORT_UOBJECT_FUNC</strong> 的定义如下：</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token macro-name function">EXPORT_UOBJECT_FUNC</span><span class="token expression"><span class="token punctuation">(</span>func_name<span class="token punctuation">,</span> func<span class="token punctuation">)</span></span><span class="token punctuation">\</span>
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>然后我断点调试跟踪堆栈发现调用关系如下：</p><p><img data-src="/images/unreal_python_bug/python_stack.png" width="50%" height="50%" align="center"></p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token function">EXPORT_UOBJECT_FUNC</span><span class="token punctuation">(</span><span class="token string">"set_text"</span><span class="token punctuation">,</span><span class="token operator">&amp;</span>UTextBlock<span class="token double-colon punctuation">::</span>SetText<span class="token punctuation">)</span><span class="token punctuation">,</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre><p>UTextBlock::SetText 函数声明如下</p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">virtual</span> <span class="token keyword">void</span> <span class="token function">SetText</span><span class="token punctuation">(</span>FText InText<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre><p><strong>EXPORT_UOBJECT_FUNC</strong> 的定义如下：</p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token macro-name function">EXPORT_UOBJECT_FUNC</span><span class="token expression"><span class="token punctuation">(</span>func_name<span class="token punctuation">,</span> func<span class="token punctuation">)</span></span><span class="token punctuation">\</span>
 <span class="token expression"><span class="token punctuation">&#123;</span></span><span class="token punctuation">\</span>
     <span class="token expression">func_name<span class="token punctuation">,</span> </span><span class="token punctuation">\</span>
     <span class="token expression"><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">(</span>PyObject <span class="token operator">*</span>self<span class="token punctuation">,</span> PyObject <span class="token operator">*</span>args<span class="token punctuation">)</span></span><span class="token punctuation">\</span>
@@ -373,13 +17,10 @@ console里输出的是一样的。到这里就陷入了思考了。</p>
         <span class="token expression"><span class="token keyword">return</span> <span class="token class-name">UePyTemplate</span><span class="token double-colon punctuation">::</span><span class="token function">invoke_func</span><span class="token punctuation">(</span><span class="token punctuation">(</span>ue_PyUObject <span class="token operator">*</span><span class="token punctuation">)</span>self<span class="token punctuation">,</span> args<span class="token punctuation">,</span> func<span class="token punctuation">)</span><span class="token punctuation">;</span></span><span class="token punctuation">\</span>
     <span class="token expression"><span class="token punctuation">&#125;</span><span class="token punctuation">,</span></span><span class="token punctuation">\</span>
     <span class="token expression">METH_VARARGS<span class="token punctuation">,</span> </span><span class="token string">""</span><span class="token punctuation">\</span>
-<span class="token expression"><span class="token punctuation">&#125;</span></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>R是返回值void T是类型UTextBlock Args是传入的参数 self是调用对象</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">// UEPyTemplate.h</span>
+<span class="token expression"><span class="token punctuation">&#125;</span></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>R是返回值void T是类型UTextBlock Args是传入的参数 self是调用对象</p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">// UEPyTemplate.h</span>
 <span class="token keyword">template</span><span class="token operator">&lt;</span><span class="token keyword">typename</span> <span class="token class-name">R</span><span class="token punctuation">,</span> <span class="token keyword">typename</span> <span class="token class-name">T</span><span class="token punctuation">,</span> <span class="token keyword">typename</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> Args<span class="token operator">></span>
 PyObject <span class="token operator">*</span><span class="token function">invoke_func</span><span class="token punctuation">(</span>ue_PyUObject <span class="token operator">*</span>self<span class="token punctuation">,</span> PyObject <span class="token operator">*</span> args<span class="token punctuation">,</span> <span class="token function">R</span><span class="token punctuation">(</span>T<span class="token double-colon punctuation">::</span><span class="token operator">*</span>func<span class="token punctuation">)</span><span class="token punctuation">(</span>Args<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-INVOKE_UOBJECT_FUNC<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token macro-name">INVOKE_UOBJECT_FUNC</span> <span class="token punctuation">\</span>
+INVOKE_UOBJECT_FUNC<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token macro-name">INVOKE_UOBJECT_FUNC</span> <span class="token punctuation">\</span>
 <span class="token expression"><span class="token punctuation">&#123;</span></span><span class="token punctuation">\</span>
     <span class="token expression"><span class="token function">UE_PY_CHECK</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">;</span></span><span class="token punctuation">\</span>
     <span class="token expression">T <span class="token operator">*</span>uobject <span class="token operator">=</span> <span class="token generic-function"><span class="token function">ue_py_check_type</span><span class="token generic class-name"><span class="token operator">&lt;</span>T<span class="token operator">></span></span></span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">;</span></span><span class="token punctuation">\</span>
@@ -392,10 +33,7 @@ INVOKE_UOBJECT_FUNC<span aria-hidden="true" class="line-numbers-rows"><span></sp
     <span class="token expression"><span class="token function">CHECK_ARGS_COUNT</span><span class="token punctuation">(</span>args<span class="token punctuation">,</span> <span class="token keyword">sizeof</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">(</span>Args<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span><span class="token punctuation">\</span>
     <span class="token expression">PyObject<span class="token operator">*</span> ret <span class="token operator">=</span> ret_type<span class="token operator">&lt;</span>R<span class="token operator">></span><span class="token double-colon punctuation">::</span><span class="token keyword">template</span> <span class="token generic-function"><span class="token function">call_func_with_args</span><span class="token generic class-name"><span class="token operator">&lt;</span>Args<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token operator">></span></span></span><span class="token punctuation">(</span>uobject<span class="token punctuation">,</span> func<span class="token punctuation">,</span> args<span class="token punctuation">)</span><span class="token punctuation">;</span></span><span class="token punctuation">\</span>
     <span class="token expression"><span class="token keyword">return</span> ret<span class="token punctuation">;</span></span><span class="token punctuation">\</span>
-<span class="token expression"><span class="token punctuation">&#125;</span></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>我们到处的这个函数只有一个参数，最终会调用CALL_WITH_1_ARG，参数列表是GET_1_ARG获得的，即:
-get_args<Arg1>::value(args, 0);</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token macro-name">GET_1_ARG</span> <span class="token expression"><span class="token keyword">auto</span> arg1 <span class="token operator">=</span> <span class="token class-name">get_args</span><span class="token operator">&lt;</span>Arg1<span class="token operator">></span><span class="token double-colon punctuation">::</span><span class="token function">value</span><span class="token punctuation">(</span>args<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span></span>
+<span class="token expression"><span class="token punctuation">&#125;</span></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>我们到处的这个函数只有一个参数，最终会调用CALL_WITH_1_ARG，参数列表是GET_1_ARG获得的，即: get_args<arg1>::value(args, 0);</arg1></p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token macro-name">GET_1_ARG</span> <span class="token expression"><span class="token keyword">auto</span> arg1 <span class="token operator">=</span> <span class="token class-name">get_args</span><span class="token operator">&lt;</span>Arg1<span class="token operator">></span><span class="token double-colon punctuation">::</span><span class="token function">value</span><span class="token punctuation">(</span>args<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span></span>
 <span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token macro-name">GET_2_ARG</span> <span class="token expression">GET_1_ARG <span class="token keyword">auto</span> arg2 <span class="token operator">=</span> <span class="token class-name">get_args</span><span class="token operator">&lt;</span>Arg2<span class="token operator">></span><span class="token double-colon punctuation">::</span><span class="token function">value</span><span class="token punctuation">(</span>args<span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span></span>
 <span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token macro-name">GET_3_ARG</span> <span class="token expression">GET_2_ARG <span class="token keyword">auto</span> arg3 <span class="token operator">=</span> <span class="token class-name">get_args</span><span class="token operator">&lt;</span>Arg3<span class="token operator">></span><span class="token double-colon punctuation">::</span><span class="token function">value</span><span class="token punctuation">(</span>args<span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span></span>
 <span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token macro-name">GET_4_ARG</span> <span class="token expression">GET_3_ARG <span class="token keyword">auto</span> arg4 <span class="token operator">=</span> <span class="token class-name">get_args</span><span class="token operator">&lt;</span>Arg4<span class="token operator">></span><span class="token double-colon punctuation">::</span><span class="token function">value</span><span class="token punctuation">(</span>args<span class="token punctuation">,</span> <span class="token number">3</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span></span>
@@ -422,16 +60,14 @@ get_args<Arg1>::value(args, 0);</p>
     <span class="token expression">GET_</span><span class="token punctuation">##</span><span class="token expression">args_count</span><span class="token punctuation">##</span><span class="token expression">_ARG<span class="token punctuation">;</span></span><span class="token punctuation">\</span>
     <span class="token expression">R ret <span class="token operator">=</span> <span class="token punctuation">(</span>uobject<span class="token operator">-></span><span class="token operator">*</span>func<span class="token punctuation">)</span><span class="token punctuation">(</span>CALL_WITH_</span><span class="token punctuation">##</span><span class="token expression">args_count</span><span class="token punctuation">##</span><span class="token expression">_ARG<span class="token punctuation">)</span><span class="token punctuation">;</span></span><span class="token punctuation">\</span>
     <span class="token expression"><span class="token function">RETURN_VALUE</span><span class="token punctuation">(</span>ret<span class="token punctuation">)</span><span class="token punctuation">;</span></span><span class="token punctuation">\</span>
-<span class="token expression"><span class="token punctuation">&#125;</span></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">template</span><span class="token operator">&lt;</span><span class="token keyword">typename</span> <span class="token class-name">T</span><span class="token operator">></span>
+<span class="token expression"><span class="token punctuation">&#125;</span></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">template</span><span class="token operator">&lt;</span><span class="token keyword">typename</span> <span class="token class-name">T</span><span class="token operator">></span>
 <span class="token keyword">struct</span> <span class="token class-name">get_args</span>
 <span class="token punctuation">&#123;</span>
     <span class="token keyword">static</span> T <span class="token function">value</span><span class="token punctuation">(</span>PyObject <span class="token operator">*</span>args<span class="token punctuation">,</span> <span class="token keyword">int</span> index<span class="token punctuation">)</span>
     <span class="token punctuation">&#123;</span>
         <span class="token keyword">return</span> <span class="token generic-function"><span class="token function">get_args_value</span><span class="token generic class-name"><span class="token operator">&lt;</span>T<span class="token operator">></span></span></span><span class="token punctuation">(</span>args<span class="token punctuation">,</span> index<span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">template</span><span class="token operator">&lt;</span><span class="token keyword">typename</span> <span class="token class-name">T</span><span class="token operator">></span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">template</span><span class="token operator">&lt;</span><span class="token keyword">typename</span> <span class="token class-name">T</span><span class="token operator">></span>
 T <span class="token function">get_args_value</span><span class="token punctuation">(</span>PyObject <span class="token operator">*</span>args<span class="token punctuation">,</span> <span class="token keyword">int</span> index<span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
     PyObject<span class="token operator">*</span> py_object <span class="token operator">=</span> <span class="token function">PyTuple_GetItem</span><span class="token punctuation">(</span>args<span class="token punctuation">,</span> index<span class="token punctuation">)</span><span class="token punctuation">;</span>
@@ -440,21 +76,11 @@ T <span class="token function">get_args_value</span><span class="token punctuati
         <span class="token keyword">return</span> <span class="token class-name">subclass_of</span><span class="token operator">&lt;</span>T<span class="token operator">></span><span class="token double-colon punctuation">::</span><span class="token function">get_subclass_value</span><span class="token punctuation">(</span>py_object<span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token punctuation">&#125;</span>
     <span class="token keyword">return</span> <span class="token generic-function"><span class="token function">get_value</span><span class="token generic class-name"><span class="token operator">&lt;</span>T<span class="token operator">></span></span></span><span class="token punctuation">(</span>py_object<span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>get_value模板函数</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">template</span><span class="token operator">&lt;</span><span class="token keyword">typename</span> <span class="token class-name">T</span><span class="token operator">></span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>get_value模板函数</p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">template</span><span class="token operator">&lt;</span><span class="token keyword">typename</span> <span class="token class-name">T</span><span class="token operator">></span>
 T <span class="token function">get_value</span><span class="token punctuation">(</span>PyObject<span class="token operator">*</span> py_object<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
     <span class="token keyword">return</span> <span class="token class-name">uobject_derived_type</span><span class="token operator">&lt;</span>T<span class="token operator">></span><span class="token double-colon punctuation">::</span><span class="token function">get_value</span><span class="token punctuation">(</span>py_object<span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-<p>调用的是特化版本的函数</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">template</span><span class="token operator">&lt;</span><span class="token operator">></span> UNREALENGINEPYTHON_API FText <span class="token function">get_value</span><span class="token punctuation">(</span>PyObject<span class="token operator">*</span> py_object<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>产生这个警告的界面里，跟FText相关的只有一个调用</p>
-<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">set_text</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> text_str<span class="token punctuation">)</span><span class="token punctuation">:</span>
-    self<span class="token punctuation">.</span>uobject<span class="token punctuation">.</span>set_text<span class="token punctuation">(</span>text_str<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p>立马打印这text_str，发现传入的参数是int，结合之前FText
-get_value特化函数，发现了坑点：
-函数将int类型的py_object进行字符串类型匹配解析时，没有做类型判定，强行按照c风格字符串进行解析，解析的结果是会将连续的内存块解析成字符串，并且在第一个'\0'空间停止，之前的内存空间数据都被当成了字符串。</p>
-<pre class="line-numbers language-C++" data-language="C++"><code class="language-C++">template&lt;&gt; FText get_value(PyObject* py_object)
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre><p>调用的是特化版本的函数</p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">template</span><span class="token operator">&lt;</span><span class="token operator">></span> UNREALENGINEPYTHON_API FText <span class="token function">get_value</span><span class="token punctuation">(</span>PyObject<span class="token operator">*</span> py_object<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre><p>产生这个警告的界面里，跟FText相关的只有一个调用</p><pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">set_text</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> text_str<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    self<span class="token punctuation">.</span>uobject<span class="token punctuation">.</span>set_text<span class="token punctuation">(</span>text_str<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre><p>立马打印这text_str，发现传入的参数是int，结合之前FText get_value特化函数，发现了坑点： 函数将int类型的py_object进行字符串类型匹配解析时，没有做类型判定，强行按照c风格字符串进行解析，解析的结果是会将连续的内存块解析成字符串，并且在第一个'\0'空间停止，之前的内存空间数据都被当成了字符串。</p><pre class="line-numbers language-C++" data-language="C++"><code class="language-C++">template&lt;&gt; FText get_value(PyObject* py_object)
 &#123;
     char *str;
 
@@ -462,12 +88,7 @@ get_value特化函数，发现了坑点：
         UE_LOG(LogTemp, Error, TEXT(&quot;argument is not a FText&quot;));
     
     return FText::FromString(FString(UTF8_TO_TCHAR(str)));
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>下图是设置字符串的结果，字符串内容都是乱码：
-<img data-src="/images/unreal_python_bug/text_error.png" width=50% height=50% align="center"/>
-这就解释清楚，之前的报错，而且报错的地方经常不固定。
-找到原因，修改方法就容易了。顺势排查了一波对字符串参数解析的特化版本，防止后面留坑。</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">template</span><span class="token operator">&lt;</span><span class="token operator">></span> FText <span class="token function">get_value</span><span class="token punctuation">(</span>PyObject<span class="token operator">*</span> py_object<span class="token punctuation">)</span>
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>下图是设置字符串的结果，字符串内容都是乱码： <img data-src="/images/unreal_python_bug/text_error.png" width="50%" height="50%" align="center"> 这就解释清楚，之前的报错，而且报错的地方经常不固定。 找到原因，修改方法就容易了。顺势排查了一波对字符串参数解析的特化版本，防止后面留坑。</p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">template</span><span class="token operator">&lt;</span><span class="token operator">></span> FText <span class="token function">get_value</span><span class="token punctuation">(</span>PyObject<span class="token operator">*</span> py_object<span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
     <span class="token keyword">char</span> <span class="token operator">*</span>str<span class="token punctuation">;</span>
     <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token function">PyString_Check</span><span class="token punctuation">(</span>py_object<span class="token punctuation">)</span><span class="token punctuation">)</span>
@@ -482,10 +103,7 @@ get_value特化函数，发现了坑点：
     <span class="token punctuation">&#125;</span>
     
     <span class="token keyword">return</span> <span class="token class-name">FText</span><span class="token double-colon punctuation">::</span><span class="token function">FromString</span><span class="token punctuation">(</span><span class="token function">FString</span><span class="token punctuation">(</span><span class="token function">UTF8_TO_TCHAR</span><span class="token punctuation">(</span>str<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h2 id="ue4引擎代码的坑">2.UE4引擎代码的坑</h2>
-<p>做UI的时候需要个屏幕坐标空间转换的函数，在谷歌上找到了个下面这个函数：</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp">UnrealEngine<span class="token operator">/</span>Engine<span class="token operator">/</span>Source<span class="token operator">/</span>Runtime<span class="token operator">/</span>UMG<span class="token operator">/</span>Public<span class="token operator">/</span>Blueprint<span class="token operator">/</span>SlateBlueprintLibrary<span class="token punctuation">.</span>h
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><h2 id="ue4引擎代码的坑">2.UE4引擎代码的坑</h2><p>做UI的时候需要个屏幕坐标空间转换的函数，在谷歌上找到了个下面这个函数：</p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp">UnrealEngine<span class="token operator">/</span>Engine<span class="token operator">/</span>Source<span class="token operator">/</span>Runtime<span class="token operator">/</span>UMG<span class="token operator">/</span>Public<span class="token operator">/</span>Blueprint<span class="token operator">/</span>SlateBlueprintLibrary<span class="token punctuation">.</span>h
 
 <span class="token comment">/**
  * Translates local coordinate of the geometry provided into local viewport coordinates.
@@ -499,9 +117,7 @@ get_value特化函数，发现了坑点：
 <span class="token function">UFUNCTION</span><span class="token punctuation">(</span>BlueprintPure<span class="token punctuation">,</span> Category<span class="token operator">=</span><span class="token string">"User Interface|Geometry"</span><span class="token punctuation">,</span> meta<span class="token operator">=</span><span class="token punctuation">(</span> WorldContext<span class="token operator">=</span><span class="token string">"WorldContextObject"</span> <span class="token punctuation">)</span><span class="token punctuation">)</span>
 <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">LocalToViewport</span><span class="token punctuation">(</span>UObject<span class="token operator">*</span> WorldContextObject<span class="token punctuation">,</span> <span class="token keyword">const</span> FGeometry<span class="token operator">&amp;</span> Geometry<span class="token punctuation">,</span> FVector2D LocalCoordinate<span class="token punctuation">,</span>
         FVector2D<span class="token operator">&amp;</span> PixelPosition<span class="token punctuation">,</span> FVector2D<span class="token operator">&amp;</span> ViewportPosition<span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>然后开始写C++导出接口:</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp">PyObject <span class="token operator">*</span><span class="token function">py_ue_screen_to_widget_local</span><span class="token punctuation">(</span>ue_PyUObject <span class="token operator">*</span> self<span class="token punctuation">,</span> PyObject <span class="token operator">*</span> args<span class="token punctuation">)</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>然后开始写C++导出接口:</p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp">PyObject <span class="token operator">*</span><span class="token function">py_ue_screen_to_widget_local</span><span class="token punctuation">(</span>ue_PyUObject <span class="token operator">*</span> self<span class="token punctuation">,</span> PyObject <span class="token operator">*</span> args<span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
     <span class="token function">ue_py_check</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">;</span>
 
@@ -520,16 +136,8 @@ get_value特化函数，发现了坑点：
     <span class="token class-name">USlateBlueprintLibrary</span><span class="token double-colon punctuation">::</span><span class="token function">ScreenToWidgetLocal</span><span class="token punctuation">(</span>widget<span class="token punctuation">,</span> geometry<span class="token punctuation">,</span> screen_pos<span class="token punctuation">,</span> local_pos<span class="token punctuation">)</span><span class="token punctuation">;</span>
     
     <span class="token keyword">return</span> <span class="token function">py_ue_new_fvector2d</span><span class="token punctuation">(</span>local_pos<span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>screen_pos在进入函数ScreenToWidgetLocal时，数据一切正常，而进入函数后，数据不对了，像没初始化的样子。查了下源码发现FVector2D没有实现拷贝构造函数</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token function">FVector2D</span><span class="token punctuation">(</span><span class="token keyword">const</span><span class="token operator">&amp;</span> FVector2D<span class="token punctuation">)</span>
-<span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p>其实只是开启了编译优化，代码行号跟变量被优化掉了，被优化的变量没法看到具体的内存值。</p>
-<h2 id="unreal-c不允许指针指向不完整的类类型踩坑">3. Unreal
-C++不允许指针指向不完整的类类型（踩坑）</h2>
-<p>新增如下代码时，突然VS2019爆出警告
-C++不允许指针指向不完整的类类型</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">//// SHierarchyViewItem.cpp</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>screen_pos在进入函数ScreenToWidgetLocal时，数据一切正常，而进入函数后，数据不对了，像没初始化的样子。查了下源码发现FVector2D没有实现拷贝构造函数</p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token function">FVector2D</span><span class="token punctuation">(</span><span class="token keyword">const</span><span class="token operator">&amp;</span> FVector2D<span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre><p>其实只是开启了编译优化，代码行号跟变量被优化掉了，被优化的变量没法看到具体的内存值。</p><h2 id="unreal-c不允许指针指向不完整的类类型踩坑">3. Unreal C++不允许指针指向不完整的类类型（踩坑）</h2><p>新增如下代码时，突然VS2019爆出警告 C++不允许指针指向不完整的类类型</p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">//// SHierarchyViewItem.cpp</span>
 NewSlot <span class="token operator">=</span> Parent<span class="token operator">-></span><span class="token function">AddChild</span><span class="token punctuation">(</span>Widget<span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token keyword">if</span> <span class="token punctuation">(</span>Parent<span class="token operator">-></span><span class="token function">IsA</span><span class="token punctuation">(</span><span class="token class-name">UCanvasPanel</span><span class="token double-colon punctuation">::</span><span class="token function">StaticClass</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
@@ -539,164 +147,5 @@ NewSlot <span class="token operator">=</span> Parent<span class="token operator"
         NewCanvasSlot<span class="token operator">-></span><span class="token function">SetAnchors</span><span class="token punctuation">(</span><span class="token function">FAnchors</span><span class="token punctuation">(</span><span class="token number">0.5f</span><span class="token punctuation">,</span> <span class="token number">0.5f</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
         NewCanvasSlot<span class="token operator">-></span><span class="token function">SetAlignment</span><span class="token punctuation">(</span><span class="token function">FVector2D</span><span class="token punctuation">(</span><span class="token number">0.5f</span><span class="token punctuation">,</span> <span class="token number">0.5f</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>引入这两个头文件就能解决这个问题</p>
-<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">"Components/CanvasPanel.h"</span></span>
-<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">"Components/CanvasPanelSlot.h"</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-<div class="license">
-  <div class="license-title">UnrealEnginPython踩坑记录</div>
-  <div class="license-link">
-    <a href="https://www.xianlongok.site/post/637d361d/">https://www.xianlongok.site/post/637d361d/</a>
-  </div>
-  <div class="license-meta">
-    <div class="license-meta-item">
-      <div class="license-meta-title">本文作者</div>
-      <div class="license-meta-text">
-          小贤
-      </div>
-    </div>
-      <div class="license-meta-item">
-        <div class="license-meta-title">发布于</div>
-        <div class="license-meta-text">
-          2021-04-22
-        </div>
-      </div>
-      <div class="license-meta-item">
-        <div class="license-meta-title">更新于</div>
-        <div class="license-meta-text">
-          2022-05-14
-        </div>
-      </div>
-    <div class="license-meta-item">
-      <div class="license-meta-title">许可协议</div>
-      <div class="license-meta-text">
-          <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank">CC BY-NC-SA 4.0</a>
-        
-      </div>
-    </div>
-  </div>
-  <div class="license-statement">
-      转载或引用本文时，请遵守上述许可协议，注明出处、不得用于商业用途！
-    
-  </div>
-</div>
-
-
-
-          <div class="post-tags">
-              <a href="/tags/UE4/" rel="tag"><i class="fa fa-tag"></i> UE4</a>
-              <a href="/tags/Python/" rel="tag"><i class="fa fa-tag"></i> Python</a>
-          </div>
-
-        
-
-          <div class="post-nav">
-            <div class="post-nav-item">
-                <a href="/post/360e070e/" rel="prev" title="UE4 SlateUI事件机制">
-                  <i class="fa fa-chevron-left"></i> UE4 SlateUI事件机制
-                </a>
-            </div>
-            <div class="post-nav-item">
-                <a href="/post/5a3da985/" rel="next" title="InjectFix学习笔记">
-                  InjectFix学习笔记 <i class="fa fa-chevron-right"></i>
-                </a>
-            </div>
-          </div>
-    </footer>
-  </article>
-</div>
-
-
-
-
-
-
-    <div class="comments" id="waline"></div>
-</div>
-  </main>
-
-  <footer class="footer">
-    <div class="footer-inner">
-
-
-<div class="copyright">
-  &copy; 2021 – 
-  <span itemprop="copyrightYear">2023</span>
-  <span class="with-love">
-    <i class="fas fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">小贤</span>
-</div>
-<div class="wordcount">
-  <span class="post-meta-item">
-    <span class="post-meta-item-icon">
-      <i class="fa fa-chart-line"></i>
-    </span>
-    <span title="站点总字数">227k</span>
-  </span>
-  <span class="post-meta-item">
-    <span class="post-meta-item-icon">
-      <i class="fa fa-coffee"></i>
-    </span>
-    <span title="站点阅读时长">3:26</span>
-  </span>
-</div><div class="powered">  
-    <a href="https://dlzhang.com" rel="noopener" target="_blank">小贤</a>使用 <a href="https://hexo.io" rel="noopener" target="_blank">Hexo</a> <a href="https://theme-next.js.org" rel="noopener" target="_blank">NexT</a> 设计搭建
-</div>
-
-    </div>
-  </footer>
-
-  
-  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
-
-  
-<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
-<script src="/js/third-party/search/local-search.js"></script>
-
-
-
-  <script src="/js/third-party/fancybox.js"></script>
-
-
-  
-
-
-  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"dkLUcqHORjRdwQiwRPJMs00N-gzGzoHsz","app_key":"EhWnaex3YyY7bQysJ2SFnukE","server_url":null,"security":false}</script>
-  <script src="/js/third-party/statistics/lean-analytics.js"></script>
-
-
-  
-
-  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
-<script src="/js/third-party/math/mathjax.js"></script>
-
-
-<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-CN","enable":true,"serverURL":"https://waline-comment-nfec4vcyk-qq317423892.vercel.app/","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"libUrl":"https://unpkg.com/@waline/client@v2/dist/waline.js","login":"disable","meta":["nick","mail","link"],"requiredMeta":["nick","mail"],"pageSize":5,"dark":"auto","emoji":false,"locale":{"placeholder":"请正确填写邮箱方便查收回复，评论通过审核才会显示。","admin":"站长","nick":"名称*","mail":"邮箱*","link":"网址"},"el":"#waline","comment":true,"path":"/post/637d361d/"}</script>
-<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
-<script>
-document.addEventListener('page:loaded', () => {
-  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
-    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
-  ).then(() => 
-    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
-  );
-});
-</script>
-
-<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false}});</script></body>
-</html>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>引入这两个头文件就能解决这个问题</p><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">"Components/CanvasPanel.h"</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">"Components/CanvasPanelSlot.h"</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre><script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css"></div><footer class="post-footer"><div class="license"><div class="license-title">UnrealEnginPython踩坑记录</div><div class="license-link"><a href="https://www.xianlongok.site/post/637d361d/">https://www.xianlongok.site/post/637d361d/</a></div><div class="license-meta"><div class="license-meta-item"><div class="license-meta-title">本文作者</div><div class="license-meta-text">小贤</div></div><div class="license-meta-item"><div class="license-meta-title">发布于</div><div class="license-meta-text">2021-04-22</div></div><div class="license-meta-item"><div class="license-meta-title">更新于</div><div class="license-meta-text">2022-05-14</div></div><div class="license-meta-item"><div class="license-meta-title">许可协议</div><div class="license-meta-text"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank">CC BY-NC-SA 4.0</a></div></div></div><div class="license-statement">转载或引用本文时，请遵守上述许可协议，注明出处、不得用于商业用途！</div></div><div class="post-tags"><a href="/tags/UE4/" rel="tag"><i class="fa fa-tag"></i> UE4</a> <a href="/tags/Python/" rel="tag"><i class="fa fa-tag"></i> Python</a></div><div class="post-nav"><div class="post-nav-item"><a href="/post/360e070e/" rel="prev" title="UE4 SlateUI事件机制"><i class="fa fa-chevron-left"></i> UE4 SlateUI事件机制</a></div><div class="post-nav-item"><a href="/post/5a3da985/" rel="next" title="InjectFix学习笔记">InjectFix学习笔记 <i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div class="comments" id="waline"></div></div></main><footer class="footer"><div class="footer-inner"><div class="copyright">&copy; 2021 – <span itemprop="copyrightYear">2023</span> <span class="with-love"><i class="fas fa-heart"></i> </span><span class="author" itemprop="copyrightHolder">小贤</span></div><div class="wordcount"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-chart-line"></i> </span><span title="站点总字数">227k</span> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-coffee"></i> </span><span title="站点阅读时长">3:26</span></span></div><div class="powered"><a href="https://dlzhang.com" rel="noopener" target="_blank">小贤</a>使用 <a href="https://hexo.io" rel="noopener" target="_blank">Hexo</a> <a href="https://theme-next.js.org" rel="noopener" target="_blank">NexT</a> 设计搭建</div></div></footer><script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script><script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script><script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script><script src="/js/third-party/search/local-search.js"></script><script src="/js/third-party/fancybox.js"></script><script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"dkLUcqHORjRdwQiwRPJMs00N-gzGzoHsz","app_key":"EhWnaex3YyY7bQysJ2SFnukE","server_url":null,"security":false}</script><script src="/js/third-party/statistics/lean-analytics.js"></script><script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script><script src="/js/third-party/math/mathjax.js"></script><script class="next-config" data-name="waline" type="application/json">{"lang":"zh-CN","enable":true,"serverURL":"https://waline-comment-nfec4vcyk-qq317423892.vercel.app/","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"libUrl":"https://unpkg.com/@waline/client@v2/dist/waline.js","login":"disable","meta":["nick","mail","link"],"requiredMeta":["nick","mail"],"pageSize":5,"dark":"auto","emoji":false,"locale":{"placeholder":"请正确填写邮箱方便查收回复，评论通过审核才会显示。","admin":"站长","nick":"名称*","mail":"邮箱*","link":"网址"},"el":"#waline","comment":true,"path":"/post/637d361d/"}</script><link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css"><script>document.addEventListener("page:loaded",()=>{NexT.utils.loadComments(CONFIG.waline.el).then(()=>NexT.utils.getScript(CONFIG.waline.libUrl,{condition:window.Waline})).then(()=>Waline.init(Object.assign({},CONFIG.waline,{el:document.querySelector(CONFIG.waline.el)})))})</script><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false}});</script></body></html>
