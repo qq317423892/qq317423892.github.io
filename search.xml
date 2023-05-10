@@ -10575,8 +10575,14 @@ href="https://huggingface.co/lllyasviel/ControlNet-v1-1/tree/main">huggingface</
 <li>完美像素模式：由 ControlNet 自己决定预处理的解析度</li>
 <li>运行预览：开启后会出现预览窗口</li>
 </ul>
+<div class="note success"><p>启用
+controlnet，并且选择想使用的预处理器跟模型后，再点击生成图片，即可看到应用
+controlnet 后的生成效果了。</p>
+</div>
 <div data-align="center">
 <p><img data-src="/images/sd_controlnet/controlnet_ui.png" width="80%" height="80%" /></p>
+</div>
+<div class="note warning"><p>选择好对应的<strong>模型</strong>跟匹配的<strong>预处理器</strong>后，点击<strong>预览</strong>才可以正确显示预处理结果，如果发现效果不对，请验证下<strong>模型</strong>跟<strong>预处理器</strong>是否匹配。</p>
 </div>
 <p>预处理器跟模型是有对应关系的，不能乱用，下面的表格是官方提供的模型跟预处理器之间的关系：</p>
 <table>
@@ -10904,6 +10910,7 @@ softedge_pidisafe
 图生图
 </td>
 <td>
+预处理器选 None
 </td>
 <td>
 </td>
@@ -11055,26 +11062,23 @@ inpaint_global_harmonious
 <div data-align="center">
 <p><img data-src="/images/sd_controlnet/control_net_openpose_1.png" width="80%" height="80%" /></p>
 </div>
-<blockquote>
-<p>姿态图也可以自己通过第三方软件制作，blender 等工具</p>
-</blockquote>
+<div class="note success"><p>姿态图也可以自己通过第三方软件制作，blender 等工具</p>
+</div>
 <ul>
 <li>openpose_face(姿态 + 面部)</li>
 </ul>
 <div data-align="center">
 <p><img data-src="/images/sd_controlnet/control_net_openpose_2.png" width="80%" height="80%" /></p>
 </div>
-<blockquote>
-<p>增加脸部后，出现了脸部的控制点</p>
-</blockquote>
+<div class="note success"><p>增加脸部后，出现了脸部的控制点</p>
+</div>
 <p>openpose_face_only（仅脸部）</p>
 <div data-align="center">
 <p><img data-src="/images/sd_controlnet/control_net_openpose_3.png" width="80%" height="80%" /></p>
 </div>
-<blockquote>
-<p>画风不一致，是因为只控制了脸部，AI 开始天马行空，不得已增加了关键词
+<div class="note success"><p>画风不一致，是因为只控制了脸部，AI 开始天马行空，不得已增加了关键词
 nsfw</p>
-</blockquote>
+</div>
 <p>openpose_full（姿态、手部及脸部）</p>
 <div data-align="center">
 <p><img data-src="/images/sd_controlnet/control_net_openpose_4.png" width="80%" height="80%" /></p>
