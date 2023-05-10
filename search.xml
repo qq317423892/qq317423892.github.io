@@ -10533,4 +10533,657 @@ code-XXXXXXX</p>
         <tag>others</tag>
       </tags>
   </entry>
+  <entry>
+    <title>controlnet 使用</title>
+    <url>/post/8dc757ea/</url>
+    <content><![CDATA[<h2 id="controlnet-模型">controlnet 模型</h2>
+<p>controlnet 模型命名规范</p>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/controlnet_name.webp" width="80%" height="80%" /></p>
+</div>
+<ul>
+<li><p>项目名称：control
+官方总是以control为项目名，其他第三方会用自己的名称表示，例如coadapter、ti2adapter等</p></li>
+<li><p>版本标记：v11 该controlnet版本号，v11意味着1.1版本</p></li>
+<li><p>质量标记：p 标识：[p]：正式产品；[e]：测试版; [u]：未完成版；
+[f]修复版；</p></li>
+<li><p>大模型版本：sd15 将stable diffusion 1.5
+版作为基础模型进行训练</p></li>
+<li><p>模型控制方法：canny 该模型功能，比如 canny
+是边缘检测模型</p></li>
+<li><p>文件类型：pth 文件名后缀，有pth、safetensors等，一般还有 yaml
+配置文件，从 1.1 开始，所有文件都需要有一个同名字的配置文件。</p></li>
+</ul>
+<h2 id="插件使用">插件使用</h2>
+<p>controlnet 更新跟安装这里就不讲解了，使用到的模型可以去 <a
+href="https://huggingface.co/lllyasviel/ControlNet-v1-1/tree/main">huggingface</a>上下载（1.1后需要下载对应的模型文件
+<strong>.pth</strong> 以及对应的 <strong>yaml</strong>
+配置文件，下载完毕后，放在目录</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">sd-webui-aki-v4<span class="token punctuation">\</span>models<span class="token punctuation">\</span>ControlNet<span class="token punctuation">\</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>下载好的模型如下图：</p>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/sd_models.png" width="40%" height="40%" /></p>
+</div>
+<div class="note success"><p>controlnet 1.1 官方给了 14 个模型，11 个正式版，3
+个实验性模型，预处理器有 30 多个。</p>
+</div>
+<p>安装了插件后，打开文生图，或者图生图，就能找到 ControlNet
+的操作界面：</p>
+<ul>
+<li>启用：点击可以启用 ControlNet</li>
+<li>低显存模式：开启显存优化，8G 以下显卡的福音</li>
+<li>完美像素模式：由 ControlNet 自己决定预处理的解析度</li>
+<li>运行预览：开启后会出现预览窗口</li>
+</ul>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/controlnet_ui.png" width="80%" height="80%" /></p>
+</div>
+<p>预处理器跟模型是有对应关系的，不能乱用，下面的表格是官方提供的模型跟预处理器之间的关系：</p>
+<table>
+<thead>
+<tr>
+<th>
+模型名
+</th>
+<th>
+用途
+</th>
+<th>
+预处理器
+</th>
+<th>
+备注
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+</td>
+<td>
+白底黑线反色
+</td>
+<td>
+invert
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+</td>
+<td>
+面部控制
+</td>
+<td>
+mediapipi_face
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+1.control_v11p_sd15_canny
+</td>
+<td>
+边缘检测
+</td>
+<td>
+canny
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td rowspan="3">
+2.control_v11f1p_sd15_depth
+</td>
+<td rowspan="3">
+深度检测
+</td>
+<td>
+depth_leres
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+depth_midas
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+depth_zoe
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td rowspan="2">
+3.control_v11p_sd15s2_lineart_anime
+</td>
+<td rowspan="2">
+动漫线稿控制
+</td>
+<td>
+lineart_anime
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+lineart_anime_denoise
+</td>
+<td>
+带去噪
+</td>
+</tr>
+<tr>
+<td rowspan="3">
+4.control_v11p_sd15_lineart
+</td>
+<td rowspan="3">
+线稿控制
+</td>
+<td>
+lineart_coarse
+</td>
+<td>
+粗略线提取
+</td>
+</tr>
+<tr>
+<td>
+lineart_realistic
+</td>
+<td>
+写实线提取
+</td>
+</tr>
+<tr>
+<td>
+lineart_standard
+</td>
+<td>
+标准
+</td>
+</tr>
+<tr>
+<td>
+5.control_v11p_sd15_mlsd
+</td>
+<td>
+直线检测
+</td>
+<td>
+mlsd
+</td>
+<td>
+直线检查，适用于建筑，室内装修图
+</td>
+</tr>
+<tr>
+<td rowspan="2">
+6.control_v11p_sd15_normalbae
+</td>
+<td rowspan="2">
+法线贴图
+</td>
+<td>
+normal_bae
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+normal_midas
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td rowspan="5">
+7.control_v11p_sd15_openpose
+</td>
+<td rowspan="5">
+姿态控制
+</td>
+<td>
+openPose
+</td>
+<td>
+仅姿态
+</td>
+</tr>
+<tr>
+<td>
+openpose_face
+</td>
+<td>
+姿态 + 脸部
+</td>
+</tr>
+<tr>
+<td>
+openpose_faceonly
+</td>
+<td>
+仅脸部
+</td>
+</tr>
+<tr>
+<td>
+openpose_full
+</td>
+<td>
+姿态、手部及脸部
+</td>
+</tr>
+<tr>
+<td>
+openpose_hand
+</td>
+<td>
+姿态 + 手部
+</td>
+</tr>
+<tr>
+<td rowspan="3">
+8.control_v11p_sd15_scribble
+</td>
+<td rowspan="3">
+涂鸦
+</td>
+<td>
+scribble_hed
+</td>
+<td>
+合成
+</td>
+</tr>
+<tr>
+<td>
+scribble_pidinet
+</td>
+<td>
+手绘
+</td>
+</tr>
+<tr>
+<td>
+scribble_xdog
+</td>
+<td>
+强化边缘
+</td>
+</tr>
+<tr>
+<td rowspan="3">
+9.control_v11p_sd15_seg
+</td>
+<td rowspan="3">
+语义分割
+</td>
+<td>
+seg_ofade20k
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+seg_ofcoco
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+seg_ufade20k
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+10.control_v11e_sd15_shuffle
+</td>
+<td>
+风格洗牌转移
+</td>
+<td>
+shuffle
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td rowspan="4">
+11.control_v11p_sd15_softedge
+</td>
+<td rowspan="4">
+软边缘
+</td>
+<td>
+softedge_hed
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+softedge_hedsafe
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+softedge_pidinet
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+softedge_pidisafe
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+12.control_v11e_sd15_ip2p
+</td>
+<td>
+图生图
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+13.control_v11f1e_sd15_tile
+</td>
+<td>
+分块采样
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+14.control_v11p_sd15_inpaint
+</td>
+<td>
+controlnet自带的局部重绘
+</td>
+<td>
+inpaint_global_harmonious
+</td>
+<td>
+</td>
+</tr>
+</tbody>
+</table>
+<h2 id="各个模型的对比">各个模型的对比</h2>
+<h3 id="invert白底黑线反色">invert（白底黑线反色）</h3>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_invert.png" width="80%" height="80%" /></p>
+</div>
+<div class="note success"><p>没有对应的模型，应该是配合其他预处理器一起使用。</p>
+</div>
+<h3 id="pix2pix图生图">Pix2Pix（图生图）</h3>
+<p>这是 ControlNet
+提供的图生图，通过输入指令，来生成新图的模型，使用的提示词，原图中的部分要素还在，然后季节改变成提示词中给定的了</p>
+<pre class="line-numbers language-prompt" data-language="prompt"><code class="language-prompt">make it winter,<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_ip2ip.png" width="80%" height="80%" /></p>
+</div>
+<h3 id="shuffer风格洗牌">shuffer（风格洗牌）</h3>
+<p>不输入任何提示词的情况下：</p>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_shuffer.png" width="80%" height="80%" /></p>
+</div>
+<p>输入提示词的情况：</p>
+<pre class="line-numbers language-prompt" data-language="prompt"><code class="language-prompt">hongkong<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_shuffer_2.png" width="80%" height="80%" /></p>
+</div>
+<h3 id="depth深度检测">depth（深度检测）</h3>
+<p>使用深度预处理器，会同时生成一张深度图，然后会根据这张深度图来控制最终的生成的效果图。下面是几种深度预处理器的对比，随机种子固定为：123456</p>
+<p>depth_leres</p>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_depth_1.png" width="80%" height="80%" /></p>
+</div>
+<p>depth_midas</p>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_depth_2.png" width="80%" height="80%" /></p>
+</div>
+<p>depth_zoe</p>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_depth_3.png" width="80%" height="80%" /></p>
+</div>
+<h3 id="canny边缘检测">canny（边缘检测）</h3>
+<p>canny 是先生成原图的描边线稿，然后通过线稿来控制最终生成的图片。</p>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_canny.png" width="80%" height="80%" /></p>
+</div>
+<p>下面是人物效果</p>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_canny_2.png" width="80%" height="80%" /></p>
+</div>
+<h3 id="lineart线稿控制">lineart（线稿控制）</h3>
+<p>lineart 有三个处理器：</p>
+<ul>
+<li>lineart_coarse（粗略线提取）</li>
+</ul>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_lineart_1.png" width="80%" height="80%" /></p>
+</div>
+<ul>
+<li>lineart_realistic（写实线提取）</li>
+</ul>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_lineart_2.png" width="80%" height="80%" /></p>
+</div>
+<ul>
+<li>lineart_standard（标准）</li>
+</ul>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_lineart_3.png" width="80%" height="80%" /></p>
+</div>
+<h3 id="lineart_anim动漫线稿">lineart_anim（动漫线稿）</h3>
+<ul>
+<li>lineart_anime</li>
+</ul>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_lineart_anim_1.png" width="80%" height="80%" /></p>
+</div>
+<ul>
+<li>lineart_anime_denoise（带去噪）</li>
+</ul>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_lineart_anim_2.png" width="80%" height="80%" /></p>
+</div>
+<div class="note success"><p>去噪后，线稿约束小了，最终生成的效果也天马行空了。</p>
+</div>
+<h3 id="mlsd直线检测">mlsd（直线检测）</h3>
+<p>这个模型用来检测直线边缘，对曲线的检查效果很差，适合做建筑，或者室内装修的生成。</p>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_mlsd.png" width="80%" height="80%" /></p>
+</div>
+<p>当然用上面的线框图效果也可以(lineart_coarse)</p>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_mlsd_lineart.png" width="80%" height="80%" /></p>
+</div>
+<h3 id="mediapipe_face面部控制">mediapipe_face（面部控制）</h3>
+<p>这个没有模型，也是配合其他预处理器一起使用的。</p>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_face.png" width="80%" height="80%" /></p>
+</div>
+<h3 id="normal法线贴图">normal（法线贴图）</h3>
+<p>normal
+处理器会对图片进行预处理，生成法线贴图，然后使用法线贴图控制最终生成的图片。</p>
+<ul>
+<li>normal_base</li>
+</ul>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_normal_1.png" width="80%" height="80%" /></p>
+</div>
+<ul>
+<li>normal_midas</li>
+</ul>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_normal_2.png" width="80%" height="80%" /></p>
+</div>
+<h3 id="openpose姿态控制">openpose（姿态控制）</h3>
+<p>下面的测试，使用了同一个随机种子 <strong>1391169082</strong>，模型是
+<strong>breakdro</strong>，关键词都留空了</p>
+<ul>
+<li>openpose（仅姿态）</li>
+</ul>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_openpose_1.png" width="80%" height="80%" /></p>
+</div>
+<blockquote>
+<p>姿态图也可以自己通过第三方软件制作，blender 等工具</p>
+</blockquote>
+<ul>
+<li>openpose_face(姿态 + 面部)</li>
+</ul>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_openpose_2.png" width="80%" height="80%" /></p>
+</div>
+<blockquote>
+<p>增加脸部后，出现了脸部的控制点</p>
+</blockquote>
+<p>openpose_face_only（仅脸部）</p>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_openpose_3.png" width="80%" height="80%" /></p>
+</div>
+<blockquote>
+<p>画风不一致，是因为只控制了脸部，AI 开始天马行空，不得已增加了关键词
+nsfw</p>
+</blockquote>
+<p>openpose_full（姿态、手部及脸部）</p>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_openpose_4.png" width="80%" height="80%" /></p>
+</div>
+<div class="note success"><p>注意手部被识别到了，姿态图出现手部</p>
+</div>
+<p>openpose_hand（姿态 + 手部）</p>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_openpose_5.png" width="80%" height="80%" /></p>
+</div>
+<h3 id="scribble涂鸦">scribble（涂鸦）</h3>
+<p>scribble_hed（合成）</p>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_scribble_1.png" width="80%" height="80%" /></p>
+</div>
+<p>scribble_pidinet(手绘)</p>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_scribble_2.png" width="80%" height="80%" /></p>
+</div>
+<p>scribble_xdog(强化边缘)</p>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_scribble_3.png" width="80%" height="80%" /></p>
+</div>
+<div class="note success"><p>强化边缘后，细节增多。</p>
+</div>
+<h3 id="seg语义分割">seg（语义分割）</h3>
+<p>语义分割是将标签或类别与图片的每个像素关联的一种深度学习算法。把画面中的内容按照物体分开，并且将同一类的像素归到一个类别，最终生成一张色块图。</p>
+<ul>
+<li>seg_ofade20k</li>
+</ul>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_seg_1.png" width="80%" height="80%" /></p>
+</div>
+<ul>
+<li>seg_ofcoco</li>
+</ul>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_seg_2.png" width="80%" height="80%" /></p>
+</div>
+<ul>
+<li>seg_ufade20k</li>
+</ul>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_seg_3.png" width="80%" height="80%" /></p>
+</div>
+<h3 id="softedge软边缘">softedge（软边缘）</h3>
+<ul>
+<li>softedge_hed</li>
+</ul>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_softedge_1.png" width="80%" height="80%" /></p>
+</div>
+<ul>
+<li>softedge_hedsafe</li>
+</ul>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_softedge_2.png" width="80%" height="80%" /></p>
+</div>
+<ul>
+<li>softedge_pidinet：</li>
+</ul>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_softedge_3.png" width="80%" height="80%" /></p>
+</div>
+<div class="note success"><p>对比 hed 算法，缺失了一些细节，注意看面部眼睛。</p>
+</div>
+<ul>
+<li>softedge_pidinetsafe</li>
+</ul>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_softedge_4.png" width="80%" height="80%" /></p>
+</div>
+<h3 id="inpaint">inpaint</h3>
+<p>一般在图生图中使用，用于局部修复</p>
+<h2 id="配合使用">配合使用</h2>
+<p>可以同时配合多个 ControlNet 效果一起使用：</p>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_batch_1.png" width="80%" height="80%" /></p>
+</div>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_batch.png" width="80%" height="80%" /></p>
+</div>
+<h2 id="预处理器推荐使用场景">预处理器推荐使用场景</h2>
+<ul>
+<li>1.人物/肖像：canny（棱角分明）、lineart（线条分明，处理细致）、scribble（自由发挥度比较高）、softedge（保留更多细节）</li>
+<li>2.动作控制：openpose</li>
+<li>3.动漫：lineart-anime（处理细致）</li>
+<li>4.建筑：depth（深度信息比较多的图）、mlsd（出室内效果图）、normal（可以做游戏建模）</li>
+<li>5.修图：inpaint（主要用于肖像）</li>
+<li>复杂的图：seg（处理很优秀）</li>
+</ul>
+<h2 id="参考">参考</h2>
+<p><a href="https://www.youtube.com/watch?v=c8ZyBBHFoUI">1.Controlnet
+1.1新版本功能详解</a></p>
+<p><a
+href="https://github.com/lllyasviel/ControlNet-v1-1-nightly">2.ControlNet
+1.1 Github</a></p>
+<p><a
+href="https://github.com/Mikubill/sd-webui-controlnet">3.ControlNet for
+Stable Diffusion WebUI</a></p>
+]]></content>
+      <categories>
+        <category>AI</category>
+        <category>stable diffussion</category>
+      </categories>
+      <tags>
+        <tag>controlnet</tag>
+        <tag>stable diffussion</tag>
+        <tag>AI</tag>
+      </tags>
+  </entry>
 </search>

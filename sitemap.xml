@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.xianlongok.site/post/8dc757ea/</loc>
+    
+    <lastmod>2023-05-10</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://www.xianlongok.site/post/ea92a01c/</loc>
     
     <lastmod>2023-04-28</lastmod>
@@ -238,7 +247,7 @@
 
   <url>
     <loc>https://www.xianlongok.site/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -246,154 +255,175 @@
   
   <url>
     <loc>https://www.xianlongok.site/tags/Atmosphere/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/tags/others/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/tags/egret/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/tags/ui/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/tags/Unity/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/tags/C/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/tags/InjectFix/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/tags/C/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/tags/UE4/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/tags/Landscape/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/tags/TextureArray/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/tags/PBD/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/tags/GC/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/tags/RenderPipline/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/tags/Reflection/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/tags/UMG/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/tags/UE5/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/tags/Mass/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/tags/ECS/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/tags/Static/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/tags/Slate/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/tags/Python/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.xianlongok.site/tags/controlnet/</loc>
+    <lastmod>2023-05-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.xianlongok.site/tags/stable-diffussion/</loc>
+    <lastmod>2023-05-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.xianlongok.site/tags/AI/</loc>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
@@ -402,133 +432,147 @@
   
   <url>
     <loc>https://www.xianlongok.site/categories/Graphics/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/categories/Blog/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/categories/h5/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/categories/%E5%8D%9A%E5%AE%A2/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/categories/Unity%E5%BC%80%E5%8F%91/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/categories/Blog/Hexo/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/categories/UE4/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/categories/h5/egret/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/categories/%E7%89%A9%E7%90%86/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/categories/%E5%8D%9A%E5%AE%A2/Hexo/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/categories/UE5/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/categories/Blog/Hexo/Github/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/categories/%E7%89%A9%E7%90%86/PBD/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/categories/%E7%89%A9%E7%90%86/%E7%BA%A6%E6%9D%9F/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/categories/UE4/SlateUI/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/categories/UE5/Mass/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/categories/UE5/Mass/ECS/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/categories/UE4/SlateUI/UMG/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.xianlongok.site/categories/UE4/Python/</loc>
-    <lastmod>2023-05-05</lastmod>
+    <lastmod>2023-05-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.xianlongok.site/categories/AI/</loc>
+    <lastmod>2023-05-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.xianlongok.site/categories/AI/stable-diffussion/</loc>
+    <lastmod>2023-05-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
