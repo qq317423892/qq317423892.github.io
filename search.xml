@@ -10582,7 +10582,8 @@ controlnet 后的生成效果了。</p>
 <div data-align="center">
 <p><img data-src="/images/sd_controlnet/controlnet_ui.png" width="80%" height="80%" /></p>
 </div>
-<div class="note warning"><p>选择好对应的<strong>模型</strong>跟匹配的<strong>预处理器</strong>后，点击<strong>预览</strong>才可以正确显示预处理结果，如果发现效果不对，请验证下<strong>模型</strong>跟<strong>预处理器</strong>是否匹配。</p>
+<div class="note warning"><p>选择好对应的<strong>模型</strong>跟匹配的<strong>预处理器</strong>后，点击<strong>预览</strong>才可以正确显示预处理结果，如果发现效果不对，请验证下<strong>模型</strong>跟<strong>预处理器</strong>是否匹配。如果没有对应的<strong>模型</strong>或者<strong>预处理器</strong>，则选择
+<strong>none</strong> 即可。</p>
 </div>
 <p>预处理器跟模型是有对应关系的，不能乱用，下面的表格是官方提供的模型跟预处理器之间的关系：</p>
 <table>
