@@ -11191,4 +11191,38 @@ Stable Diffusion WebUI</a></p>
         <tag>AI</tag>
       </tags>
   </entry>
+  <entry>
+    <title>Vercel + Waline 国内评论不可见问题修复</title>
+    <url>/post/54f20f49/</url>
+    <content><![CDATA[<p>2022年8月1日，LeanCloud 宣布国际版共享域名不在向中国大陆提供服务，我博客的评论系统就一直处于瘫痪状态，之前也尝试解决，但是没找到合适方法，最近发现 <a href="https://github.com/orgs/walinejs/discussions/1203">Waline</a> 上说， LeanCloud 限制 IP 这个事情，其实对 Waline 没有影响，因为我使用了官方推荐的方式 Vercel 部署，而 Vercel 的 IP 本身就是在海外的，但是评论瘫痪了，说明是其他问题。</p>
+<div align=center>
+<img data-src="/images/vercel_waline_modify/vercel_dns.png" width="80%" height="80%" />
+</div>
+<p>因此需要使用自定义的域名来搭建 waline 的评论系统，首先是去申请一个新域名，然后将这个域名的 DNS 解析设置一下，默认 Vercel 显示的是：</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">cname</span><span class="token punctuation">:</span> cname.vercel<span class="token punctuation">-</span>dns.com 
+<span class="token key atrule">A</span><span class="token punctuation">:</span> 76.76.21.21<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>但是因为被墙，官方推荐使用下面这个：</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">cname</span><span class="token punctuation">:</span> name<span class="token punctuation">-</span>china.vercel<span class="token punctuation">-</span>dns.com
+<span class="token key atrule">A</span><span class="token punctuation">:</span> 76.223.126.88<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>设置好 DNS 解析后，找到 Vercel 上你用来搭建评论的项目，修改掉之前默认的域名，换上你自己申请的域名地址（因为使用的还是 LeanCloud 国际版，因此域名不需要备案）：</p>
+<div align=center>
+<img data-src="/images/vercel_waline_modify/domain.png" width="80%" height="80%" />
+</div>
+<p>稍等一下 Vercel 会自动刷新解析状态。最后回到你本地博客的主题配置文件，修改 waline 的设置，修改 serverURL 为你自己的域名（记得要带 <a href="https://www">https://www</a>）</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">waline</span><span class="token punctuation">:</span>
+  <span class="token key atrule">enable</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
+  <span class="token key atrule">serverURL</span><span class="token punctuation">:</span> https<span class="token punctuation">:</span>//www.xxxx.xxx<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<div class="note success"><p><a href="https://www.xxx.xxx/ui">https://www.xxx.xxx/ui</a> 是打开评论管理平台的入口了</p>
+</div>
+]]></content>
+      <categories>
+        <category>Blog</category>
+      </categories>
+      <tags>
+        <tag>Blog</tag>
+        <tag>Hexo</tag>
+        <tag>Waline</tag>
+        <tag>Vercel</tag>
+      </tags>
+  </entry>
 </search>
