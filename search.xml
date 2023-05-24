@@ -1051,7 +1051,7 @@ Sheet</strong></p>
 <p><img data-src="/images/egret_ui_batch/texture_merger_add.png" width="80%" height="80%" /></p>
 </div>
 <p>最后点
-<strong>导出</strong>，导出合图文件，导出时，恶意选择导出比例（100%、200%、50%）：</p>
+<strong>导出</strong>，导出合图文件，导出时，可以选择导出比例（100%、200%、50%）：</p>
 <div data-align="center">
 <p><img data-src="/images/egret_ui_batch/texture_merger_save.png" width="80%" height="80%" /></p>
 </div>
@@ -1813,7 +1813,7 @@ Egret SpriteSheet 文件格式规范</a></p>
 </div>
 <p><a
 href="https://bbs.egret.com/thread-43642-1-1.html">4.一个高性能的文本控件</a></p>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">]]></content>
+]]></content>
       <categories>
         <category>h5</category>
         <category>egret</category>
@@ -10629,6 +10629,35 @@ mediapipi_face
 </td>
 </tr>
 <tr>
+<td rowspan="3">
+</td>
+<td rowspan="3">
+参考来源图片
+</td>
+<td>
+refrence_only
+</td>
+<td>
+仅参考输入图
+</td>
+</tr>
+<tr>
+<td>
+refrence_adain
+</td>
+<td>
+输入图+自适应范例
+</td>
+</tr>
+<tr>
+<td>
+refrence_adain+attn
+</td>
+<td>
+输入图+自适应范例+attention
+</td>
+</tr>
+<tr>
 <td>
 1.control_v11p_sd15_canny
 </td>
@@ -11154,6 +11183,102 @@ nsfw</p>
 </div>
 <h3 id="inpaint">inpaint</h3>
 <p>一般在图生图中使用，用于局部修复</p>
+<h3 id="refrence">refrence</h3>
+<p>可以实现 LoRA 模型的效果，参考输入图片，生成效果图：</p>
+<ul>
+<li>reference_only</li>
+</ul>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_ref_1.png" width="100%" height="100%" /></p>
+</div>
+<div class="note success"><p>refrence
+使用时，需要配合提示词以及参考图对应的风格的模型，如果只使用参考图，最终生成的画面可能会崩掉，官方推荐使用
+reference_only + style</p>
+</div>
+<ul>
+<li>reference_adain</li>
+</ul>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_ref_3.png" width="30%" height="30%" /></p>
+</div>
+<ul>
+<li>reference_adain+attn</li>
+</ul>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_ref_2.png" width="30%" height="30%" /></p>
+</div>
+<h3 id="tile">tile</h3>
+<p>这个模型有两个用途：</p>
+<ul>
+<li>忽略图片中的一些细节，并且会产生新的细节</li>
+<li>如果局部快中语义合全局提示词不匹配，会忽略全局提示词，并根据局部上下文引导扩散</li>
+</ul>
+<h4 id="高清修复">高清修复</h4>
+<p>官方链接中给了一张 64<em>64 的小狗图，我们可以用 tile
+模型对这个图片放大，并且增加丰富的细节，大小可以自己设置（这里设置成 512
+</em> 512）。</p>
+<pre class="line-numbers language-prompot" data-language="prompot"><code class="language-prompot">a dog, on grass<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_tile_1.png" width="80%" height="80%" /></p>
+</div>
+<div class="note success"><p>预处理器这里可以选 none，如果选了
+tile_resample，可以对输入的图片进行缩小后再作为参考输入，可以
+设置缩小的比例。</p>
+</div>
+<h4 id="修复一些不能直接放大的图">修复一些不能直接放大的图</h4>
+<p>下面这张图图片尺寸比较大，但是细节基本丢失，这个图片就不能使用常规的放大算法（需要补充大量细节），就可以利用
+tile 的特性，让模型自动忽略一些错误的细节，然后生成我们想要的效果。</p>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_tile_2.png" width="80%" height="80%" /></p>
+</div>
+<div class="note success"><p>这里我们使用了预处理器，因为这张图的大小比较大，因此我们可以使用预处理区现将图片缩小。</p>
+</div>
+<p>有了这个功能后，我们就可以自己使用一些简略图，让 AI
+给我们画出不错的创意了</p>
+<pre class="line-numbers language-prompt" data-language="prompt"><code class="language-prompt">a beautiful house, stone steps path<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_tile_3.png" width="80%" height="80%" /></p>
+</div>
+<h4 id="配合-sd-scale-放大算法">配合 SD scale 放大算法</h4>
+<p>在图生图中默认有 SD scale
+算法（打开脚本下拉，就能看到），这两个算法在放大时，都做了显存优化，会按照最终生成的图片大小进行分块，然后逐块生成，最后再将这些合并成大图。</p>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/sd_scale.png" width="40%" height="40%" /></p>
+</div>
+<div class="note success"><p>直接使用的话，每块都会受到提示词的影响，最终导致生成的结果混乱，因此可以配合
+ControlNet 的 tile 模型，控制最终生成的结果。</p>
+</div>
+<p>controlnet 参数，Ultimate SD upscale 参数保持默认</p>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_tile_5.png" width="50%" height="50%" /></p>
+</div>
+<p>下面是将图片从 568 * 561 放大 3
+倍后的效果，放大后细节做了补充，效果很惊艳。</p>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_tile_4.png" width="100%" height="100%" /></p>
+</div>
+<div class="note success"><ol type="1">
+<li>SD 图生图自带两个放大算法 <a
+href="https://github.com/Coyote-A/ultimate-upscale-for-automatic1111">"Ultimate
+SD upscale"</a> 跟 "SD upscale"，两个是完全不同的放大算法。</li>
+<li>"Ultimate SD upscale" 是 1.1 版本开始支持的</li>
+<li>"SD upscale" 是 1.1.117 版本开始支持，使用时，ControlNet
+里的图片要置空，因为不好维护，官方推荐使用 "Ultimate SD upscale"</li>
+<li>普遍使用的放大算法还是 Tiled VAE/Diffusion 扩展，但是官方说
+ControlNet 1.1 兼容大部分的 tile-based 扩展，使用 Tile VAE 细节没有使用
+ControlNet + SD 放大算法的惊艳</li>
+</ol>
+</div>
+<p>这个放大算法也不是完美无瑕，测试中也会发现一些问题（放大倍数很高的时候
+<strong>4倍</strong>）：</p>
+<ul>
+<li>会有多出来的眼睛</li>
+<li>图片中有景深时，每个块景深可能不一样，导致整体上景深是错乱的。</li>
+<li>块之间会有明显的接缝痕迹。</li>
+</ul>
+<div data-align="center">
+<p><img data-src="/images/sd_controlnet/control_net_tile_6.png" width="60%" height="60%" /></p>
+</div>
 <h2 id="配合使用">配合使用</h2>
 <p>可以同时配合多个 ControlNet 效果一起使用：</p>
 <div data-align="center">
@@ -11194,26 +11319,40 @@ Stable Diffusion WebUI</a></p>
   <entry>
     <title>Vercel + Waline 国内评论不可见问题修复</title>
     <url>/post/54f20f49/</url>
-    <content><![CDATA[<p>2022年8月1日，LeanCloud 宣布国际版共享域名不在向中国大陆提供服务，我博客的评论系统就一直处于瘫痪状态，之前也尝试解决，但是没找到合适方法，最近发现 <a href="https://github.com/orgs/walinejs/discussions/1203">Waline</a> 上说， LeanCloud 限制 IP 这个事情，其实对 Waline 没有影响，因为我使用了官方推荐的方式 Vercel 部署，而 Vercel 的 IP 本身就是在海外的，但是评论瘫痪了，说明是其他问题。</p>
-<div align=center>
-<img data-src="/images/vercel_waline_modify/vercel_dns.png" width="80%" height="80%" />
+    <content><![CDATA[<p>2022年8月1日，LeanCloud
+宣布国际版共享域名不在向中国大陆提供服务，我博客的评论系统就一直处于瘫痪状态，之前也尝试解决，但是没找到合适方法，最近发现
+<a href="https://github.com/orgs/walinejs/discussions/1203">Waline</a>
+上说， LeanCloud 限制 IP 这个事情，其实对 Waline
+没有影响，因为我使用了官方推荐的方式 Vercel 部署，而 Vercel 的 IP
+本身就是在海外的，但是评论瘫痪了，说明是其他问题。</p>
+<div data-align="center">
+<p><img data-src="/images/vercel_waline_modify/vercel_dns.png" width="80%" height="80%" /></p>
 </div>
-<p>因此需要使用自定义的域名来搭建 waline 的评论系统，首先是去申请一个新域名，然后将这个域名的 DNS 解析设置一下，默认 Vercel 显示的是：</p>
+<p>因此需要使用自定义的域名来搭建 waline
+的评论系统，首先是去申请一个新域名，然后将这个域名的 DNS
+解析设置一下，默认 Vercel 显示的是：</p>
 <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">cname</span><span class="token punctuation">:</span> cname.vercel<span class="token punctuation">-</span>dns.com 
 <span class="token key atrule">A</span><span class="token punctuation">:</span> 76.76.21.21<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 <p>但是因为被墙，官方推荐使用下面这个：</p>
 <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">cname</span><span class="token punctuation">:</span> name<span class="token punctuation">-</span>china.vercel<span class="token punctuation">-</span>dns.com
 <span class="token key atrule">A</span><span class="token punctuation">:</span> 76.223.126.88<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p>设置好 DNS 解析后，找到 Vercel 上你用来搭建评论的项目，修改掉之前默认的域名，换上你自己申请的域名地址（因为使用的还是 LeanCloud 国际版，因此域名不需要备案）：</p>
-<div align=center>
-<img data-src="/images/vercel_waline_modify/domain.png" width="80%" height="80%" />
+<p>设置好 DNS 解析后，找到 Vercel
+上你用来搭建评论的项目，修改掉之前默认的域名，换上你自己申请的域名地址（因为使用的还是
+LeanCloud 国际版，因此域名不需要备案）：</p>
+<div data-align="center">
+<p><img data-src="/images/vercel_waline_modify/domain.png" width="80%" height="80%" /></p>
 </div>
-<p>稍等一下 Vercel 会自动刷新解析状态。最后回到你本地博客的主题配置文件，修改 waline 的设置，修改 serverURL 为你自己的域名（记得要带 <a href="https://www">https://www</a>）</p>
+<p>稍等一下 Vercel
+会自动刷新解析状态。最后回到你本地博客的主题配置文件，修改 waline
+的设置，修改 serverURL 为你自己的域名（记得要带 https://www）</p>
 <pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">waline</span><span class="token punctuation">:</span>
   <span class="token key atrule">enable</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
   <span class="token key atrule">serverURL</span><span class="token punctuation">:</span> https<span class="token punctuation">:</span>//www.xxxx.xxx<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-<div class="note success"><p><a href="https://www.xxx.xxx/ui">https://www.xxx.xxx/ui</a> 是打开评论管理平台的入口了</p>
+<div class="note success"><p>https://www.xxx.xxx/ui 是打开评论管理平台的入口了</p>
 </div>
+<p>后面看到这篇文章 <a
+href="https://blog.csdn.net/Panzer_Jack/article/details/127418379">关于waline国内无法使用的解决方案</a>
+说不需要再次申请域名，可以在自己已有的域名下，新增一个子域名，即可</p>
 ]]></content>
       <categories>
         <category>Blog</category>
