@@ -1,4 +1,352 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><meta name="theme-color" content="#e7ddc8" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#181c27" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0"><link rel="preconnect" href="https://fonts.googleapis.com" crossorigin><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="apple-touch-icon" sizes="180x180" href="/./images/apple-touch-icon-next.png"><link rel="icon" type="image/png" sizes="32x32" href="/./images/favicon-32x32-next.png"><link rel="icon" type="image/png" sizes="16x16" href="/./images/favicon-16x16-next.png"><link rel="mask-icon" href="/./images/safari-pinned-tab-next.svg" color="#e7ddc8"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=LXGW:300,300italic,400,400italic,700,700italic%7CNoto+Serif+SC:300,300italic,400,400italic,700,700italic%7CLong+Cang:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous"><script class="next-config" data-name="main" type="application/json">{"hostname":"www.xianlongok.site","root":"/","images":"/blog/images/","scheme":"Gemini","darkmode":true,"version":"8.17.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":null,"post_body":null,"coll_header":null,"sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script><meta name="description" content="1.InjectFix 工作流程  * 打新包 * 其他预处理     * 预先配置好需要Patch的类跟函数，提交配置Configure代码     * 打包机打包时，自动reload被Inject的dll，保证当前的dll没有被注入过     * 调用InjectFix提供的注入函数，注入WrappersManagerImpl，ILFixInterfaceBridge，ILFixDynamic"><meta property="og:type" content="article"><meta property="og:title" content="InjectFix学习笔记"><meta property="og:url" content="https://www.xianlongok.site/post/5a3da985/index.html"><meta property="og:site_name" content="十三"><meta property="og:description" content="1.InjectFix 工作流程  * 打新包 * 其他预处理     * 预先配置好需要Patch的类跟函数，提交配置Configure代码     * 打包机打包时，自动reload被Inject的dll，保证当前的dll没有被注入过     * 调用InjectFix提供的注入函数，注入WrappersManagerImpl，ILFixInterfaceBridge，ILFixDynamic"><meta property="og:locale" content="zh_CN"><meta property="article:published_time" content="2021-03-25T04:52:30.000Z"><meta property="article:modified_time" content="2022-05-12T15:45:54.752Z"><meta property="article:author" content="小贤"><meta property="article:tag" content="Unity"><meta property="article:tag" content="C#"><meta property="article:tag" content="InjectFix"><meta name="twitter:card" content="summary"><link rel="canonical" href="https://www.xianlongok.site/post/5a3da985/"><script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://www.xianlongok.site/post/5a3da985/","path":"post/5a3da985/","title":"InjectFix学习笔记"}</script><script class="next-config" data-name="calendar" type="application/json">""</script><title>InjectFix学习笔记 | 十三</title><script async src="https://www.googletagmanager.com/gtag/js?id=G-2Y4JGXG8FG"></script><script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"G-2Y4JGXG8FG","only_pageview":false}</script><script src="/js/third-party/analytics/google-analytics.js"></script><link rel="dns-prefetch" href="https://www.xianlongok.work"><noscript><link rel="stylesheet" href="/css/noscript.css"></noscript></head><body itemscope itemtype="http://schema.org/WebPage" class="use-motion"><div class="headband"></div><main class="main"><div class="column"><header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container"><div class="site-nav-toggle"><div class="toggle" aria-label="切换导航栏" role="button"><span class="toggle-line"></span> <span class="toggle-line"></span> <span class="toggle-line"></span></div></div><div class="site-meta"><a href="/" class="brand" rel="start"><i class="logo-line"></i><p class="site-title">十三</p><i class="logo-line"></i></a><p class="site-subtitle" itemprop="description">安心学技术</p></div><div class="site-nav-right"><div class="toggle popup-trigger" aria-label="搜索" role="button"><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class="site-nav"><ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fas fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fas fa-splotch fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fas fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-tools"><a href="/tools/" rel="section"><i class="fas fa-wrench fa-fw"></i>工具</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fas fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fas fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fas fa-book fa-fw"></i>留言板</a></li><li class="menu-item menu-item-novelai"><a href="/NovelAI/" rel="section"><i class="fas fa-tachometer fa-fw"></i>NovelAI</a></li><li class="menu-item menu-item-search"><a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索</a></li></ul></nav><div class="search-pop-overlay"><div class="popup search-popup"><div class="search-header"><span class="search-icon"><i class="fa fa-search"></i></span><div class="search-input-container"><input autocomplete="off" autocapitalize="off" maxlength="80" placeholder="搜索..." spellcheck="false" type="search" class="search-input"></div><span class="popup-btn-close" role="button"><i class="fa fa-times-circle"></i></span></div><div class="search-result-container no-result"><div class="search-result-icon"><i class="fa fa-spinner fa-pulse fa-5x"></i></div></div></div></div></header><aside class="sidebar"><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class="sidebar-nav"><li class="sidebar-nav-toc">文章目录</li><li class="sidebar-nav-overview">站点概览</li></ul><div class="sidebar-panel-container"><div class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#injectfix-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="nav-number">1.</span> <span class="nav-text">1.InjectFix 工作流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#injectfix-%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">2.InjectFix 工作原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#inject%E9%98%B6%E6%AE%B5"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 Inject阶段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ifix%E8%B7%9Fifix.filter%E6%A0%87%E7%AD%BE"><span class="nav-number">2.2.</span> <span class="nav-text">2.1.1 [IFix]跟[IFix.Filter]标签</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ifix.custombridge-interface%E5%92%8Cdelegate%E6%A1%A5%E6%8E%A5"><span class="nav-number">2.3.</span> <span class="nav-text">2.1.2 [IFix.CustomBridge] ：interface和delegate桥接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#patch%E9%98%B6%E6%AE%B5"><span class="nav-number">2.4.</span> <span class="nav-text">2.2 Patch阶段</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%B3%95"><span class="nav-number">2.4.1.</span> <span class="nav-text">2.2.1 修复方法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B0%E5%A2%9E%E5%87%BD%E6%95%B0%E7%B1%BB%E5%9E%8B"><span class="nav-number">2.5.</span> <span class="nav-text">2.2.2 新增函数、类型</span></a></li></ol></li></ol></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person"><img class="site-author-image" itemprop="image" alt="小贤" src="/images/avatar.jpg"><p class="site-author-name" itemprop="name">小贤</p><div class="site-description" itemprop="description">Watch and learn, your magic is mine!</div></div><div class="site-state-wrap animated"><nav class="site-state"><div class="site-state-item site-state-posts"><a href="/archives/"><span class="site-state-item-count">24</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"><a href="/categories/"><span class="site-state-item-count">22</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"><a href="/tags/"><span class="site-state-item-count">34</span> <span class="site-state-item-name">标签</span></a></div></nav></div><div class="links-of-author animated"><span class="links-of-author-item"><a href="https://github.com/qq317423892" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qq317423892" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i></a> </span><span class="links-of-author-item"><a href="mailto:xianlongok@163.com" title="E-Mail → mailto:xianlongok@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i></a></span></div></div></div><div class="back-to-top animated" role="button" aria-label="返回顶部"><i class="fa fa-arrow-up"></i> <span>0%</span></div></div><div class="sidebar-inner sidebar-blogroll"><div class="links-of-blogroll animated"><div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i> 链接</div><ul class="links-of-blogroll-list"><li class="links-of-blogroll-item"><a href="https://scorpioq.github.io/" title="https:&#x2F;&#x2F;scorpioq.github.io&#x2F;" rel="noopener" target="_blank">ScorpioQ</a></li><li class="links-of-blogroll-item"><a href="https://www.xygblog.com/" title="https:&#x2F;&#x2F;www.xygblog.com&#x2F;" rel="noopener" target="_blank">邪妖怪のBlog</a></li></ul></div></div></aside></div><div class="main-inner post posts-expand"><div class="post-block"><article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN"><link itemprop="mainEntityOfPage" href="https://www.xianlongok.site/post/5a3da985/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="/images/avatar.jpg"><meta itemprop="name" content="小贤"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="十三"><meta itemprop="description" content="Watch and learn, your magic is mine!"></span><span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork"><meta itemprop="name" content="InjectFix学习笔记 | 十三"><meta itemprop="description" content=""></span><header class="post-header"><h1 class="post-title" itemprop="name headline">InjectFix学习笔记</h1><div class="post-meta-container"><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-calendar"></i> </span><span class="post-meta-item-text">发表于</span> <time title="创建时间：2021-03-25 12:52:30" itemprop="dateCreated datePublished" datetime="2021-03-25T12:52:30+08:00">2021-03-25</time> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-folder"></i> </span><span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Unity%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">Unity开发</span></a> </span></span><span id="/post/5a3da985/" class="post-meta-item leancloud_visitors" data-flag-title="InjectFix学习笔记" title="阅读次数"><span class="post-meta-item-icon"><i class="far fa-eye"></i> </span><span class="post-meta-item-text">阅读次数：</span> <span class="leancloud-visitors-count"></span> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-comment"></i> </span><span class="post-meta-item-text">Waline：</span> <a title="waline" href="/post/5a3da985/#waline" itemprop="discussionUrl"><span class="post-comments-count waline-comment-count" data-path="/post/5a3da985/" itemprop="commentCount"></span> </a></span><span class="post-meta-break"></span> <span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="far fa-file-word"></i> </span><span class="post-meta-item-text">本文字数：</span> <span>7.2k</span> </span><span class="post-meta-item" title="阅读时长"><span class="post-meta-item-icon"><i class="far fa-clock"></i> </span><span class="post-meta-item-text">阅读时长 &asymp;</span> <span>7 分钟</span></span></div></div></header><div class="post-body" itemprop="articleBody"><h2 id="injectfix-工作流程">1.InjectFix 工作流程</h2><ul><li>打新包<ul><li>其他预处理</li><li>预先配置好需要Patch的类跟函数，提交配置Configure代码</li><li>打包机打包时，自动reload被Inject的dll，保证当前的dll没有被注入过</li><li>调用InjectFix提供的注入函数，注入WrappersManagerImpl，ILFixInterfaceBridge，ILFixDynamicMethodWrapper，IDMAP-1跟插桩代码dll</li><li>执行il2cpp处理</li><li>执行其他预处理</li></ul></li><li>Patch阶段<ul><li>修复代码<ul><li>修复函数：使用标签[IFix.Patch]</li><li>新增类、属性、方法：使用标签[IFix.Interpret]</li></ul></li><li>调用InjectFix提供的打Patch函数，生成Patch文件</li><li>生成Patch文件的AssetsBuddle包</li><li>上传更新过后的AssetsBuddle包</li></ul></li></ul><blockquote><p>ps：在patch过程中，如果没有重新打出新的包体，不要删除Patch标签</p></blockquote><span id="more"></span><h2 id="injectfix-工作原理">2.InjectFix 工作原理</h2><h3 id="inject阶段">2.1 Inject阶段</h3><h3 id="ifix跟ifix.filter标签">2.1.1 [IFix]跟[IFix.Filter]标签</h3><p>在Inject阶段，预先对有可能需要修复的类跟函数提交配置类，调用Inject处理函数时，会对这些写上标签的函数注入插桩代码，例如有如下代码，其中Add跟Sub目前逻辑是错误的，是需要修复的函数：<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">namespace IFix.Test
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#e7ddc8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#181c27" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/./images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/./images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/./images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/./images/safari-pinned-tab-next.svg" color="#e7ddc8">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=LXGW:300,300italic,400,400italic,700,700italic%7CNoto+Serif+SC:300,300italic,400,400italic,700,700italic%7CLong+Cang:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.xianlongok.site","root":"/","images":"/blog/images/","scheme":"Gemini","darkmode":true,"version":"8.17.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":null,"post_body":null,"coll_header":null,"sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="1.InjectFix 工作流程  * 打新包 * 其他预处理     * 预先配置好需要Patch的类跟函数，提交配置Configure代码     * 打包机打包时，自动reload被Inject的dll，保证当前的dll没有被注入过     * 调用InjectFix提供的注入函数，注入WrappersManagerImpl，ILFixInterfaceBridge，ILFixDynamic">
+<meta property="og:type" content="article">
+<meta property="og:title" content="InjectFix学习笔记">
+<meta property="og:url" content="https://www.xianlongok.site/post/5a3da985/index.html">
+<meta property="og:site_name" content="十三">
+<meta property="og:description" content="1.InjectFix 工作流程  * 打新包 * 其他预处理     * 预先配置好需要Patch的类跟函数，提交配置Configure代码     * 打包机打包时，自动reload被Inject的dll，保证当前的dll没有被注入过     * 调用InjectFix提供的注入函数，注入WrappersManagerImpl，ILFixInterfaceBridge，ILFixDynamic">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-03-25T04:52:30.000Z">
+<meta property="article:modified_time" content="2022-05-12T15:45:54.752Z">
+<meta property="article:author" content="小贤">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="C#">
+<meta property="article:tag" content="InjectFix">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.xianlongok.site/post/5a3da985/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://www.xianlongok.site/post/5a3da985/","path":"post/5a3da985/","title":"InjectFix学习笔记"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>InjectFix学习笔记 | 十三</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2Y4JGXG8FG"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"G-2Y4JGXG8FG","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+
+
+
+<link rel="dns-prefetch" href="https://www.xianlongok.work">
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">十三</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">安心学技术</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fas fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fas fa-splotch fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fas fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-tools"><a href="/tools/" rel="section"><i class="fas fa-wrench fa-fw"></i>工具</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fas fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fas fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fas fa-book fa-fw"></i>留言板</a></li><li class="menu-item menu-item-novelai"><a href="/NovelAI/" rel="section"><i class="fas fa-tachometer fa-fw"></i>NovelAI</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#injectfix-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="nav-number">1.</span> <span class="nav-text">1.InjectFix 工作流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#injectfix-%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">2.InjectFix 工作原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#inject%E9%98%B6%E6%AE%B5"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 Inject阶段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ifix%E8%B7%9Fifix.filter%E6%A0%87%E7%AD%BE"><span class="nav-number">2.2.</span> <span class="nav-text">2.1.1 [IFix]跟[IFix.Filter]标签</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ifix.custombridge-interface%E5%92%8Cdelegate%E6%A1%A5%E6%8E%A5"><span class="nav-number">2.3.</span> <span class="nav-text">2.1.2
+[IFix.CustomBridge] ：interface和delegate桥接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#patch%E9%98%B6%E6%AE%B5"><span class="nav-number">2.4.</span> <span class="nav-text">2.2 Patch阶段</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%B3%95"><span class="nav-number">2.4.1.</span> <span class="nav-text">2.2.1 修复方法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B0%E5%A2%9E%E5%87%BD%E6%95%B0%E7%B1%BB%E5%9E%8B"><span class="nav-number">2.5.</span> <span class="nav-text">2.2.2 新增函数、类型</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小贤"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">小贤</p>
+  <div class="site-description" itemprop="description">Watch and learn, your magic is mine!</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/qq317423892" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qq317423892" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:xianlongok@163.com" title="E-Mail → mailto:xianlongok@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+    <div class="sidebar-inner sidebar-blogroll">
+      <div class="links-of-blogroll animated">
+        <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+          链接
+        </div>
+        <ul class="links-of-blogroll-list">
+            <li class="links-of-blogroll-item">
+              <a href="https://scorpioq.github.io/" title="https:&#x2F;&#x2F;scorpioq.github.io&#x2F;" rel="noopener" target="_blank">ScorpioQ</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://www.xygblog.com/" title="https:&#x2F;&#x2F;www.xygblog.com&#x2F;" rel="noopener" target="_blank">邪妖怪のBlog</a>
+            </li>
+        </ul>
+      </div>
+    </div>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.xianlongok.site/post/5a3da985/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="小贤">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="十三">
+      <meta itemprop="description" content="Watch and learn, your magic is mine!">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="InjectFix学习笔记 | 十三">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          InjectFix学习笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-03-25 12:52:30" itemprop="dateCreated datePublished" datetime="2021-03-25T12:52:30+08:00">2021-03-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Unity%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">Unity开发</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/5a3da985/" class="post-meta-item leancloud_visitors" data-flag-title="InjectFix学习笔记" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/post/5a3da985/#waline" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" data-path="/post/5a3da985/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>7.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="injectfix-工作流程">1.InjectFix 工作流程</h2>
+<ul>
+<li>打新包
+<ul>
+<li>其他预处理</li>
+<li>预先配置好需要Patch的类跟函数，提交配置Configure代码</li>
+<li>打包机打包时，自动reload被Inject的dll，保证当前的dll没有被注入过</li>
+<li>调用InjectFix提供的注入函数，注入WrappersManagerImpl，ILFixInterfaceBridge，ILFixDynamicMethodWrapper，IDMAP-1跟插桩代码dll</li>
+<li>执行il2cpp处理</li>
+<li>执行其他预处理</li>
+</ul></li>
+<li>Patch阶段
+<ul>
+<li>修复代码
+<ul>
+<li>修复函数：使用标签[IFix.Patch]</li>
+<li>新增类、属性、方法：使用标签[IFix.Interpret]</li>
+</ul></li>
+<li>调用InjectFix提供的打Patch函数，生成Patch文件</li>
+<li>生成Patch文件的AssetsBuddle包</li>
+<li>上传更新过后的AssetsBuddle包</li>
+</ul></li>
+</ul>
+<blockquote>
+<p>ps：在patch过程中，如果没有重新打出新的包体，不要删除Patch标签</p>
+</blockquote>
+<span id="more"></span>
+<h2 id="injectfix-工作原理">2.InjectFix 工作原理</h2>
+<h3 id="inject阶段">2.1 Inject阶段</h3>
+<h3 id="ifix跟ifix.filter标签">2.1.1 [IFix]跟[IFix.Filter]标签</h3>
+<p>在Inject阶段，预先对有可能需要修复的类跟函数提交配置类，调用Inject处理函数时，会对这些写上标签的函数注入插桩代码，例如有如下代码，其中Add跟Sub目前逻辑是错误的，是需要修复的函数：
+<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">namespace IFix.Test
 &#123;
     public class Calculator
     &#123;
@@ -22,7 +370,13 @@
             return a &#x2F; b;
         &#125;
     &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>打包时需要配置对应的配置类，具体配置<strong>Configure</strong>类如下，其中 <strong>[Configure]</strong> 标签是配置类的标签，用来配置注入阶段需要注入或者过滤的内容，配置类必须放在<strong>Editor</strong>目录下。 * <strong>[IFix]</strong> 标签 ：用来配置需要注入的类型 * <strong>[IFix.Filter]</strong> 标签 ：用来过滤不需要的字段</p><pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">[Configure]
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+打包时需要配置对应的配置类，具体配置<strong>Configure</strong>类如下，其中
+<strong>[Configure]</strong>
+标签是配置类的标签，用来配置注入阶段需要注入或者过滤的内容，配置类必须放在<strong>Editor</strong>目录下。
+* <strong>[IFix]</strong> 标签 ：用来配置需要注入的类型 *
+<strong>[IFix.Filter]</strong> 标签 ：用来过滤不需要的字段</p>
+<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">[Configure]
 public class HelloworldCfg
 &#123;
     [IFix]
@@ -43,7 +397,9 @@ public class HelloworldCfg
         return methodInfo.DeclaringType.FullName &#x3D;&#x3D; &quot;IFix.Test.Calculator&quot; 
             &amp;&amp; (methodInfo.Name &#x3D;&#x3D; &quot;Div&quot; || methodInfo.Name &#x3D;&#x3D; &quot;Mult&quot;);
     &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>使用<strong>ILSpy工具</strong>查看注入后dll，看到生成如下代码，其中<strong>Add</strong>跟<strong>Sub</strong>方法增加了注入代码，<strong>Mult</strong>跟<strong>Div</strong>函数因为在配置类中被过滤了，没有注入代码。<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">public class Calculator
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>使用<strong>ILSpy工具</strong>查看注入后dll，看到生成如下代码，其中<strong>Add</strong>跟<strong>Sub</strong>方法增加了注入代码，<strong>Mult</strong>跟<strong>Div</strong>函数因为在配置类中被过滤了，没有注入代码。
+<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">public class Calculator
 &#123;
     public int Add(int a, int b)
     &#123;
@@ -72,13 +428,17 @@ public class HelloworldCfg
     &#123;
         return a &#x2F; b;
     &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>除了插桩代码，注入阶段还会注入几个相关的代码，其中<strong>IDMAP0</strong>是修复函数的索引ID，当索引值超过32760时，会生成下一个<strong>IDMAP1</strong>，依次类推。<pre class="line-numbers language-none"><code class="language-none">public enum IDMAP0
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+除了插桩代码，注入阶段还会注入几个相关的代码，其中<strong>IDMAP0</strong>是修复函数的索引ID，当索引值超过32760时，会生成下一个<strong>IDMAP1</strong>，依次类推。
+<pre class="line-numbers language-none"><code class="language-none">public enum IDMAP0
 &#123;
     IFix-Test-Calculator-Add0 &#x3D; 6,
     IFix-Test-Calculator-Sub0,
     Helloworld-test0 &#x3D; 5,
     Helloworld-Start0 &#x3D; 0
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>其中的GetPatch(<strong>6</strong>)中的参数<strong>6</strong>对应到注入代码中IDMAP0中<strong>IFix-Test-Calculator-Add0</strong></p><p>注入WrappersManagerImpl类代码<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">public class WrappersManagerImpl : WrappersManager
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+其中的GetPatch(<strong>6</strong>)中的参数<strong>6</strong>对应到注入代码中IDMAP0中<strong>IFix-Test-Calculator-Add0</strong></p>
+<p>注入WrappersManagerImpl类代码 <pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">public class WrappersManagerImpl : WrappersManager
 &#123;
     private VirtualMachine virtualMachine;
 
@@ -118,7 +478,11 @@ public class HelloworldCfg
     &#123;
         return new ILFixInterfaceBridge(fieldNum, fieldTypes, typeIndex, vTable, slots, virtualMachine);
     &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>其中使用到的iLFixDynamicMethodWrapper的代码如下，其中 **__Gen_Wrap_X** 函数会根据注入时函数的参数个数，类型来生成，相同的参数只生成一个对应的 **__Gen_Wrap_X** 方法，例子中的Add，Sub方法共用了 **__Gen_Wrap_1** 方法<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">public class ILFixDynamicMethodWrapper
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+其中使用到的iLFixDynamicMethodWrapper的代码如下，其中 **__Gen_Wrap_X**
+函数会根据注入时函数的参数个数，类型来生成，相同的参数只生成一个对应的
+**__Gen_Wrap_X** 方法，例子中的Add，Sub方法共用了 **__Gen_Wrap_1** 方法
+<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">public class ILFixDynamicMethodWrapper
 &#123;
     private VirtualMachine virtualMachine;
 
@@ -187,7 +551,21 @@ public class HelloworldCfg
     &#123;
         ILFixDynamicMethodWrapper.wrapperArray &#x3D; new ILFixDynamicMethodWrapper[0];
     &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p><p>如果Patch阶段，有对Add方法进行修复，生成Patch，则执行逻辑会通过IFix.WrappersManagerImpl.GetPatch(6).__Gen_Wrap_1(this, a, b)调用<strong>ILFixDynamicMethodWrapper </strong>中的**__Gen_Wrap_1<strong>函数，最终调用</strong>virtualMachine<strong>的函数，通过IFix内部实现的虚拟机，解析执行Patch中的IL指令，执行修复后的代码逻辑，最后然后通过 </strong>call.GetInt32(0)** 获取计算返回的结果，将正确的值返回。</p><h3 id="ifix.custombridge-interface和delegate桥接">2.1.2 <strong>[IFix.CustomBridge]</strong> ：interface和delegate桥接</h3><p>在注入阶段使用，用来把一个在虚拟机上的类适配到原生interface或者把一个虚拟机的函数适配到原生delegate。 - 修复代码赋值一个闭包到一个delegate变量； - 修复代码的Unity协程用了yield return； - 新增一个函数，赋值到一个delegate变量； - 新增一个类，赋值到一个原生interface变量； - 新增函数，用了yield return；</p><p>例如，原生类代码如下：</p><pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">public interface ISubSystem
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p>如果Patch阶段，有对Add方法进行修复，生成Patch，则执行逻辑会通过IFix.WrappersManagerImpl.GetPatch(6).__Gen_Wrap_1(this,
+a, b)调用<strong>ILFixDynamicMethodWrapper
+</strong>中的**__Gen_Wrap_1<strong>函数，最终调用</strong>virtualMachine<strong>的函数，通过IFix内部实现的虚拟机，解析执行Patch中的IL指令，执行修复后的代码逻辑，最后然后通过
+</strong>call.GetInt32(0)** 获取计算返回的结果，将正确的值返回。</p>
+<h3 id="ifix.custombridge-interface和delegate桥接">2.1.2
+<strong>[IFix.CustomBridge]</strong> ：interface和delegate桥接</h3>
+<p>在注入阶段使用，用来把一个在虚拟机上的类适配到原生interface或者把一个虚拟机的函数适配到原生delegate。
+- 修复代码赋值一个闭包到一个delegate变量； -
+修复代码的Unity协程用了yield return； -
+新增一个函数，赋值到一个delegate变量； -
+新增一个类，赋值到一个原生interface变量； - 新增函数，用了yield
+return；</p>
+<p>例如，原生类代码如下：</p>
+<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">public interface ISubSystem
 &#123;
     bool running &#123; get; &#125;
     void Print();
@@ -196,7 +574,9 @@ public class HelloworldCfg
 public class Test 
 &#123;
     public delegate int MyDelegate(int a, int b);
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>配置类代码如下：</p><pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">[IFix.CustomBridge]
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>配置类代码如下：</p>
+<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">[IFix.CustomBridge]
 public static class AdditionalBridge
 &#123;
     static List&lt;Type&gt; bridge &#x3D; new List&lt;Type&gt;()
@@ -205,12 +585,17 @@ public static class AdditionalBridge
         typeof(IEnumerator),
         typeof(Test.MyDelegate)
     &#125;;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>新增函数（或者修复代码[IFix.Patch]的Unity协程），用到了 yield return</p><pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">[IFix.Interpret]
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>新增函数（或者修复代码[IFix.Patch]的Unity协程），用到了 yield
+return</p>
+<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">[IFix.Interpret]
 public IEnumerator TestInterface()
 &#123;
     yield return new WaitForSeconds(1);
     UnityEngine.Debug.Log(&quot;wait one second&quot;);
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>新增函数（或者修复代码[IFix.Patch]），赋值到一个delegate变量</p><pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">public class Test 
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>新增函数（或者修复代码[IFix.Patch]），赋值到一个delegate变量</p>
+<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">public class Test 
 &#123;
     public delegate int MyDelegate(int a, int b);
     
@@ -219,7 +604,9 @@ public IEnumerator TestInterface()
     &#123;
         return (a,b) &#x3D;&gt; a + b;
     &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>新增一个类，该类实现了一个接口</p><pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">[IFix.Interpret]
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>新增一个类，该类实现了一个接口</p>
+<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">[IFix.Interpret]
 public class SubSystem : ISubSystem
 &#123;
     public bool running &#123; get &#123; return true; &#125; &#125;
@@ -227,19 +614,43 @@ public class SubSystem : ISubSystem
     &#123;
         UnityEngine.Debug.Log(&quot;SubSystem1.Print&quot;);
     &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>注入dll后，使用<strong>ILSpy</strong>能看到dll中有注入的类<strong>ILFixInterfaceBridge</strong></p><h3 id="patch阶段">2.2 Patch阶段</h3><p>Patch阶段针对修复内容使用对应的Tag * 修复方法 ：[IFix.Patch] * 新增方法、类型 ：[IFix.Interpret]</p><h4 id="修复方法">2.2.1 修复方法</h4><p>需要修复的方法，再Patch阶段加上[Patch]标签，在执行生成Patch时，被修复的方法就会被写到生成的Patch里，例如，将Add方法从原先的 <strong>a * b</strong> 改成正确的逻辑 <strong>a + b</strong>：</p><pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">[Patch]
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>注入dll后，使用<strong>ILSpy</strong>能看到dll中有注入的类<strong>ILFixInterfaceBridge</strong></p>
+<h3 id="patch阶段">2.2 Patch阶段</h3>
+<p>Patch阶段针对修复内容使用对应的Tag * 修复方法 ：[IFix.Patch] *
+新增方法、类型 ：[IFix.Interpret]</p>
+<h4 id="修复方法">2.2.1 修复方法</h4>
+<p>需要修复的方法，再Patch阶段加上[Patch]标签，在执行生成Patch时，被修复的方法就会被写到生成的Patch里，例如，将Add方法从原先的
+<strong>a * b</strong> 改成正确的逻辑 <strong>a + b</strong>：</p>
+<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">[Patch]
 public int Add(int a, int b)
 &#123;
     return a + b;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre><blockquote><p>不支持修复泛型函数，不支持修复构造函数</p></blockquote><h3 id="新增函数类型">2.2.2 新增函数、类型</h3><ul><li>新增一个函数</li></ul><pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">[IFix.Interpret]
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<blockquote>
+<p>不支持修复泛型函数，不支持修复构造函数</p>
+</blockquote>
+<h3 id="新增函数类型">2.2.2 新增函数、类型</h3>
+<ul>
+<li>新增一个函数</li>
+</ul>
+<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">[IFix.Interpret]
 public bool Greater(int a,int b)
 &#123;
     return a &gt; b;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre><ul><li>新增一个类</li></ul><pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">[IFix.Interpret]
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<ul>
+<li>新增一个类</li>
+</ul>
+<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">[IFix.Interpret]
 public class NewClass
 &#123;
     ...
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre><ul><li>新增一个属性</li></ul><pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">private string name;&#x2F;&#x2F;这个name字段是原生的
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<ul>
+<li>新增一个属性</li>
+</ul>
+<pre class="line-numbers language-c#" data-language="c#"><code class="language-c#">private string name;&#x2F;&#x2F;这个name字段是原生的
 
 public string Name
 &#123;
@@ -253,4 +664,173 @@ public string Name
     &#123;
         return name;
     &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><blockquote><p>不支持继承原生类，泛型类，不支持在原生类中新增字段</p></blockquote></div><footer class="post-footer"><div class="license"><div class="license-title">InjectFix学习笔记</div><div class="license-link"><a href="https://www.xianlongok.site/post/5a3da985/">https://www.xianlongok.site/post/5a3da985/</a></div><div class="license-meta"><div class="license-meta-item"><div class="license-meta-title">本文作者</div><div class="license-meta-text">小贤</div></div><div class="license-meta-item"><div class="license-meta-title">发布于</div><div class="license-meta-text">2021-03-25</div></div><div class="license-meta-item"><div class="license-meta-title">更新于</div><div class="license-meta-text">2022-05-12</div></div><div class="license-meta-item"><div class="license-meta-title">许可协议</div><div class="license-meta-text"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank">CC BY-NC-SA 4.0</a></div></div></div><div class="license-statement">转载或引用本文时，请遵守上述许可协议，注明出处、不得用于商业用途！</div></div><div class="post-tags"><a href="/tags/Unity/" rel="tag"><i class="fa fa-tag"></i> Unity</a> <a href="/tags/C/" rel="tag"><i class="fa fa-tag"></i> C#</a> <a href="/tags/InjectFix/" rel="tag"><i class="fa fa-tag"></i> InjectFix</a></div><div class="post-nav"><div class="post-nav-item"><a href="/post/637d361d/" rel="prev" title="UnrealEnginPython踩坑记录"><i class="fa fa-chevron-left"></i> UnrealEnginPython踩坑记录</a></div><div class="post-nav-item"><a href="/post/568ad23c/" rel="next" title="第一次使用Github + Hexo搭建博客">第一次使用Github + Hexo搭建博客 <i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div class="comments" id="waline"></div></div></main><footer class="footer"><div class="footer-inner"><div class="copyright">&copy; 2021 – <span itemprop="copyrightYear">2023</span> <span class="with-love"><i class="fas fa-heart"></i> </span><span class="author" itemprop="copyrightHolder">小贤</span></div><div class="wordcount"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-chart-line"></i> </span><span title="站点总字数">256k</span> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-coffee"></i> </span><span title="站点阅读时长">3:53</span></span></div><div class="powered"><a href="https://dlzhang.com" rel="noopener" target="_blank">小贤</a>使用 <a href="https://hexo.io" rel="noopener" target="_blank">Hexo</a> <a href="https://theme-next.js.org" rel="noopener" target="_blank">NexT</a> 设计搭建</div></div></footer><div class="reading-progress-bar"></div><noscript><div class="noscript-warning">Theme NexT works best with JavaScript enabled</div></noscript><script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/jquery@3.7.0/dist/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script><script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script><script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.1/dist/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script><script src="/js/third-party/search/local-search.js"></script><script src="/js/third-party/fancybox.js"></script><script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"dkLUcqHORjRdwQiwRPJMs00N-gzGzoHsz","app_key":"EhWnaex3YyY7bQysJ2SFnukE","server_url":null,"security":false}</script><script src="/js/third-party/statistics/lean-analytics.js"></script><script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script><script src="/js/third-party/math/mathjax.js"></script><script class="next-config" data-name="waline" type="application/json">{"lang":"zh-CN","enable":true,"serverURL":"https://www.xianlongok.work","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"libUrl":"https://unpkg.com/@waline/client@v2/dist/waline.js","login":"disable","meta":["nick","mail","link"],"requiredMeta":["nick","mail"],"pageSize":5,"dark":"auto","emoji":false,"locale":{"placeholder":"请正确填写邮箱方便查收回复，评论通过审核才会显示。","admin":"站长","nick":"名称*","mail":"邮箱*","link":"网址"},"el":"#waline","comment":true,"path":"/post/5a3da985/"}</script><link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css"><script>document.addEventListener("page:loaded",()=>{NexT.utils.loadComments(CONFIG.waline.el).then(()=>NexT.utils.getScript(CONFIG.waline.libUrl,{condition:window.Waline})).then(()=>Waline.init(Object.assign({},CONFIG.waline,{el:document.querySelector(CONFIG.waline.el)})))})</script><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false}});</script></body></html>
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<blockquote>
+<p>不支持继承原生类，泛型类，不支持在原生类中新增字段</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+<div class="license">
+  <div class="license-title">InjectFix学习笔记</div>
+  <div class="license-link">
+    <a href="https://www.xianlongok.site/post/5a3da985/">https://www.xianlongok.site/post/5a3da985/</a>
+  </div>
+  <div class="license-meta">
+    <div class="license-meta-item">
+      <div class="license-meta-title">本文作者</div>
+      <div class="license-meta-text">
+          小贤
+      </div>
+    </div>
+      <div class="license-meta-item">
+        <div class="license-meta-title">发布于</div>
+        <div class="license-meta-text">
+          2021-03-25
+        </div>
+      </div>
+      <div class="license-meta-item">
+        <div class="license-meta-title">更新于</div>
+        <div class="license-meta-text">
+          2022-05-12
+        </div>
+      </div>
+    <div class="license-meta-item">
+      <div class="license-meta-title">许可协议</div>
+      <div class="license-meta-text">
+          <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank">CC BY-NC-SA 4.0</a>
+        
+      </div>
+    </div>
+  </div>
+  <div class="license-statement">
+      转载或引用本文时，请遵守上述许可协议，注明出处、不得用于商业用途！
+    
+  </div>
+</div>
+
+
+
+          <div class="post-tags">
+              <a href="/tags/Unity/" rel="tag"><i class="fa fa-tag"></i> Unity</a>
+              <a href="/tags/C/" rel="tag"><i class="fa fa-tag"></i> C#</a>
+              <a href="/tags/InjectFix/" rel="tag"><i class="fa fa-tag"></i> InjectFix</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/637d361d/" rel="prev" title="UnrealEnginPython踩坑记录">
+                  <i class="fa fa-chevron-left"></i> UnrealEnginPython踩坑记录
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/568ad23c/" rel="next" title="第一次使用Github + Hexo搭建博客">
+                  第一次使用Github + Hexo搭建博客 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2021 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fas fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">小贤</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">256k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">3:53</span>
+  </span>
+</div><div class="powered">  
+    <a href="https://dlzhang.com" rel="noopener" target="_blank">小贤</a>使用 <a href="https://hexo.io" rel="noopener" target="_blank">Hexo</a> <a href="https://theme-next.js.org" rel="noopener" target="_blank">NexT</a> 设计搭建
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.0/dist/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.1/dist/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"dkLUcqHORjRdwQiwRPJMs00N-gzGzoHsz","app_key":"EhWnaex3YyY7bQysJ2SFnukE","server_url":null,"security":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="waline" type="application/json">{"lang":"zh-CN","enable":true,"serverURL":"https://www.xianlongok.work","cssUrl":"https://unpkg.com/@waline/client@v2/dist/waline.css","commentCount":true,"pageview":false,"libUrl":"https://unpkg.com/@waline/client@v2/dist/waline.js","login":"disable","meta":["nick","mail","link"],"requiredMeta":["nick","mail"],"pageSize":5,"dark":"auto","emoji":false,"locale":{"placeholder":"请正确填写邮箱方便查收回复，评论通过审核才会显示。","admin":"站长","nick":"名称*","mail":"邮箱*","link":"网址"},"el":"#waline","comment":true,"path":"/post/5a3da985/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css">
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() =>
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => 
+    Waline.init(Object.assign({}, CONFIG.waline,{ el: document.querySelector(CONFIG.waline.el) }))
+  );
+});
+</script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false}});</script></body>
+</html>
